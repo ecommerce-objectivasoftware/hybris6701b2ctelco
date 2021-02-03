@@ -65,8 +65,8 @@ commerce-extension-pack/
 **/hybris/bin/modules/
 #!**/hybris/bin/ext-addon/b2bacceleratoraddon
 #hybris/bin/ext-addon/b2bacceleratoraddon/project.properties
-**/core-customize/README
-**/core-customize/SIGNATURE.SMF
+**/hybris6701b2ctelco/README
+**/hybris6701b2ctelco/SIGNATURE.SMF
 
 
 ### Extension specific ###
@@ -134,6 +134,23 @@ build.xml
 hybris/config/backup/
 
 # Project-specific ignores
+#Addons
+hybris6701b2ctelco/hybris/bin/custom/electronicsonline/electronicsonlinestorefront/web/webroot/WEB-INF/views/addons
+hybris6701b2ctelco/hybris/bin/custom/electronicsonline/electronicsonlinestorefront/web/webroot/_ui/addons
+hybris6701b2ctelco/hybris/bin/custom/electronicsonline/electronicsonlinestorefront/web/webroot/cmscockpit
+hybris6701b2ctelco/hybris/bin/custom/electronicsonline/electronicsonlinestorefront/web/addonsrc
+hybris6701b2ctelco/hybris/bin/custom/electronicsonline/electronicsonlinestorefront/web/addontestsrc
+hybris6701b2ctelco/hybris/bin/custom/electronicsonline/electronicsonlinestorefront/web/webroot/cockpit
+hybris6701b2ctelco/hybris/bin/custom/electronicsonline/electronicsonlinestorefront/web/webroot/WEB-INF/tags/addons/
+hybris6701b2ctelco/hybris/bin/custom/electronicsonline/electronicsonlinestorefront/web/webroot/WEB-INF/tld/
+hybris6701b2ctelco/hybris/bin/custom/electronicsonline/electronicsonlinestorefront/web/webroot/WEB-INF/messages/addons
+hybris6701b2ctelco/hybris/bin/custom/electronicsonline/electronicsonlinestorefront/web/webroot/WEB-INF/_ui-src/addons
+hybris6701b2ctelco/hybris/bin/custom/electronicsonline/electronicsonlinestorefront/resources/wro_addons.xml
+
+hybris6701b2ctelco/hybris/bin/custom/electronicsonline/electronicsonlinestorefront/web/commonwebsrc
+hybris6701b2ctelco/hybris/bin/custom/electronicsonline/electronicsonlinewebservices/web/addonsrc
+hybris6701b2ctelco/hybris/bin/custom/electronicsonline/electronicsonlinewebservices/web/webroot/WEB-INF/messages/addons
+hybris6701b2ctelco/hybris/bin/custom/electronicsonline/electronicsonlinewebservices/web/webroot/WEB-INF/cache/addons
 
 #Generated Assets
 
