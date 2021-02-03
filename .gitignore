@@ -67,7 +67,7 @@ commerce-extension-pack/
 #hybris/bin/ext-addon/b2bacceleratoraddon/project.properties
 **/hybris6701b2ctelco/README
 **/hybris6701b2ctelco/SIGNATURE.SMF
-
+**/hybris/config/solr/instances/default/*
 
 ### Extension specific ###
 .externalToolBuilders/
