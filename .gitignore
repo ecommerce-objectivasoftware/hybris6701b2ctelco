@@ -1,0 +1,157 @@
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.o
+*.so
+
+# Packages #
+############
+# it's better to unpack these files and commit the raw source
+# git has its own built in compression methods
+*.7z
+*.dmg
+*.gz
+*.iso
+*.rar
+*.tar
+!hybrislicence.jar
+
+# Logs and databases #
+######################
+*.log
+*.sqlite
+*.log.*
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+RemoteSystemsTempFiles/
+
+# Application specific exclusions #
+###################################
+*.swp
+*.tmp
+
+### Hybris specific ####
+hybris-Mobile-Apps-SDK/
+Mobile-Commerce-SDK/
+hybris-dependencies/
+hybris-ems/
+hybris-oms/
+hybris-sbg/
+sap-samples/
+licenses/
+build-tools/
+installer/
+c4c-integration/
+hybris/config/local.properties
+commerce-extension-pack/
+**/hybris/data/
+**/hybris/log/
+**/hybris/sampleconfigurations/
+**/hybris/temp/
+
+**/hybris/bin/platform/
+**/hybris/bin/ext-*/*
+**/hybris/bin/modules/
+#!**/hybris/bin/ext-addon/b2bacceleratoraddon
+#hybris/bin/ext-addon/b2bacceleratoraddon/project.properties
+**/core-customize/README
+**/core-customize/SIGNATURE.SMF
+
+
+### Extension specific ###
+.externalToolBuilders/
+.settings/
+eclipsebin/
+gensrc/
+classes/
+jalo/
+extensioninfo.xsd
+platformhome.properties
+items.xsd
+hmc.xsd
+beans.xsd
+.metadata
+*.ruleset
+ruleset.xml
+*-testclasses.xml
+*-webtestclasses.xml
+*hmc.jar
+.classpath
+.project
+.springBeans
+
+# Note, not all build.xml files are to be ignored, so we specify:
+
+integration_reference/
+*.bak
+
+
+# Idea Files #
+##############
+**/.idea/*
+idea/*
+idea-module-files/
+**/hybris/config/hybris4intellij.properties
+*.iml
+
+# Linux edited files #
+######################
+*~
+
+# Gradle fies #
+###############
+build/
+.gradle/
+
+###################
+temp/
+
+/deploy
+/artifacts
+/hybris_download
+/vagrant/.vagrant
+/vagrant/unisontest
+/vagrant/Vagrantfile.local
+/README
+/installed_hybris
+build.xml
+*.gitignore
+*.scannerwork
+
+# PROJECT Files
+#Config
+hybris/config/backup/
+
+# Project-specific ignores
+
+#Generated Assets
+
+#Generated frontend files
+
+#Excluded
+
+# Data Migration
+dummy.txt
+hybris/config/licence/installedSaplicenses.properties
+
+
+/.sass-cache/
+*.map
+node_modules
+.cache-loader
+.idea
+.vscode
+_ui-src
+theme-alpha
+theme-lambda
