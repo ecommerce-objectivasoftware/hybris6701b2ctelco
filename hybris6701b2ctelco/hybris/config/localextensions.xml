@@ -9,8 +9,8 @@
     <extension name='commerceservicesbackoffice' />
     <extension name='solrfacetsearchbackoffice' />
     <extension name='solrserver' />
-    <extension name='ycommercewebservices' />
-    <extension name='ycommercewebservicestest' />
+    <!--<extension name='ycommercewebservices' />-->
+    <!--<extension name='ycommercewebservicestest' />-->
     <extension name='electronicsstore' />
     <extension name='apparelstore' />
     <extension name='acceleratorwebservicesaddon' />
@@ -64,6 +64,7 @@
     <extension name='electronicsonlinetest'/>
     <extension name='electronicsonlineinitialdata'/>
     <extension name='electronicsonlinestorefront'/>
+    <extension name='electronicsonlinewebservices'/>
 
   </extensions>
 </hybrisconfig>
