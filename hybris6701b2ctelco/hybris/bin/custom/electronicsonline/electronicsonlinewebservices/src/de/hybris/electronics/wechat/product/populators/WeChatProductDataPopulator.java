@@ -158,7 +158,7 @@ public class WeChatProductDataPopulator implements Populator<ProductData, WeChat
     }
 
     private String getSiteUrl() {
-        return getConfigurationService().getConfiguration().getString("website.electronics.https", "https://electronics.local:9002/electronicsonlinestorefront");
+        return getConfigurationService().getConfiguration().getString("demo.image.url", "https://electronics.local:9002/electronicsonlinestorefront");
     }
 
     public ConfigurationService getConfigurationService() {
