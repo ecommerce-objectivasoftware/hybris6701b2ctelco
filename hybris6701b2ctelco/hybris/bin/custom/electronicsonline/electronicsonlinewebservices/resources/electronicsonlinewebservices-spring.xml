@@ -262,6 +262,20 @@
         <property name="idPattern" value="[0-9a-f]{40}|[0-9a-f-]{36}"/>
     </bean>
 
+	<alias name="defaultWechatCategoryDataConverter" alias="wechatCategoryDataConverter"/>
+	<bean id="defaultWechatCategoryDataConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="de.hybris.electronics.dto.plp.WechatCategoryBodyData" />
+		<property name="populators" ref="wechatCategoryPopulator" />
+	</bean>
+
+	<bean id="wechatCategoryPopulator" class="de.hybris.electronics.facades.pages.plp.populators.WechatCategoryPopulator"/>
+
+	<bean id="wechatCategoryFacade" class="de.hybris.electronics.facades.pages.plp.impl.DefaultWechatCategoryFacade"/>
+
+	<bean id="wechatCategoryService" class="de.hybris.electronics.services.pages.plp.impl.DefaultWechatCategoryService"/>
+
+	<bean id="wechatCategoryDao" class="de.hybris.electronics.daos.pages.plp.impl.DefaultWechatCategoryDao"/>
+
 	<bean id="weChatProductDataPopulator"
 		  class="de.hybris.electronics.wechat.product.populators.WeChatProductDataPopulator">
 		<property name="configurationService" ref="configurationService"/>

@@ -152,4 +152,25 @@
 		          type="java.util.List&lt;de.hybris.electronics.queues.data.OrderStatusUpdateElementData>"/>
 	</bean>
 
+	<bean class="de.hybris.electronics.dto.plp.WechatCategoryBodyData">
+		<property name="id" type="String"/>
+		<property name="name" type="String"/>
+		<property name="picUrl" type="String"/>
+		<property name="frontName" type="String"/>
+		<property name="title" type="String"/>
+	</bean>
+	<bean class="de.hybris.electronics.dto.plp.WechatCategoryWsDTO">
+		<property name="data" type="de.hybris.electronics.dto.plp.WechatCategoryData"/>
+		<property name="error" type="String"/>
+	</bean>
+	<bean class="de.hybris.electronics.dto.plp.WechatCategoryData">
+		<property name="categoryList"
+				  type="java.util.List&lt;de.hybris.electronics.dto.plp.WechatCategoryBodyData>"/>
+		<property name="primaryCategory"
+				  type="java.util.List&lt;de.hybris.electronics.dto.plp.WechatCategoryBodyData>"/>
+		<property name="currentCategory"
+				  type="java.util.List&lt;de.hybris.electronics.dto.plp.WechatCategoryBodyData>"/>
+		<property name="currentSubCategory"
+				  type="java.util.List&lt;de.hybris.electronics.dto.plp.WechatCategoryBodyData>"/>
+	</bean>
 </beans>
