@@ -3,15 +3,18 @@ package de.hybris.electronics.wechat.product.populators;
 import de.hybris.electronics.dto.pdp.*;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.converters.Populator;
+import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 public class WeChatProductDataPopulator implements Populator<ProductData, WeChatProductData> {
+
+    private ConfigurationService configurationService;
 
     @Override
     public void populate(ProductData productData, WeChatProductData weChatProductData) throws ConversionException {
@@ -40,7 +43,7 @@ public class WeChatProductDataPopulator implements Populator<ProductData, WeChat
         info.setName(productData.getName());
         info.setDetail(productData.getDescription());
         List<String> gallery = new ArrayList<>();
-        productData.getImages().forEach(image -> gallery.add(image.getUrl()));
+        productData.getImages().forEach(image -> gallery.add(String.format("%s%s", getSiteUrl(), image.getUrl())));
 
         info.setGallery(gallery);
         return info;
@@ -80,7 +83,12 @@ public class WeChatProductDataPopulator implements Populator<ProductData, WeChat
             data.setContent(review.getComment());
             data.setId(review.getId());
             data.setNickname(review.getAlias());
-            data.setPicList(Collections.singletonList("/static/images/avatar.png"));
+
+            List<String> images = new ArrayList<>();
+            if (CollectionUtils.isNotEmpty(productData.getImages())) {
+                images.add(String.format("%s%s", getSiteUrl(), productData.getImages().iterator().next().getUrl()));
+            }
+            data.setPicList(images);
             dataList.add(data);
         });
         comment.setData(dataList);
@@ -149,4 +157,15 @@ public class WeChatProductDataPopulator implements Populator<ProductData, WeChat
         return formatter.format(currentTime);
     }
 
+    private String getSiteUrl() {
+        return getConfigurationService().getConfiguration().getString("website.electronics.https", "https://electronics.local:9002/electronicsonlinestorefront");
+    }
+
+    public ConfigurationService getConfigurationService() {
+        return configurationService;
+    }
+
+    public void setConfigurationService(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
+    }
 }
