@@ -9,6 +9,7 @@ import org.apache.commons.collections.CollectionUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -59,13 +60,13 @@ public class WeChatProductDataPopulator implements Populator<ProductData, WeChat
         return brand;
     }
 
-    private Attribute getAttribute() {
+    private List<Attribute> getAttribute() {
 
         Attribute attribute = new Attribute();
         attribute.setAttribute("Attribute value");
         attribute.setName("Attribute name");
         attribute.setValue("Attribute value");
-        return attribute;
+        return Collections.singletonList(attribute);
     }
 
     private Comment getComment(ProductData productData) {

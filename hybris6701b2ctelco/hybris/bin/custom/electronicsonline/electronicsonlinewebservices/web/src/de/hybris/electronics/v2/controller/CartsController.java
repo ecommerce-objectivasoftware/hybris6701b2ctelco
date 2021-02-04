@@ -1083,4 +1083,28 @@ public class CartsController extends BaseCommerceController
 		}
 	}
 
+	@RequestMapping(value = "/{cartId}/wechat/add-product", method = RequestMethod.POST)
+	@ResponseBody
+	@ApiOperation(value = "WeChat demo that adds a product to the cart.", notes = "WeChat demo that adds a product to the cart.")
+	@ApiBaseSiteIdUserIdAndCartIdParam
+	public CartModificationWsDTO weChatAddProductToCart(@ApiParam(value = "Base site identifier.") @PathVariable final String baseSiteId,
+											  @ApiParam(value = "Code of the product to be added to cart. Product look-up is performed for the current product catalog version.") @RequestParam(required = true) final String code,
+											  @ApiParam(value = "Quantity of product.") @RequestParam(required = false, defaultValue = "1") final long qty,
+											  @ApiParam(value = "Name of the store where product will be picked. Set only if want to pick up from a store.") @RequestParam(required = false) final String pickupStore,
+											  @ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(required = false, defaultValue = DEFAULT_FIELD_SET) final String fields)
+			throws CommerceCartModificationException, WebserviceValidationException, ProductLowStockException, StockSystemException //NOSONAR
+	{
+		if (LOG.isDebugEnabled())
+		{
+			LOG.debug("addCartEntry: " + logParam("code", code) + ", " + logParam("qty", qty) + ", "
+					+ logParam("pickupStore", pickupStore));
+		}
+
+		if (StringUtils.isNotEmpty(pickupStore))
+		{
+			validate(pickupStore, "pickupStore", pointOfServiceValidator);
+		}
+
+		return addCartEntryInternal(baseSiteId, code, qty, pickupStore, fields);
+	}
 }
