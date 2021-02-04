@@ -1,8 +1,9 @@
 package de.hybris.electronics.dto.pdp;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Data {
+public class Data implements Serializable {
 
     private String id;
 

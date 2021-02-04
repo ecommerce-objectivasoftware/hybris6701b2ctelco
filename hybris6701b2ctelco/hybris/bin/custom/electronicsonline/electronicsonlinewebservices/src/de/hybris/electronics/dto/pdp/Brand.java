@@ -1,6 +1,8 @@
 package de.hybris.electronics.dto.pdp;
 
-public class Brand {
+import java.io.Serializable;
+
+public class Brand implements Serializable {
     private String name;
 
     public void setName(String name) {

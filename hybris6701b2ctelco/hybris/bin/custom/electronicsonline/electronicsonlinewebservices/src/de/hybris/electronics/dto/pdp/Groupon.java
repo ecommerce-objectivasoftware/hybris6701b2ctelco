@@ -1,6 +1,8 @@
 package de.hybris.electronics.dto.pdp;
 
-public class Groupon {
+import java.io.Serializable;
+
+public class Groupon implements Serializable {
 
     private String id;
 

@@ -1,6 +1,9 @@
 package de.hybris.electronics.dto.pdp;
 
-public class Issue {
+import java.io.Serializable;
+
+public class Issue implements Serializable {
+
     private int id;
 
     private String question;

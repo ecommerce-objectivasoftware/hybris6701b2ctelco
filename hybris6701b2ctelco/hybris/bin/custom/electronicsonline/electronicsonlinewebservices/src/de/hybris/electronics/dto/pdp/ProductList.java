@@ -1,6 +1,8 @@
 package de.hybris.electronics.dto.pdp;
 
-public class ProductList {
+import java.io.Serializable;
+
+public class ProductList implements Serializable {
     private double price;
 
     private String specifications;

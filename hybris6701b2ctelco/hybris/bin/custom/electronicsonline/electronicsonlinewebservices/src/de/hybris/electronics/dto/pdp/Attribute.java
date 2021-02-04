@@ -1,6 +1,8 @@
 package de.hybris.electronics.dto.pdp;
 
-public class Attribute {
+import java.io.Serializable;
+
+public class Attribute implements Serializable {
 
     private String name;
 

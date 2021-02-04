@@ -1,8 +1,9 @@
 package de.hybris.electronics.dto.pdp;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class SpecificationList {
+public class SpecificationList implements Serializable {
 
     private String name;
 

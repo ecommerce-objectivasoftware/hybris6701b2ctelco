@@ -1,6 +1,8 @@
 package de.hybris.electronics.dto.pdp;
 
-public class WeChatProductData {
+import java.io.Serializable;
+
+public class WeChatProductData implements Serializable {
 
     private RootData data;
 

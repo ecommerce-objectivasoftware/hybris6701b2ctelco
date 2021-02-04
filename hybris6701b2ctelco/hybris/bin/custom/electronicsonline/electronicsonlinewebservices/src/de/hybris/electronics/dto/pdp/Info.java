@@ -1,8 +1,10 @@
 package de.hybris.electronics.dto.pdp;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Info {
+public class Info implements Serializable {
+
     private String id;
 
     private double retailPrice;

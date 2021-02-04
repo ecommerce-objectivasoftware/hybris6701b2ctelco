@@ -1,6 +1,8 @@
 package de.hybris.electronics.dto.pdp;
 
-public class ValueList {
+import java.io.Serializable;
+
+public class ValueList implements Serializable {
     
     private boolean checked;
 

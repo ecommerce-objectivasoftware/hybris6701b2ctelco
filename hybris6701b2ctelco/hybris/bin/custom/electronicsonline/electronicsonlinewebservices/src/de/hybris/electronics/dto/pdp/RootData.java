@@ -1,8 +1,9 @@
 package de.hybris.electronics.dto.pdp;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class RootData {
+public class RootData implements Serializable {
     private List<SpecificationList> specificationList;
 
     private Info info;
