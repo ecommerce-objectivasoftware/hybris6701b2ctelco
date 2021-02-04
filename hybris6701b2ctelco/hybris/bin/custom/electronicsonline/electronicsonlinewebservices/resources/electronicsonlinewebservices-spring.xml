@@ -276,4 +276,8 @@
 
 	<bean id="wechatCategoryDao" class="de.hybris.electronics.daos.pages.plp.impl.DefaultWechatCategoryDao"/>
 
+	<bean id="weChatProductDataPopulator"
+		  class="de.hybris.electronics.wechat.product.populators.WeChatProductDataPopulator">
+		<property name="configurationService" ref="configurationService"/>
+	</bean>
 </beans>
