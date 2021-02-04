@@ -261,4 +261,7 @@
     <bean id="defaultOrderCodeIdentificationStrategy" class="de.hybris.electronics.strategies.impl.DefaultOrderCodeIdentificationStrategy">
         <property name="idPattern" value="[0-9a-f]{40}|[0-9a-f-]{36}"/>
     </bean>
+
+	<bean id="weChatProductDataPopulator"
+		  class="de.hybris.electronics.wechat.product.populators.WeChatProductDataPopulator"/>
 </beans>

@@ -10,16 +10,25 @@
  */
 package de.hybris.electronics.v2.controller;
 
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
+import de.hybris.electronics.constants.YcommercewebservicesConstants;
+import de.hybris.electronics.dto.pdp.RootData;
+import de.hybris.electronics.dto.pdp.WeChatProductData;
+import de.hybris.electronics.formatters.WsDateFormatter;
+import de.hybris.electronics.product.data.ReviewDataList;
+import de.hybris.electronics.product.data.SuggestionDataList;
+import de.hybris.electronics.queues.data.ProductExpressUpdateElementData;
+import de.hybris.electronics.queues.data.ProductExpressUpdateElementDataList;
+import de.hybris.electronics.queues.impl.ProductExpressUpdateQueue;
+import de.hybris.electronics.stock.CommerceStockFacade;
+import de.hybris.electronics.v2.helper.ProductsHelper;
+import de.hybris.electronics.validator.PointOfServiceValidator;
 import de.hybris.platform.catalog.enums.ProductReferenceTypeEnum;
 import de.hybris.platform.commercefacades.catalog.CatalogFacade;
 import de.hybris.platform.commercefacades.product.ProductFacade;
 import de.hybris.platform.commercefacades.product.ProductOption;
-import de.hybris.platform.commercefacades.product.data.ProductData;
-import de.hybris.platform.commercefacades.product.data.ProductReferenceData;
-import de.hybris.platform.commercefacades.product.data.ProductReferencesData;
-import de.hybris.platform.commercefacades.product.data.ReviewData;
-import de.hybris.platform.commercefacades.product.data.StockData;
-import de.hybris.platform.commercefacades.product.data.SuggestionData;
+import de.hybris.platform.commercefacades.product.data.*;
 import de.hybris.platform.commercefacades.search.ProductSearchFacade;
 import de.hybris.platform.commercefacades.search.data.AutocompleteSuggestionData;
 import de.hybris.platform.commercefacades.search.data.SearchStateData;
@@ -28,12 +37,7 @@ import de.hybris.platform.commercefacades.storefinder.data.StoreFinderStockSearc
 import de.hybris.platform.commerceservices.search.facetdata.ProductSearchPageData;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.store.data.GeoPoint;
-import de.hybris.platform.commercewebservicescommons.dto.product.ProductReferenceListWsDTO;
-import de.hybris.platform.commercewebservicescommons.dto.product.ProductWsDTO;
-import de.hybris.platform.commercewebservicescommons.dto.product.ReviewListWsDTO;
-import de.hybris.platform.commercewebservicescommons.dto.product.ReviewWsDTO;
-import de.hybris.platform.commercewebservicescommons.dto.product.StockWsDTO;
-import de.hybris.platform.commercewebservicescommons.dto.product.SuggestionListWsDTO;
+import de.hybris.platform.commercewebservicescommons.dto.product.*;
 import de.hybris.platform.commercewebservicescommons.dto.queues.ProductExpressUpdateElementListWsDTO;
 import de.hybris.platform.commercewebservicescommons.dto.search.facetdata.ProductSearchPageWsDTO;
 import de.hybris.platform.commercewebservicescommons.dto.store.StoreFinderStockSearchPageWsDTO;
@@ -44,30 +48,10 @@ import de.hybris.platform.webservicescommons.cache.CacheControl;
 import de.hybris.platform.webservicescommons.cache.CacheControlDirective;
 import de.hybris.platform.webservicescommons.errors.exceptions.WebserviceValidationException;
 import de.hybris.platform.webservicescommons.swagger.ApiBaseSiteIdParam;
-import de.hybris.electronics.constants.YcommercewebservicesConstants;
-import de.hybris.electronics.formatters.WsDateFormatter;
-import de.hybris.electronics.product.data.ReviewDataList;
-import de.hybris.electronics.product.data.SuggestionDataList;
-import de.hybris.electronics.queues.data.ProductExpressUpdateElementData;
-import de.hybris.electronics.queues.data.ProductExpressUpdateElementDataList;
-import de.hybris.electronics.queues.impl.ProductExpressUpdateQueue;
-import de.hybris.electronics.stock.CommerceStockFacade;
-import de.hybris.electronics.v2.helper.ProductsHelper;
-import de.hybris.electronics.validator.PointOfServiceValidator;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.Authorization;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -77,21 +61,12 @@ import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Validator;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.Authorization;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.*;
 
 
 /**
@@ -135,6 +110,8 @@ public class ProductsController extends BaseController
 	private CatalogFacade catalogFacade;
 	@Resource(name = "productsHelper")
 	private ProductsHelper productsHelper;
+	@Resource(name = "weChatProductDataPopulator")
+	private Populator<ProductData, WeChatProductData> weChatProductDataPopulator;
 
 	static
 	{
@@ -505,4 +482,23 @@ public class ProductsController extends BaseController
 		return catalogInfo;
 	}
 
+
+	@RequestMapping(value = "/wechat/{productCode}", method = RequestMethod.GET)
+	@CacheControl(directive = CacheControlDirective.PRIVATE, maxAge = 120)
+	@Cacheable(value = "productCache", key = "T(de.hybris.platform.commercewebservicescommons.cache.CommerceCacheKeyGenerator).generateKey(true,true,#productCode,#fields)")
+	@ResponseBody
+	@ApiOperation(value = "Get product details for WeChat", notes = "Returns details of a single product according to a product code.")
+	@ApiBaseSiteIdParam
+	public WeChatProductData getProductByCodeForWeChat(
+			@ApiParam(value = "Product identifier", required = true) @PathVariable final String productCode,
+			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(defaultValue = DEFAULT_FIELD_SET) final String fields) {
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("getProductByCode: code=" + sanitize(productCode) + " | options=" + PRODUCT_OPTIONS);
+		}
+
+		final ProductData product = productFacade.getProductForCodeAndOptions(productCode, OPTIONS);
+		WeChatProductData weChatProductData = new WeChatProductData();
+		weChatProductDataPopulator.populate(product, weChatProductData);
+		return weChatProductData;
+	}
 }
