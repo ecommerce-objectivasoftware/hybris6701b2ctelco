@@ -10,6 +10,10 @@
  */
 package de.hybris.electronics.v2.controller;
 
+import de.hybris.electronics.dto.plp.WechatCategoryBodyData;
+import de.hybris.electronics.dto.plp.WechatCategoryData;
+import de.hybris.electronics.dto.plp.WechatCategoryWsDTO;
+import de.hybris.electronics.facades.pages.plp.WechatCategoryFacade;
 import de.hybris.platform.commercefacades.catalog.CatalogFacade;
 import de.hybris.platform.commercefacades.catalog.CatalogOption;
 import de.hybris.platform.commercefacades.catalog.PageOption;
@@ -28,10 +32,14 @@ import de.hybris.platform.webservicescommons.swagger.ApiBaseSiteIdParam;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -60,6 +68,8 @@ public class CatalogsController extends BaseController
 	private CatalogFacade catalogFacade;
 	@Resource(name = "fieldSetBuilder")
 	private FieldSetBuilder fieldSetBuilder;
+	@Autowired
+    private WechatCategoryFacade wechatCategoryFacade;
 
 
 	@RequestMapping(method = RequestMethod.GET)
@@ -141,6 +151,49 @@ public class CatalogsController extends BaseController
 				context);
 
 		return getDataMapper().map(categoryHierarchyData, CategoryHierarchyWsDTO.class, fieldSet);
+	}
+
+	@RequestMapping(value = "/wechat/categories/{categoryId}", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(value = "Get information about catagory in a catalog version", notes = "Returns information about a specified category that exists in a catalog version available for the current base store.")
+	@ApiBaseSiteIdParam
+	public WechatCategoryWsDTO getWeChatCategorisById(
+			@ApiParam(value = "Category identifier", required = true) @PathVariable final String categoryId,
+
+			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(defaultValue = "DEFAULT") final String fields)
+	{
+		final WechatCategoryWsDTO wechatCategoryWsDTO = new WechatCategoryWsDTO();
+		final List<WechatCategoryBodyData> wechatCategoryBodyDataList = wechatCategoryFacade.getCategoryById(categoryId);
+		if(CollectionUtils.isNotEmpty(wechatCategoryBodyDataList)) {
+			WechatCategoryData wechatCategoryData = new WechatCategoryData();
+			wechatCategoryData.setCategoryList(wechatCategoryBodyDataList.subList(0, 1));
+			wechatCategoryData.setPrimaryCategory(wechatCategoryBodyDataList.subList(1, 2));
+			wechatCategoryData.setCurrentCategory(wechatCategoryBodyDataList.subList(3, 4));
+			wechatCategoryData.setCurrentSubCategory(wechatCategoryBodyDataList.subList(5, 6));
+			wechatCategoryWsDTO.setData(wechatCategoryData);
+		}
+		return wechatCategoryWsDTO;
+	}
+
+
+	@RequestMapping(value = "/wechat/categories", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(value = "Get information about catagory in a catalog version", notes = "Returns information about a specified category that exists in a catalog version available for the current base store.")
+	@ApiBaseSiteIdParam
+	public WechatCategoryWsDTO getWeChatCategories(
+			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(defaultValue = "DEFAULT") final String fields)
+	{
+		final List<WechatCategoryBodyData> wechatCategoryBodyDataList = wechatCategoryFacade.getCategoryList();
+		final List<WechatCategoryBodyData> wechatCategoryBodyDataListAfterFilter = wechatCategoryBodyDataList.stream()
+				.filter(data -> Objects.nonNull(data.getPicUrl())).collect(Collectors.toList());
+		final WechatCategoryWsDTO wechatCategoryWsDTO = new WechatCategoryWsDTO();
+		final WechatCategoryData wechatCategoryData = new WechatCategoryData();
+		wechatCategoryData.setCategoryList(wechatCategoryBodyDataListAfterFilter.subList(0,5));
+		wechatCategoryData.setPrimaryCategory(wechatCategoryBodyDataListAfterFilter.subList(5,9));
+		wechatCategoryData.setCurrentCategory(wechatCategoryBodyDataListAfterFilter.subList(9,10));
+		wechatCategoryData.setCurrentSubCategory(wechatCategoryBodyDataListAfterFilter.subList(10,15));
+		wechatCategoryWsDTO.setData(wechatCategoryData);
+		return wechatCategoryWsDTO;
 	}
 
 	protected static Set<CatalogOption> getOptions()
