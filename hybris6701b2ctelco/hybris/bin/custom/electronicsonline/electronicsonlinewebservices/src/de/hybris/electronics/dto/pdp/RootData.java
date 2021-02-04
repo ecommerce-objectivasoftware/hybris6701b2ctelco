@@ -16,7 +16,7 @@ public class RootData implements Serializable {
 
     private Brand brand;
 
-    private Attribute attribute;
+    private List<Attribute> attribute;
 
     private List<Issue> issue;
 
@@ -72,11 +72,11 @@ public class RootData implements Serializable {
         return this.brand;
     }
 
-    public void setAttribute(Attribute attribute) {
+    public void setAttribute(List<Attribute> attribute) {
         this.attribute = attribute;
     }
 
-    public Attribute getAttribute() {
+    public List<Attribute> getAttribute() {
         return this.attribute;
     }
 
