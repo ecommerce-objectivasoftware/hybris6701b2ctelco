@@ -15,7 +15,7 @@ import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 public class WechatAddressPopulator implements Populator<AddressModel, WechatAddressBodyData> {
     @Override
     public void populate(AddressModel addressModel, WechatAddressBodyData wechatAddressBodyData) throws ConversionException {
-        wechatAddressBodyData.setId(Math.toIntExact(addressModel.getPk().getLong()));
+        wechatAddressBodyData.setId(Long.parseLong(addressModel.getPk().toString()));
         wechatAddressBodyData.setName(addressModel.getFirstname().concat(addressModel.getLastname()));
         wechatAddressBodyData.setTel(addressModel.getCellphone());
         wechatAddressBodyData.setAddressDetail(addressModel.getLine1());
