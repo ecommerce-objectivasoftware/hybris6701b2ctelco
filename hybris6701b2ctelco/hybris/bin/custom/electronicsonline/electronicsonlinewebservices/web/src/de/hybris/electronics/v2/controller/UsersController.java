@@ -10,6 +10,8 @@
  */
 package de.hybris.electronics.v2.controller;
 
+import de.hybris.electronics.dto.user.WeChatLoginUserData;
+import de.hybris.electronics.wechat.user.WeChatDemoUserFacade;
 import de.hybris.platform.commercefacades.address.AddressVerificationFacade;
 import de.hybris.platform.commercefacades.address.data.AddressVerificationResult;
 import de.hybris.platform.commercefacades.customer.CustomerFacade;
@@ -130,7 +132,8 @@ public class UsersController extends BaseCommerceController
 	private Validator guestConvertingDTOValidator;
 	@Resource(name = "passwordStrengthValidator")
 	private Validator passwordStrengthValidator;
-
+	@Resource(name = "weChatDemoUserFacade")
+	private WeChatDemoUserFacade weChatDemoUserFacade;
 
 	@Secured(
 	{ "ROLE_CLIENT", "ROLE_TRUSTED_CLIENT", "ROLE_CUSTOMERMANAGERGROUP" })
@@ -1200,5 +1203,23 @@ public class UsersController extends BaseCommerceController
 		orderHistoriesData.setPagination(result.getPagination());
 
 		return orderHistoriesData;
+	}
+
+	@Secured({ "ROLE_CUSTOMERGROUP", "ROLE_TRUSTED_CLIENT", "ROLE_CUSTOMERMANAGERGROUP" })
+	@RequestMapping(value = "/{userId}/wechat/login", method = RequestMethod.POST)
+	@ApiOperation(value = "WeChat user login.", notes = "WeChat user login")
+	@ApiBaseSiteIdAndUserIdParam
+	@ResponseBody
+	public WeChatLoginUserData weChatLogin(
+			@ApiParam(value = "Customer's email.", required = true) @PathVariable final String userId,
+			@ApiParam(value = "Customer's password.", required = true) @RequestParam final String password)
+			throws PasswordMismatchException, RequestParameterException //NOSONAR
+	{
+		if (!EmailValidator.getInstance().isValid(userId))
+		{
+			throw new RequestParameterException("Login [" + userId + "] is not a valid e-mail address!",
+					RequestParameterException.INVALID, "newLogin");
+		}
+		return weChatDemoUserFacade.weChatUserLogin(userId, password);
 	}
 }

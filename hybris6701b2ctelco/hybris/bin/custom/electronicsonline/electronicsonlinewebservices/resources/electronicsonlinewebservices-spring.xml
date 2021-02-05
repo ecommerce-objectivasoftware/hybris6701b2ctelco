@@ -280,4 +280,12 @@
 		  class="de.hybris.electronics.wechat.product.populators.WeChatProductDataPopulator">
 		<property name="configurationService" ref="configurationService"/>
 	</bean>
+
+	<bean id="weChatDemoUserFacade"
+		  class="de.hybris.electronics.wechat.user.impl.DefaultWeChatDemoUserFacade">
+		<property name="userService" ref="userService"/>
+		<property name="passwordEncoderService" ref="passwordEncoderService"/>
+		<property name="customerNameStrategy" ref="customerNameStrategy"/>
+	</bean>
+
 </beans>
