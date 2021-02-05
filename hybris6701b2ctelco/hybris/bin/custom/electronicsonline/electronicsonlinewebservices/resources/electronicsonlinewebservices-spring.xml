@@ -281,6 +281,13 @@
 		<property name="configurationService" ref="configurationService"/>
 	</bean>
 
+	<bean id="weChatDemoUserFacade"
+		  class="de.hybris.electronics.wechat.user.impl.DefaultWeChatDemoUserFacade">
+		<property name="userService" ref="userService"/>
+		<property name="passwordEncoderService" ref="passwordEncoderService"/>
+		<property name="customerNameStrategy" ref="customerNameStrategy"/>
+	</bean>
+
 	<alias name="defaultWechatProductDetailDataConverter" alias="wechatProductDetailDataConverter"/>
 	<bean id="defaultWechatProductDetailDataConverter" parent="abstractPopulatingConverter">
 		<property name="targetClass" value="de.hybris.electronics.dto.plp.WechatProductDetailData" />
