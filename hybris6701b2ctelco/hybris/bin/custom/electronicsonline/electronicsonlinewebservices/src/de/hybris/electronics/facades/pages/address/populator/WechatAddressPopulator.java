@@ -17,7 +17,8 @@ public class WechatAddressPopulator implements Populator<AddressModel, WechatAdd
     public void populate(AddressModel addressModel, WechatAddressBodyData wechatAddressBodyData) throws ConversionException {
         wechatAddressBodyData.setId(Long.parseLong(addressModel.getPk().toString()));
         wechatAddressBodyData.setName(addressModel.getFirstname().concat(addressModel.getLastname()));
-        wechatAddressBodyData.setTel(addressModel.getCellphone());
         wechatAddressBodyData.setAddressDetail(addressModel.getLine1());
+        wechatAddressBodyData.setTel(addressModel.getPhone1());
+        wechatAddressBodyData.setIsDefault(addressModel.getShippingAddress());
     }
 }
