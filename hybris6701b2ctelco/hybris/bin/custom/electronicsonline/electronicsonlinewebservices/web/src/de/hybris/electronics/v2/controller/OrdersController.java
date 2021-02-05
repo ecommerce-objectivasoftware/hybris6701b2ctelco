@@ -10,6 +10,8 @@
  */
 package de.hybris.electronics.v2.controller;
 
+import de.hybris.electronics.dto.order.WechatOrderHeaderData;
+import de.hybris.electronics.dto.order.WechatOrderWsDTO;
 import de.hybris.platform.commercefacades.order.OrderFacade;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.order.data.OrderHistoriesData;
@@ -192,5 +194,28 @@ public class OrdersController extends BaseCommerceController
 		final OrderData orderData = getCheckoutFacade().placeOrder();
 		return getDataMapper().map(orderData, OrderWsDTO.class, fields);
 	}
+
+	@Secured(
+			{ "ROLE_CUSTOMERGROUP", "ROLE_CLIENT", "ROLE_CUSTOMERMANAGERGROUP", "ROLE_TRUSTED_CLIENT" })
+	@RequestMapping(value = "/{userId}/order/prepay", method = RequestMethod.POST)
+	@ResponseBody
+	@ApiOperation(value = "pre pay a order", notes = "Authorizes the cart and places the order. The response contains the new order data.")
+	@ApiBaseSiteIdAndUserIdParam
+	public WechatOrderWsDTO prepayOrder(
+			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(defaultValue = DEFAULT_FIELD_SET) final String fields)
+			throws WebserviceValidationException
+	{
+		WechatOrderWsDTO wechatOrderWsDTO = new WechatOrderWsDTO();
+		wechatOrderWsDTO.setErrno(0);
+		WechatOrderHeaderData wechatOrderHeaderData = new WechatOrderHeaderData();
+		wechatOrderHeaderData.setTimeStamp("1612348193000");
+		wechatOrderHeaderData.setNonceStr("5K8264ILTKCH16CQ2502SI8ZNMTM67VS");
+		wechatOrderHeaderData.setPackageValue("prepay_id=wx2017033010242291fcfe0db70013231072");
+		wechatOrderHeaderData.setSignType("MD5");
+		wechatOrderHeaderData.setPaySign("MD5(appId=wxd678efh567hg6787&nonceStr=5K8264ILTKCH16CQ2502SI8ZNMTM67VS&package=prepay_id=wx2017033010242291fcfe0db70013231072&signType=MD5&timeStamp=1490840662&key=qazwsxedcrfvtgbyhnujmikolp111111) = 22D9B4E54AB1950F51E0649E8810ACD6");
+		wechatOrderWsDTO.setData(wechatOrderHeaderData);
+		return wechatOrderWsDTO;
+	}
+
 
 }
