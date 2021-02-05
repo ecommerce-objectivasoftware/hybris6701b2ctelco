@@ -170,11 +170,11 @@ public class CatalogsController extends BaseController
 	{
 		final WechatCategoryWsDTO wechatCategoryWsDTO = new WechatCategoryWsDTO();
 		final List<WechatCategoryBodyData> wechatCategoryBodyDataList = wechatCategoryFacade.getCategoryById(categoryId);
+		wechatCategoryWsDTO.setErrno(String.valueOf(0));
 		if(CollectionUtils.isNotEmpty(wechatCategoryBodyDataList)) {
 			WechatCategoryData wechatCategoryData = new WechatCategoryData();
 			wechatCategoryData.setCategoryList(wechatCategoryBodyDataList);
 			wechatCategoryWsDTO.setData(wechatCategoryData);
-			wechatCategoryWsDTO.setError(String.valueOf(0));
 		}
 		return wechatCategoryWsDTO;
 	}
@@ -191,7 +191,7 @@ public class CatalogsController extends BaseController
 		final List<WechatCategoryBodyData> wechatCategoryBodyDataListAfterFilter = wechatCategoryBodyDataList.stream()
 				.filter(data -> Objects.nonNull(data.getPicUrl())).collect(Collectors.toList());
 		final WechatCategoryWsDTO wechatCategoryWsDTO = new WechatCategoryWsDTO();
-		wechatCategoryWsDTO.setError(String.valueOf(0));
+		wechatCategoryWsDTO.setErrno(String.valueOf(0));
 		if(CollectionUtils.isNotEmpty(wechatCategoryBodyDataListAfterFilter)) {
 			final WechatCategoryData wechatCategoryData = new WechatCategoryData();
 			if (wechatCategoryBodyDataListAfterFilter.size() > 15) {

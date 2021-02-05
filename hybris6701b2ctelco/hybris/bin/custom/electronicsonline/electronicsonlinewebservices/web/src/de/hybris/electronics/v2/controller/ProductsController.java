@@ -13,8 +13,11 @@ package de.hybris.electronics.v2.controller;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import de.hybris.electronics.constants.YcommercewebservicesConstants;
-import de.hybris.electronics.dto.pdp.RootData;
 import de.hybris.electronics.dto.pdp.WeChatProductData;
+import de.hybris.electronics.dto.plp.WechatProductDetailData;
+import de.hybris.electronics.dto.plp.WechatProductHeaderData;
+import de.hybris.electronics.dto.plp.WechatProductWsDTO;
+import de.hybris.electronics.facades.pages.plp.WechatProductFacade;
 import de.hybris.electronics.formatters.WsDateFormatter;
 import de.hybris.electronics.product.data.ReviewDataList;
 import de.hybris.electronics.product.data.SuggestionDataList;
@@ -67,6 +70,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -112,7 +116,8 @@ public class ProductsController extends BaseController
 	private ProductsHelper productsHelper;
 	@Resource(name = "weChatProductDataPopulator")
 	private Populator<ProductData, WeChatProductData> weChatProductDataPopulator;
-
+	@Resource
+	private WechatProductFacade wechatProductFacade;
 	static
 	{
 		String productOptions = "";
@@ -500,5 +505,29 @@ public class ProductsController extends BaseController
 		WeChatProductData weChatProductData = new WeChatProductData();
 		weChatProductDataPopulator.populate(product, weChatProductData);
 		return weChatProductData;
+	}
+
+
+	@GetMapping(value = "/wechat/product/list")
+	@CacheControl(directive = CacheControlDirective.PRIVATE, maxAge = 120)
+	@Cacheable(value = "productCache", key = "T(de.hybris.platform.commercewebservicescommons.cache.CommerceCacheKeyGenerator).generateKey(true,true,#productCode,#fields)")
+	@ResponseBody
+	@ApiOperation(value = "Get product list", notes = "Returns product list.")
+	@ApiBaseSiteIdParam
+	public WechatProductWsDTO getProductList(
+			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(defaultValue = DEFAULT_FIELD_SET) final String fields)
+	{
+		final List<WechatProductDetailData> productDataList = wechatProductFacade.getProductList();
+		final List<WechatProductDetailData> productDataListAfterFilter = productDataList.stream()
+				.filter(data -> Objects.nonNull(data.getPicUrl())).collect(Collectors.toList());
+		WechatProductWsDTO wechatProductWsDTO = new WechatProductWsDTO();
+		wechatProductWsDTO.setErrno(String.valueOf(0));
+		WechatProductHeaderData wechatProductHeaderData = new WechatProductHeaderData();
+		wechatProductWsDTO.setData(wechatProductHeaderData);
+		if(CollectionUtils.isNotEmpty(productDataListAfterFilter))
+		{
+			wechatProductHeaderData.setList(productDataListAfterFilter);
+		}
+		return wechatProductWsDTO;
 	}
 }
