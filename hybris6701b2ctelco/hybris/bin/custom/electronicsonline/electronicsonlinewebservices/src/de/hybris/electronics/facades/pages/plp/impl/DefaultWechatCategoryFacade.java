@@ -35,13 +35,25 @@ private Converter<CategoryModel, WechatCategoryBodyData> wechatCategoryDataConve
     }
 
     @Override
-    public List<WechatCategoryBodyData> getCategoryById(String categoryId) {
+    public List<WechatCategoryBodyData> getSubCategoryById(String categoryId) {
         final CategoryModel categoryModel = wechatCategoryService.getCategoryById(categoryId);
         final Collection<CategoryModel> subCategoryList = categoryModel.getAllSubcategories();
-        if(!CollectionUtils.isEmpty(subCategoryList)) {
-            return wechatCategoryDataConverter.convertAll(subCategoryList);
-        }
-        return Collections.emptyList();
+        subCategoryList.add(categoryModel);
+        return wechatCategoryDataConverter.convertAll(subCategoryList);
+
+
+    }
+
+    @Override
+    public List<WechatCategoryBodyData> getCategoryByIds(String[] ids) {
+        final List<CategoryModel> categoryModelList = wechatCategoryService.getCategoryByIds(ids);
+        return wechatCategoryDataConverter.convertAll(categoryModelList);
+    }
+
+    @Override
+    public WechatCategoryBodyData getCategoryById(String categoryId) {
+        final CategoryModel categoryModel = wechatCategoryService.getCategoryById(categoryId);
+        return wechatCategoryDataConverter.convert(categoryModel);
 
     }
 }

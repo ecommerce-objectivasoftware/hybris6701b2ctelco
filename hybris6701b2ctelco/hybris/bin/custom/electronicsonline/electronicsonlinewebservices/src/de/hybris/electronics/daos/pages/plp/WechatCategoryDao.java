@@ -8,4 +8,6 @@ public interface WechatCategoryDao {
     List<CategoryModel> getCategoryList();
 
     CategoryModel getCategoryById(String categoryId);
+
+    List<CategoryModel> getCategoryByIds(String[] ids);
 }

@@ -8,5 +8,10 @@ public interface WechatCategoryFacade {
 
     List<WechatCategoryBodyData> getCategoryList();
 
-    List<WechatCategoryBodyData> getCategoryById(String categoryId);
+    List<WechatCategoryBodyData> getSubCategoryById(String categoryId);
+
+    List<WechatCategoryBodyData> getCategoryByIds(String[] ids);
+
+    WechatCategoryBodyData getCategoryById(String categoryId);
+
 }

@@ -33,11 +33,7 @@ import de.hybris.platform.webservicescommons.mapping.FieldSetBuilder;
 import de.hybris.platform.webservicescommons.mapping.impl.FieldSetBuilderContext;
 import de.hybris.platform.webservicescommons.swagger.ApiBaseSiteIdParam;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
 
 import javax.annotation.Resource;
 
@@ -73,10 +69,6 @@ public class CatalogsController extends BaseController
 	private FieldSetBuilder fieldSetBuilder;
 	@Autowired
     private WechatCategoryFacade wechatCategoryFacade;
-	@Autowired
-	private WechatCategoryService wechatCategoryService;
-	@Resource
-	private Converter<CategoryModel, WechatCategoryBodyData> wechatCategoryDataConverter;
 
 	@RequestMapping(method = RequestMethod.GET)
 	@ResponseBody
@@ -169,13 +161,12 @@ public class CatalogsController extends BaseController
 			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(defaultValue = "DEFAULT") final String fields)
 	{
 		final WechatCategoryWsDTO wechatCategoryWsDTO = new WechatCategoryWsDTO();
-		final List<WechatCategoryBodyData> wechatCategoryBodyDataList = wechatCategoryFacade.getCategoryById(categoryId);
-		wechatCategoryWsDTO.setErrno(String.valueOf(0));
-		if(CollectionUtils.isNotEmpty(wechatCategoryBodyDataList)) {
-			WechatCategoryData wechatCategoryData = new WechatCategoryData();
-			wechatCategoryData.setCategoryList(wechatCategoryBodyDataList);
-			wechatCategoryWsDTO.setData(wechatCategoryData);
-		}
+		wechatCategoryWsDTO.setErrno(0);
+		WechatCategoryData wechatCategoryData = new WechatCategoryData();
+		wechatCategoryData.setCurrentCategory(wechatCategoryFacade.getCategoryById(categoryId));
+		wechatCategoryData.setCurrentSubCategory(wechatCategoryFacade.getSubCategoryById(categoryId));
+		wechatCategoryWsDTO.setData(wechatCategoryData);
+
 		return wechatCategoryWsDTO;
 	}
 
@@ -187,23 +178,18 @@ public class CatalogsController extends BaseController
 	public WechatCategoryWsDTO getWeChatCategories(
 			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(defaultValue = "DEFAULT") final String fields)
 	{
-		final List<WechatCategoryBodyData> wechatCategoryBodyDataList = wechatCategoryFacade.getCategoryList();
-		final List<WechatCategoryBodyData> wechatCategoryBodyDataListAfterFilter = wechatCategoryBodyDataList.stream()
-				.filter(data -> Objects.nonNull(data.getPicUrl())).collect(Collectors.toList());
 		final WechatCategoryWsDTO wechatCategoryWsDTO = new WechatCategoryWsDTO();
-		wechatCategoryWsDTO.setErrno(String.valueOf(0));
-		if(CollectionUtils.isNotEmpty(wechatCategoryBodyDataListAfterFilter)) {
-			final WechatCategoryData wechatCategoryData = new WechatCategoryData();
-			if (wechatCategoryBodyDataListAfterFilter.size() > 15) {
-				wechatCategoryData.setCategoryList(wechatCategoryBodyDataListAfterFilter.subList(0, 5));
-				wechatCategoryData.setPrimaryCategory(wechatCategoryBodyDataListAfterFilter.subList(5, 9));
-				CategoryModel categoryModel = wechatCategoryService.getCategoryById("B2C_Color");
-				wechatCategoryData.setCurrentCategory(wechatCategoryDataConverter.convert(categoryModel));
-				wechatCategoryData.setCurrentSubCategory(wechatCategoryBodyDataListAfterFilter.subList(10, 15));
-				wechatCategoryWsDTO.setData(wechatCategoryData);
-			} else {
-				wechatCategoryData.setCategoryList(wechatCategoryBodyDataListAfterFilter);
-			}
+		wechatCategoryWsDTO.setErrno(0);
+		final WechatCategoryData wechatCategoryData = new WechatCategoryData();
+		final List<WechatCategoryBodyData> wechatCategoryBodyDataList = wechatCategoryFacade.getCategoryList();
+		if(CollectionUtils.isNotEmpty(wechatCategoryBodyDataList) && wechatCategoryBodyDataList.size() > 15) {
+			final List<WechatCategoryBodyData> wechatCategoryList = new ArrayList<>(wechatCategoryBodyDataList.subList(0, 5));
+			wechatCategoryList.add(wechatCategoryFacade.getCategoryById("578"));
+			wechatCategoryData.setCategoryList(wechatCategoryList);
+			wechatCategoryData.setCurrentCategory(wechatCategoryBodyDataList.get(5));
+			wechatCategoryData.setPrimaryCategory(wechatCategoryBodyDataList.subList(6, 10));
+			wechatCategoryData.setCurrentSubCategory(wechatCategoryBodyDataList.subList(10, 15));
+			wechatCategoryWsDTO.setData(wechatCategoryData);
 		}
 		return wechatCategoryWsDTO;
 	}
