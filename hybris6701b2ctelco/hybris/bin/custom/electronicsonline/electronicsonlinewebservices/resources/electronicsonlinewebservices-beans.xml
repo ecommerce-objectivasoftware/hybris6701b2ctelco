@@ -172,7 +172,14 @@
 				  type="de.hybris.electronics.dto.plp.WechatCategoryBodyData"/>
 		<property name="currentSubCategory"
 				  type="java.util.List&lt;de.hybris.electronics.dto.plp.WechatCategoryBodyData>"/>
-	</bean>
+        <property name="parentCategory"
+                  type="de.hybris.electronics.dto.plp.WechatCategoryBodyData"/>
+        <property name="brotherCategory"
+                  type="java.util.List&lt;de.hybris.electronics.dto.plp.WechatCategoryBodyData>"/>
+        <property name="list"
+                  type="java.util.List&lt;de.hybris.electronics.dto.plp.WechatProductDetailData>"/>
+
+    </bean>
 
 	<bean class="de.hybris.electronics.dto.plp.WechatProductWsDTO">
 		<property name="data" type="de.hybris.electronics.dto.plp.WechatProductHeaderData"/>
@@ -189,6 +196,5 @@
 		<property name="picUrl" type="String"/>
 		<property name="retailPrice" type="Double"/>
 	</bean>
-
 
 </beans>

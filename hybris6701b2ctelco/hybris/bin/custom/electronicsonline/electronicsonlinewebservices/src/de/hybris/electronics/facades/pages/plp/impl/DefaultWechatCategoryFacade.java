@@ -38,9 +38,16 @@ private Converter<CategoryModel, WechatCategoryBodyData> wechatCategoryDataConve
     public List<WechatCategoryBodyData> getSubCategoryById(String categoryId) {
         final CategoryModel categoryModel = wechatCategoryService.getCategoryById(categoryId);
         final Collection<CategoryModel> subCategoryList = categoryModel.getAllSubcategories();
-        subCategoryList.add(categoryModel);
         return wechatCategoryDataConverter.convertAll(subCategoryList);
 
+
+    }
+
+    @Override
+    public List<WechatCategoryBodyData> getSuperCategoryById(String categoryId) {
+        final CategoryModel categoryModel = wechatCategoryService.getCategoryById(categoryId);
+        final Collection<CategoryModel> superCategoryList = categoryModel.getAllSupercategories();
+        return wechatCategoryDataConverter.convertAll(superCategoryList);
 
     }
 
