@@ -10,18 +10,26 @@
  */
 package de.hybris.electronics.v2.controller;
 
+import de.hybris.electronics.cart.impl.CommerceWebServicesCartFacade;
+import de.hybris.electronics.dto.cart.WeChatAddToCartResponseData;
+import de.hybris.electronics.dto.cart.details.CartList;
+import de.hybris.electronics.dto.cart.details.CartTotal;
+import de.hybris.electronics.dto.cart.details.WeChatCartDetailsResponseData;
+import de.hybris.electronics.dto.cart.details.WeChatCartDetailsRootData;
+import de.hybris.electronics.exceptions.InvalidPaymentInfoException;
+import de.hybris.electronics.exceptions.NoCheckoutCartException;
+import de.hybris.electronics.exceptions.UnsupportedDeliveryModeException;
+import de.hybris.electronics.exceptions.UnsupportedRequestException;
 import de.hybris.electronics.order.data.CartDataList;
 import de.hybris.electronics.order.data.OrderEntryDataList;
 import de.hybris.electronics.product.data.PromotionResultDataList;
+import de.hybris.electronics.request.support.impl.PaymentProviderRequestSupportedStrategy;
+import de.hybris.electronics.stock.CommerceStockFacade;
 import de.hybris.electronics.voucher.data.VoucherDataList;
 import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.commercefacades.customer.CustomerFacade;
 import de.hybris.platform.commercefacades.order.SaveCartFacade;
-import de.hybris.platform.commercefacades.order.data.CCPaymentInfoData;
-import de.hybris.platform.commercefacades.order.data.CartData;
-import de.hybris.platform.commercefacades.order.data.CartModificationData;
-import de.hybris.platform.commercefacades.order.data.DeliveryModesData;
-import de.hybris.platform.commercefacades.order.data.OrderEntryData;
+import de.hybris.platform.commercefacades.order.data.*;
 import de.hybris.platform.commercefacades.product.data.PromotionResultData;
 import de.hybris.platform.commercefacades.product.data.StockData;
 import de.hybris.platform.commercefacades.promotion.CommercePromotionRestrictionFacade;
@@ -35,43 +43,22 @@ import de.hybris.platform.commerceservices.order.CommerceCartModificationExcepti
 import de.hybris.platform.commerceservices.order.CommerceCartRestorationException;
 import de.hybris.platform.commerceservices.promotion.CommercePromotionRestrictionException;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
-import de.hybris.platform.commercewebservicescommons.dto.order.CartListWsDTO;
-import de.hybris.platform.commercewebservicescommons.dto.order.CartModificationWsDTO;
-import de.hybris.platform.commercewebservicescommons.dto.order.CartWsDTO;
-import de.hybris.platform.commercewebservicescommons.dto.order.DeliveryModeListWsDTO;
-import de.hybris.platform.commercewebservicescommons.dto.order.DeliveryModeWsDTO;
-import de.hybris.platform.commercewebservicescommons.dto.order.OrderEntryListWsDTO;
-import de.hybris.platform.commercewebservicescommons.dto.order.OrderEntryWsDTO;
-import de.hybris.platform.commercewebservicescommons.dto.order.PaymentDetailsWsDTO;
+import de.hybris.platform.commercewebservicescommons.dto.order.*;
 import de.hybris.platform.commercewebservicescommons.dto.product.PromotionResultListWsDTO;
 import de.hybris.platform.commercewebservicescommons.dto.user.AddressWsDTO;
 import de.hybris.platform.commercewebservicescommons.dto.voucher.VoucherListWsDTO;
-import de.hybris.platform.commercewebservicescommons.errors.exceptions.CartEntryException;
-import de.hybris.platform.commercewebservicescommons.errors.exceptions.CartException;
-import de.hybris.platform.commercewebservicescommons.errors.exceptions.LowStockException;
-import de.hybris.platform.commercewebservicescommons.errors.exceptions.ProductLowStockException;
-import de.hybris.platform.commercewebservicescommons.errors.exceptions.RequestParameterException;
-import de.hybris.platform.commercewebservicescommons.errors.exceptions.StockSystemException;
+import de.hybris.platform.commercewebservicescommons.errors.exceptions.*;
+import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.platform.webservicescommons.cache.CacheControl;
 import de.hybris.platform.webservicescommons.cache.CacheControlDirective;
 import de.hybris.platform.webservicescommons.errors.exceptions.WebserviceValidationException;
 import de.hybris.platform.webservicescommons.swagger.ApiBaseSiteIdAndUserIdParam;
 import de.hybris.platform.webservicescommons.swagger.ApiBaseSiteIdUserIdAndCartIdParam;
-import de.hybris.electronics.cart.impl.CommerceWebServicesCartFacade;
-import de.hybris.electronics.exceptions.InvalidPaymentInfoException;
-import de.hybris.electronics.exceptions.NoCheckoutCartException;
-import de.hybris.electronics.exceptions.UnsupportedDeliveryModeException;
-import de.hybris.electronics.exceptions.UnsupportedRequestException;
-import de.hybris.electronics.request.support.impl.PaymentProviderRequestSupportedStrategy;
-import de.hybris.electronics.stock.CommerceStockFacade;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
-
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.Authorization;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.log4j.Logger;
@@ -83,18 +70,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.Authorization;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Controller
@@ -127,6 +108,8 @@ public class CartsController extends BaseCommerceController
 	private SaveCartFacade saveCartFacade;
 	@Resource(name = "voucherFacade")
 	private VoucherFacade voucherFacade;
+	@Resource(name = "configurationService")
+	private ConfigurationService configurationService;
 
 	protected static CartModificationData mergeCartModificationData(final CartModificationData cmd1,
 			final CartModificationData cmd2)
@@ -1087,24 +1070,77 @@ public class CartsController extends BaseCommerceController
 	@ResponseBody
 	@ApiOperation(value = "WeChat demo that adds a product to the cart.", notes = "WeChat demo that adds a product to the cart.")
 	@ApiBaseSiteIdUserIdAndCartIdParam
-	public CartModificationWsDTO weChatAddProductToCart(@ApiParam(value = "Base site identifier.") @PathVariable final String baseSiteId,
-											  @ApiParam(value = "Code of the product to be added to cart. Product look-up is performed for the current product catalog version.") @RequestParam(required = true) final String code,
-											  @ApiParam(value = "Quantity of product.") @RequestParam(required = false, defaultValue = "1") final long qty,
-											  @ApiParam(value = "Name of the store where product will be picked. Set only if want to pick up from a store.") @RequestParam(required = false) final String pickupStore,
-											  @ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(required = false, defaultValue = DEFAULT_FIELD_SET) final String fields)
+	public WeChatAddToCartResponseData weChatAddProductToCart(@ApiParam(value = "Base site identifier.") @PathVariable final String baseSiteId,
+															  @ApiParam(value = "Code of the product to be added to cart. Product look-up is performed for the current product catalog version.") @RequestParam(required = true) final String productId,
+															  @ApiParam(value = "Quantity of product.") @RequestParam(required = false, defaultValue = "1") final long number,
+															  @ApiParam(value = "Name of the store where product will be picked. Set only if want to pick up from a store.") @RequestParam(required = false) final String pickupStore,
+															  @ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(required = false, defaultValue = DEFAULT_FIELD_SET) final String fields)
 			throws CommerceCartModificationException, WebserviceValidationException, ProductLowStockException, StockSystemException //NOSONAR
 	{
-		if (LOG.isDebugEnabled())
-		{
-			LOG.debug("addCartEntry: " + logParam("code", code) + ", " + logParam("qty", qty) + ", "
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("addCartEntry: " + logParam("code", productId) + ", " + logParam("qty", number) + ", "
 					+ logParam("pickupStore", pickupStore));
 		}
 
-		if (StringUtils.isNotEmpty(pickupStore))
-		{
+		if (StringUtils.isNotEmpty(pickupStore)) {
 			validate(pickupStore, "pickupStore", pointOfServiceValidator);
 		}
 
-		return addCartEntryInternal(baseSiteId, code, qty, pickupStore, fields);
+		CartModificationWsDTO cartModificationWsDTO = addCartEntryInternal(baseSiteId, productId, number, pickupStore, fields);
+		WeChatAddToCartResponseData weChatAddToCartResponseData = new WeChatAddToCartResponseData();
+		if (cartModificationWsDTO.getStatusCode().equalsIgnoreCase("success")) {
+			weChatAddToCartResponseData.setErrno(0);
+		} else {
+			weChatAddToCartResponseData.setErrno(1);
+		}
+
+		long qty = getSessionCart().getEntries().stream().mapToLong(OrderEntryData::getQuantity).sum();
+		weChatAddToCartResponseData.setData(qty);
+		return weChatAddToCartResponseData;
+	}
+
+	@RequestMapping(value = "/{cartId}/wechat/details", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(value = "WeChat get a cart with a given identifier.", notes = "WeChat returns the cart with a given identifier.")
+	@ApiBaseSiteIdUserIdAndCartIdParam
+	public WeChatCartDetailsResponseData getCartForWeChat(
+			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(required = false, defaultValue = DEFAULT_FIELD_SET) final String fields) {
+		// CartMatchingFilter sets current cart based on cartId, so we can return cart from the session
+		CartData cartData = getSessionCart();
+
+		WeChatCartDetailsRootData weChatCartDetailsRootData = new WeChatCartDetailsRootData();
+
+		weChatCartDetailsRootData.setCartList(new ArrayList<>());
+		cartData.getEntries().forEach(entry -> {
+			CartList cartList = new CartList();
+			cartList.setChecked(true);
+			cartList.setGoodsName(entry.getProduct().getName());
+			cartList.setNumber(String.valueOf(entry.getQuantity()));
+			if (CollectionUtils.isNotEmpty(entry.getProduct().getImages())) {
+				cartList.setPicUrl(String.format("%s%s", getSiteUrl(), entry.getProduct().getImages().iterator().next().getUrl()));
+			}
+			cartList.setPrice(String.valueOf(entry.getTotalPrice().getValue()));
+			cartList.setProductId(entry.getProduct().getCode());
+			cartList.setSpecifications(entry.getProduct().getName());
+			weChatCartDetailsRootData.getCartList().add(cartList);
+		});
+
+		CartTotal cartTotal = new CartTotal();
+		long qty = cartData.getEntries().stream().mapToLong(OrderEntryData::getQuantity).sum();
+		cartTotal.setCheckedGoodsAmount(String.valueOf(qty));
+		cartTotal.setCheckedGoodsCount(String.valueOf(cartData.getEntries().size()));
+		cartTotal.setGoodsAmount(String.valueOf(qty));
+		cartTotal.setGoodsCount(String.valueOf(cartData.getEntries().size()));
+
+		weChatCartDetailsRootData.setCartTotal(cartTotal);
+
+		WeChatCartDetailsResponseData weChatCartDetailsResponseData = new WeChatCartDetailsResponseData();
+		weChatCartDetailsResponseData.setData(weChatCartDetailsRootData);
+		weChatCartDetailsResponseData.setErrno(0);
+		return weChatCartDetailsResponseData;
+	}
+
+	private String getSiteUrl() {
+		return configurationService.getConfiguration().getString("demo.image.url", "https://electronics.local:9002/electronicsonlinestorefront");
 	}
 }
