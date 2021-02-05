@@ -8,6 +8,7 @@ import de.hybris.platform.servicelayer.search.FlexibleSearchService;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -24,6 +25,7 @@ public class DefaultWechatCategoryDao implements WechatCategoryDao {
 
     private static final String GET_CATEGORY_BY_ID = "select {" + CategoryModel.PK + "} from {" + CategoryModel._TYPECODE
             +"} where {"+ CategoryModel.CODE + "} = ?categoryId";
+    private static final String GET_CATEGORY_LIST_BY_IDS = GET_CATEGORY_LIST + " and {" + CategoryModel.CODE + "} IN (?ids)";
     @Resource
     private FlexibleSearchService flexibleSearchService;
     @Override
@@ -38,6 +40,14 @@ public class DefaultWechatCategoryDao implements WechatCategoryDao {
         final FlexibleSearchQuery query = new FlexibleSearchQuery(GET_CATEGORY_BY_ID);
         query.addQueryParameter("categoryId", categoryId);
         return flexibleSearchService.<CategoryModel> search(query).getResult().get(0);
+
+    }
+
+    @Override
+    public List<CategoryModel> getCategoryByIds(String[] ids) {
+        final FlexibleSearchQuery query = new FlexibleSearchQuery(GET_CATEGORY_LIST_BY_IDS);
+        query.addQueryParameter("ids", Arrays.asList(ids));
+        return flexibleSearchService.<CategoryModel> search(query).getResult();
 
     }
 }

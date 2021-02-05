@@ -28,4 +28,10 @@ public class DefaultWechatCategoryService implements WechatCategoryService {
     public CategoryModel getCategoryById(String categoryId) {
         return wechatCategoryDao.getCategoryById(categoryId);
     }
+
+    @Override
+    public List<CategoryModel> getCategoryByIds(String[] ids) {
+        return wechatCategoryDao.getCategoryByIds(ids);
+
+    }
 }

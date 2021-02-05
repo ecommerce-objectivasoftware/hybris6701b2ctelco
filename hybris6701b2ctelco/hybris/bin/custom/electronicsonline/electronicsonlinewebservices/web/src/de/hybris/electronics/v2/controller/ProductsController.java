@@ -521,7 +521,7 @@ public class ProductsController extends BaseController
 		final List<WechatProductDetailData> productDataListAfterFilter = productDataList.stream()
 				.filter(data -> Objects.nonNull(data.getPicUrl())).collect(Collectors.toList());
 		WechatProductWsDTO wechatProductWsDTO = new WechatProductWsDTO();
-		wechatProductWsDTO.setErrno(String.valueOf(0));
+		wechatProductWsDTO.setErrno(0);
 		WechatProductHeaderData wechatProductHeaderData = new WechatProductHeaderData();
 		wechatProductWsDTO.setData(wechatProductHeaderData);
 		if(CollectionUtils.isNotEmpty(productDataListAfterFilter))
