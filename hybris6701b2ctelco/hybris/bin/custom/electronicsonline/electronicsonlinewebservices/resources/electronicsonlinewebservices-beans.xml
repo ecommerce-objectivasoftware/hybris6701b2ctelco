@@ -197,4 +197,20 @@
 		<property name="retailPrice" type="Double"/>
 	</bean>
 
+	<bean class="de.hybris.electronics.dto.address.WechatAddressWsDTO">
+		<property name="data" type="de.hybris.electronics.dto.address.WechatAddressHeaderData"/>
+		<property name="errno" type="Integer"/>
+	</bean>
+	<bean class="de.hybris.electronics.dto.address.WechatAddressHeaderData">
+		<property name="list" type="java.util.List&lt;de.hybris.electronics.dto.address.WechatAddressBodyData>"/>
+		<property name="total" type="Integer"/>
+	</bean>
+	<bean class="de.hybris.electronics.dto.address.WechatAddressBodyData">
+		<property name="id" type="Integer"/>
+		<property name="name" type="String"/>
+		<property name="tel" type="String"/>
+		<property name="addressDetail" type="String"/>
+	</bean>
+
+
 </beans>
