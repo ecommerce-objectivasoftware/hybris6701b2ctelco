@@ -280,4 +280,19 @@
 		  class="de.hybris.electronics.wechat.product.populators.WeChatProductDataPopulator">
 		<property name="configurationService" ref="configurationService"/>
 	</bean>
+
+	<alias name="defaultWechatProductDetailDataConverter" alias="wechatProductDetailDataConverter"/>
+	<bean id="defaultWechatProductDetailDataConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="de.hybris.electronics.dto.plp.WechatProductDetailData" />
+		<property name="populators" ref="wechatProductDetailPopulator" />
+	</bean>
+
+    <bean id="wechatProductDetailPopulator" class="de.hybris.electronics.facades.pages.plp.populators.WechatProductDetailPopulator"/>
+
+	<bean id="wechatProductFacade" class="de.hybris.electronics.facades.pages.plp.impl.DefaultWechatProductFacade"/>
+
+	<bean id="wechatProductService" class="de.hybris.electronics.services.pages.plp.impl.DefaultWechatProductService"/>
+
+	<bean id="wechatProductDao" class="de.hybris.electronics.daos.pages.plp.impl.DefaultWechatProductDao"/>
+
 </beans>

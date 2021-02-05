@@ -161,7 +161,7 @@
 	</bean>
 	<bean class="de.hybris.electronics.dto.plp.WechatCategoryWsDTO">
 		<property name="data" type="de.hybris.electronics.dto.plp.WechatCategoryData"/>
-		<property name="error" type="String"/>
+		<property name="errno" type="String"/>
 	</bean>
 	<bean class="de.hybris.electronics.dto.plp.WechatCategoryData">
 		<property name="categoryList"
@@ -173,4 +173,22 @@
 		<property name="currentSubCategory"
 				  type="java.util.List&lt;de.hybris.electronics.dto.plp.WechatCategoryBodyData>"/>
 	</bean>
+
+	<bean class="de.hybris.electronics.dto.plp.WechatProductWsDTO">
+		<property name="data" type="de.hybris.electronics.dto.plp.WechatProductHeaderData"/>
+		<property name="errno" type="String"/>
+	</bean>
+
+	<bean class="de.hybris.electronics.dto.plp.WechatProductHeaderData">
+		<property name="list" type="java.util.List&lt;de.hybris.electronics.dto.plp.WechatProductDetailData>"/>
+	</bean>
+
+	<bean class="de.hybris.electronics.dto.plp.WechatProductDetailData">
+		<property name="id" type="String"/>
+		<property name="name" type="String"/>
+		<property name="picUrl" type="String"/>
+		<property name="retailPrice" type="Double"/>
+	</bean>
+
+
 </beans>
