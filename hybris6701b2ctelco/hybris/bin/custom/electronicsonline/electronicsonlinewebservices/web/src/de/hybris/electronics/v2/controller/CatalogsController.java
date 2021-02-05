@@ -13,7 +13,9 @@ package de.hybris.electronics.v2.controller;
 import de.hybris.electronics.dto.plp.WechatCategoryBodyData;
 import de.hybris.electronics.dto.plp.WechatCategoryData;
 import de.hybris.electronics.dto.plp.WechatCategoryWsDTO;
+import de.hybris.electronics.dto.plp.WechatProductDetailData;
 import de.hybris.electronics.facades.pages.plp.WechatCategoryFacade;
+import de.hybris.electronics.facades.pages.plp.WechatProductFacade;
 import de.hybris.electronics.services.pages.plp.WechatCategoryService;
 import de.hybris.platform.category.model.CategoryModel;
 import de.hybris.platform.commercefacades.catalog.CatalogFacade;
@@ -69,6 +71,8 @@ public class CatalogsController extends BaseController
 	private FieldSetBuilder fieldSetBuilder;
 	@Autowired
     private WechatCategoryFacade wechatCategoryFacade;
+	@Resource
+	private WechatProductFacade wechatProductFacade;
 
 	@RequestMapping(method = RequestMethod.GET)
 	@ResponseBody
@@ -163,6 +167,16 @@ public class CatalogsController extends BaseController
 		final WechatCategoryWsDTO wechatCategoryWsDTO = new WechatCategoryWsDTO();
 		wechatCategoryWsDTO.setErrno(0);
 		WechatCategoryData wechatCategoryData = new WechatCategoryData();
+		final List<WechatCategoryBodyData> superCategoryList = wechatCategoryFacade.getSuperCategoryById(categoryId);
+		if(CollectionUtils.isNotEmpty(superCategoryList))
+		{
+			wechatCategoryData.setParentCategory(superCategoryList.get(0));
+		}
+		final List<WechatCategoryBodyData> categoryList = wechatCategoryFacade.getCategoryList();
+		wechatCategoryData.setBrotherCategory(categoryList.subList(15, 20));
+
+		final List<WechatProductDetailData> productDataList = wechatProductFacade.getProductList();
+		wechatCategoryData.setList(productDataList);
 		wechatCategoryData.setCurrentCategory(wechatCategoryFacade.getCategoryById(categoryId));
 		wechatCategoryData.setCurrentSubCategory(wechatCategoryFacade.getSubCategoryById(categoryId));
 		wechatCategoryWsDTO.setData(wechatCategoryData);
@@ -183,12 +197,13 @@ public class CatalogsController extends BaseController
 		final WechatCategoryData wechatCategoryData = new WechatCategoryData();
 		final List<WechatCategoryBodyData> wechatCategoryBodyDataList = wechatCategoryFacade.getCategoryList();
 		if(CollectionUtils.isNotEmpty(wechatCategoryBodyDataList) && wechatCategoryBodyDataList.size() > 15) {
-			final List<WechatCategoryBodyData> wechatCategoryList = new ArrayList<>(wechatCategoryBodyDataList.subList(0, 5));
+			final List<WechatCategoryBodyData> wechatCategoryList = new ArrayList<>();
 			wechatCategoryList.add(wechatCategoryFacade.getCategoryById("578"));
+			wechatCategoryList.addAll(wechatCategoryBodyDataList.subList(0, 5));
 			wechatCategoryData.setCategoryList(wechatCategoryList);
-			wechatCategoryData.setCurrentCategory(wechatCategoryBodyDataList.get(5));
+			wechatCategoryData.setCurrentCategory(wechatCategoryFacade.getCategoryById("578"));
 			wechatCategoryData.setPrimaryCategory(wechatCategoryBodyDataList.subList(6, 10));
-			wechatCategoryData.setCurrentSubCategory(wechatCategoryBodyDataList.subList(10, 15));
+			wechatCategoryData.setCurrentSubCategory(wechatCategoryFacade.getSubCategoryById("578"));
 			wechatCategoryWsDTO.setData(wechatCategoryData);
 		}
 		return wechatCategoryWsDTO;
