@@ -10,6 +10,9 @@
  */
 package de.hybris.electronics.v2.controller;
 
+import de.hybris.electronics.dto.cart.WeChatAddToCartResponseData;
+import de.hybris.electronics.dto.cart.WeChatMiniCartResponseData;
+import de.hybris.electronics.dto.cart.WeChatMiniCartRootData;
 import de.hybris.electronics.order.data.CartDataList;
 import de.hybris.electronics.order.data.OrderEntryDataList;
 import de.hybris.electronics.product.data.PromotionResultDataList;
@@ -1087,24 +1090,43 @@ public class CartsController extends BaseCommerceController
 	@ResponseBody
 	@ApiOperation(value = "WeChat demo that adds a product to the cart.", notes = "WeChat demo that adds a product to the cart.")
 	@ApiBaseSiteIdUserIdAndCartIdParam
-	public CartModificationWsDTO weChatAddProductToCart(@ApiParam(value = "Base site identifier.") @PathVariable final String baseSiteId,
-											  @ApiParam(value = "Code of the product to be added to cart. Product look-up is performed for the current product catalog version.") @RequestParam(required = true) final String code,
-											  @ApiParam(value = "Quantity of product.") @RequestParam(required = false, defaultValue = "1") final long qty,
-											  @ApiParam(value = "Name of the store where product will be picked. Set only if want to pick up from a store.") @RequestParam(required = false) final String pickupStore,
-											  @ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(required = false, defaultValue = DEFAULT_FIELD_SET) final String fields)
+	public WeChatAddToCartResponseData weChatAddProductToCart(@ApiParam(value = "Base site identifier.") @PathVariable final String baseSiteId,
+															  @ApiParam(value = "Code of the product to be added to cart. Product look-up is performed for the current product catalog version.") @RequestParam(required = true) final String productId,
+															  @ApiParam(value = "Quantity of product.") @RequestParam(required = false, defaultValue = "1") final long number,
+															  @ApiParam(value = "Name of the store where product will be picked. Set only if want to pick up from a store.") @RequestParam(required = false) final String pickupStore,
+															  @ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(required = false, defaultValue = DEFAULT_FIELD_SET) final String fields)
 			throws CommerceCartModificationException, WebserviceValidationException, ProductLowStockException, StockSystemException //NOSONAR
 	{
-		if (LOG.isDebugEnabled())
-		{
-			LOG.debug("addCartEntry: " + logParam("code", code) + ", " + logParam("qty", qty) + ", "
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("addCartEntry: " + logParam("code", productId) + ", " + logParam("qty", number) + ", "
 					+ logParam("pickupStore", pickupStore));
 		}
 
-		if (StringUtils.isNotEmpty(pickupStore))
-		{
+		if (StringUtils.isNotEmpty(pickupStore)) {
 			validate(pickupStore, "pickupStore", pointOfServiceValidator);
 		}
 
-		return addCartEntryInternal(baseSiteId, code, qty, pickupStore, fields);
+		CartModificationWsDTO cartModificationWsDTO = addCartEntryInternal(baseSiteId, productId, number, pickupStore, fields);
+		WeChatAddToCartResponseData weChatAddToCartResponseData = new WeChatAddToCartResponseData();
+		if (cartModificationWsDTO.getStatusCode().equalsIgnoreCase("success")) {
+			weChatAddToCartResponseData.setErrno(0);
+		} else {
+			weChatAddToCartResponseData.setErrno(1);
+		}
+
+		long qty = getSessionCart().getEntries().stream().mapToLong(OrderEntryData::getQuantity).sum();
+		weChatAddToCartResponseData.setData(qty);
+		return weChatAddToCartResponseData;
+	}
+
+	@RequestMapping(value = "/{cartId}/wechat", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(value = "Get a cart with a given identifier.", notes = "Returns the cart with a given identifier.")
+	@ApiBaseSiteIdUserIdAndCartIdParam
+	public CartWsDTO getCartForWeChat(
+			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(required = false, defaultValue = DEFAULT_FIELD_SET) final String fields)
+	{
+		// CartMatchingFilter sets current cart based on cartId, so we can return cart from the session
+		return getDataMapper().map(getSessionCart(), CartWsDTO.class, fields);
 	}
 }
