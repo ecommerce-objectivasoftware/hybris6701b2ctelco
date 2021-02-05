@@ -206,7 +206,7 @@
 		<property name="total" type="Integer"/>
 	</bean>
 	<bean class="de.hybris.electronics.dto.address.WechatAddressBodyData">
-		<property name="id" type="Integer"/>
+		<property name="id" type="Long"/>
 		<property name="name" type="String"/>
 		<property name="tel" type="String"/>
 		<property name="addressDetail" type="String"/>
