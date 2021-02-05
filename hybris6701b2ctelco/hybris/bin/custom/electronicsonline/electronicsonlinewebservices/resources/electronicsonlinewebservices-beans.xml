@@ -213,4 +213,16 @@
 	</bean>
 
 
+	<bean class="de.hybris.electronics.dto.order.WechatOrderWsDTO">
+		<property name="data" type="de.hybris.electronics.dto.order.WechatOrderHeaderData"/>
+		<property name="errno" type="Integer"/>
+	</bean>
+	<bean class="de.hybris.electronics.dto.order.WechatOrderHeaderData">
+		<property name="timeStamp" type="String"/>
+		<property name="nonceStr" type="String"/>
+		<property name="packageValue" type="String"/>
+		<property name="signType" type="String"/>
+		<property name="paySign" type="String"/>
+	</bean>
+
 </beans>
