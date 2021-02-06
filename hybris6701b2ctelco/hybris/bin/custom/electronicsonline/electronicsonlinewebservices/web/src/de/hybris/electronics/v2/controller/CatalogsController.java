@@ -16,8 +16,6 @@ import de.hybris.electronics.dto.plp.WechatCategoryWsDTO;
 import de.hybris.electronics.dto.plp.WechatProductDetailData;
 import de.hybris.electronics.facades.pages.plp.WechatCategoryFacade;
 import de.hybris.electronics.facades.pages.plp.WechatProductFacade;
-import de.hybris.electronics.services.pages.plp.WechatCategoryService;
-import de.hybris.platform.category.model.CategoryModel;
 import de.hybris.platform.commercefacades.catalog.CatalogFacade;
 import de.hybris.platform.commercefacades.catalog.CatalogOption;
 import de.hybris.platform.commercefacades.catalog.PageOption;
@@ -29,7 +27,6 @@ import de.hybris.platform.commercewebservicescommons.dto.catalog.CatalogListWsDT
 import de.hybris.platform.commercewebservicescommons.dto.catalog.CatalogVersionWsDTO;
 import de.hybris.platform.commercewebservicescommons.dto.catalog.CatalogWsDTO;
 import de.hybris.platform.commercewebservicescommons.dto.catalog.CategoryHierarchyWsDTO;
-import de.hybris.platform.servicelayer.dto.converter.Converter;
 import de.hybris.platform.webservicescommons.mapping.DataMapper;
 import de.hybris.platform.webservicescommons.mapping.FieldSetBuilder;
 import de.hybris.platform.webservicescommons.mapping.impl.FieldSetBuilderContext;
@@ -176,6 +173,7 @@ public class CatalogsController extends BaseController
 		wechatCategoryData.setBrotherCategory(categoryList.subList(15, 20));
 
 		final List<WechatProductDetailData> productDataList = wechatProductFacade.getProductList();
+		Collections.shuffle(productDataList);
 		wechatCategoryData.setList(productDataList);
 		wechatCategoryData.setCurrentCategory(wechatCategoryFacade.getCategoryById(categoryId));
 		wechatCategoryData.setCurrentSubCategory(wechatCategoryFacade.getSubCategoryById(categoryId));
