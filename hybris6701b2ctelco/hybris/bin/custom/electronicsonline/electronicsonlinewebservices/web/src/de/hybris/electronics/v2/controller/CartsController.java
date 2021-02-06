@@ -1160,19 +1160,8 @@ public class CartsController extends BaseCommerceController
 	public WechatCheckoutCartWsDTO getCheckoutCartForWeChat(
 			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(required = false, defaultValue = DEFAULT_FIELD_SET) final String fields) {
 		// CartMatchingFilter sets current cart based on cartId, so we can return cart from the session
+		setDefaultDeliveryIfNeeded();
 		final CartData cartData = getSessionCart();
-		// If no delivery address for the cart, we will use the default address.
-		if (Objects.isNull(cartData.getDeliveryAddress())) {
-			final AddressData defaultAddress = getUserFacade().getDefaultAddress();
-			if (Objects.nonNull(defaultAddress)) {
-				try {
-					wechatAddressFacade.addAddressForCart(defaultAddress.getId());
-				}
-				catch (final Exception e) {
-					LOG.error("Cannot set default address to the cart.");
-				}
-			}
-		}
 
 		final WechatCheckoutCartWsDTO wechatCheckoutCartWsDTO = new WechatCheckoutCartWsDTO();
 		// Set data
@@ -1220,6 +1209,23 @@ public class CartsController extends BaseCommerceController
 		wechatCheckoutCartWsDTO.setData(wechatCartData);
 		wechatCheckoutCartWsDTO.setErrno(0);
 		return wechatCheckoutCartWsDTO;
+	}
+
+	private void setDefaultDeliveryIfNeeded()
+	{
+		final CartData cartData = getSessionCart();
+		// If no delivery address for the cart, we will use the default address.
+		if (Objects.isNull(cartData.getDeliveryAddress())) {
+			final AddressData defaultAddress = getUserFacade().getDefaultAddress();
+			if (Objects.nonNull(defaultAddress)) {
+				try {
+					wechatAddressFacade.addAddressForCart(defaultAddress.getId());
+				}
+				catch (final Exception e) {
+					LOG.error("Cannot set default address to the cart.");
+				}
+			}
+		}
 	}
 
 	private Double getValueFromPriceData(final PriceData priceData) {
