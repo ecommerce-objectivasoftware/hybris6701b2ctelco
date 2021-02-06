@@ -10,6 +10,9 @@
  */
 package de.hybris.electronics.v2.controller;
 
+import de.hybris.electronics.dto.order.OrderRootData;
+import de.hybris.electronics.dto.order.WeChatOrderResponseData;
+import de.hybris.electronics.wechat.order.WeChatOrderDemoFacade;
 import de.hybris.platform.commercefacades.order.OrderFacade;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.order.data.OrderHistoriesData;
@@ -70,7 +73,8 @@ public class OrdersController extends BaseCommerceController
 	private CartLoaderStrategy cartLoaderStrategy;
 	@Resource(name = "ordersHelper")
 	private OrdersHelper ordersHelper;
-
+	@Resource(name = "weChatOrderDemoFacade")
+	private WeChatOrderDemoFacade weChatOrderDemoFacade;
 
 	@Secured("ROLE_TRUSTED_CLIENT")
 	@RequestMapping(value = "/orders/{code}", method = RequestMethod.GET)
@@ -193,4 +197,47 @@ public class OrdersController extends BaseCommerceController
 		return getDataMapper().map(orderData, OrderWsDTO.class, fields);
 	}
 
+
+
+	@Secured(
+			{ "ROLE_CUSTOMERGROUP", "ROLE_CLIENT", "ROLE_CUSTOMERMANAGERGROUP", "ROLE_TRUSTED_CLIENT" })
+	@RequestMapping(value = "/users/{userId}/wechat/place-order", method = RequestMethod.POST)
+	@ResponseStatus(HttpStatus.CREATED)
+	@ResponseBody
+	@ApiOperation(value = "WeChat place a order", notes = "Authorizes the cart and places the order. The response contains the new order data.")
+	@ApiBaseSiteIdAndUserIdParam
+	public WeChatOrderResponseData weChatPlaceOrder(
+			@ApiParam(value = "Cart code for logged in user, cart GUID for guest checkout", required = true) @RequestParam(required = true) final String cartId, //NOSONAR
+			@ApiParam(value = "CCV security code.") @RequestParam(required = false) final String securityCode,
+			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(defaultValue = DEFAULT_FIELD_SET) final String fields)
+			throws PaymentAuthorizationException, InvalidCartException, WebserviceValidationException, NoCheckoutCartException //NOSONAR
+	{
+		if (LOG.isDebugEnabled())
+		{
+			LOG.info("placeOrder");
+		}
+
+		cartLoaderStrategy.loadCart(cartId);
+
+		weChatOrderDemoFacade.setDeliveryMode();
+		weChatOrderDemoFacade.setPaymentInfo();
+
+		validateCartForPlaceOrder();
+
+		//authorize
+		if (!getCheckoutFacade().authorizePayment(securityCode))
+		{
+			throw new PaymentAuthorizationException();
+		}
+
+		//placeorder
+		final OrderData orderData = getCheckoutFacade().placeOrder();
+		OrderRootData orderRootData = new OrderRootData();
+		orderRootData.setOrderId(orderData.getCode());
+		orderRootData.setGrouponLinkId(orderData.getCode());
+		WeChatOrderResponseData weChatOrderResponseData = new WeChatOrderResponseData();
+		weChatOrderResponseData.setData(orderRootData);
+		weChatOrderResponseData.setErrno(0);
+		return weChatOrderResponseData;
+	}
 }

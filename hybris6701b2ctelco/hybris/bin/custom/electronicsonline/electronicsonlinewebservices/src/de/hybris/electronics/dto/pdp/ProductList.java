@@ -7,7 +7,7 @@ public class ProductList implements Serializable {
 
     private String specifications;
 
-    private String number;
+    private int number;
 
     private String id;
 
@@ -27,11 +27,11 @@ public class ProductList implements Serializable {
         return this.specifications;
     }
 
-    public void setNumber(String number) {
+    public void setNumber(int number) {
         this.number = number;
     }
 
-    public String getNumber() {
+    public int getNumber() {
         return this.number;
     }
 
