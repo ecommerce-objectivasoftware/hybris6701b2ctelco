@@ -1186,7 +1186,7 @@ public class CartsController extends BaseCommerceController
 				checkedGood.setId(orderEntryData.getEntryNumber());
 				checkedGood.setGoodsName(orderEntryData.getProduct().getName());
 				checkedGood.setNumber(orderEntryData.getQuantity());
-				checkedGood.setPrice(getValueFromPriceData(orderEntryData.getTotalPrice()));
+				checkedGood.setPrice(getValueFromPriceData(orderEntryData.getBasePrice()));
 				if (CollectionUtils.isNotEmpty(orderEntryData.getProduct().getCategories())) {
 					checkedGood.setSpecifications(orderEntryData.getProduct().getCategories().stream().findFirst().get().getName());
 				}
