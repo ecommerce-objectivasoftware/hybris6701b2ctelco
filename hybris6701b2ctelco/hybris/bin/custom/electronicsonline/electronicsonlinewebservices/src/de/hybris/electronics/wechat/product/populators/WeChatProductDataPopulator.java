@@ -124,7 +124,12 @@ public class WeChatProductDataPopulator implements Populator<ProductData, WeChat
         List<ProductList> productListList = new ArrayList<>();
         ProductList productList = new ProductList();
         productList.setId(productData.getCode());
-        productList.setNumber(productData.getCode());
+        if (Boolean.TRUE.equals(productData.getPurchasable())) {
+            productList.setNumber(500);
+        } else {
+            productList.setNumber(0);
+        }
+
         productList.setPrice(Double.parseDouble(productData.getPrice().getValue().toString()));
         productList.setSpecifications(productData.getName());
         productListList.add(productList);

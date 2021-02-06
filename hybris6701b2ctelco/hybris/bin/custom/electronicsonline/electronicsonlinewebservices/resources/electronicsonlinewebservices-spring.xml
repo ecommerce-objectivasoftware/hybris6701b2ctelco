@@ -302,6 +302,14 @@
 
 	<bean id="wechatProductDao" class="de.hybris.electronics.daos.pages.plp.impl.DefaultWechatProductDao"/>
 
+	<bean id="weChatOrderDemoFacade"
+		  class="de.hybris.electronics.wechat.order.impl.DefaultWeChatOrderDemoFacade">
+		<property name="checkoutFacade" ref="checkoutFacade"/>
+		<property name="cartFacade" ref="commerceWebServicesCartFacade2"/>
+		<property name="userService" ref="userService"/>
+		<property name="i18NFacade" ref="i18NFacade"/>
+		<property name="customerNameStrategy" ref="customerNameStrategy"/>
+	</bean>
 
 	<bean id="wechatAddressFacade" class="de.hybris.electronics.facades.pages.address.impl.DefaultWechatAddressFacade"/>
 	<bean id="wechatAddressService" class="de.hybris.electronics.services.pages.address.impl.DefaultWechatAddressService"/>
