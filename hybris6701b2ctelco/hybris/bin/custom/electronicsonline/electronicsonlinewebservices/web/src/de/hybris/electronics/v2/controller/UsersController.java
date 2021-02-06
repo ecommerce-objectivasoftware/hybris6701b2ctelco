@@ -10,7 +10,11 @@
  */
 package de.hybris.electronics.v2.controller;
 
+import de.hybris.electronics.dto.address.WechatAddressBodyData;
+import de.hybris.electronics.dto.address.WechatAddressHeaderData;
+import de.hybris.electronics.dto.address.WechatAddressWsDTO;
 import de.hybris.electronics.dto.user.WeChatLoginUserData;
+import de.hybris.electronics.facades.pages.address.WechatAddressFacade;
 import de.hybris.electronics.wechat.user.WeChatDemoUserFacade;
 import de.hybris.platform.commercefacades.address.AddressVerificationFacade;
 import de.hybris.platform.commercefacades.address.data.AddressVerificationResult;
@@ -69,6 +73,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.log4j.Logger;
@@ -134,7 +139,8 @@ public class UsersController extends BaseCommerceController
 	private Validator passwordStrengthValidator;
 	@Resource(name = "weChatDemoUserFacade")
 	private WeChatDemoUserFacade weChatDemoUserFacade;
-
+	@Resource
+	private WechatAddressFacade wechatAddressFacade;
 	@Secured(
 	{ "ROLE_CLIENT", "ROLE_TRUSTED_CLIENT", "ROLE_CUSTOMERMANAGERGROUP" })
 	@RequestMapping(method = RequestMethod.POST)
@@ -471,6 +477,74 @@ public class UsersController extends BaseCommerceController
 		addressDataList.setAddresses(addressList);
 		return getDataMapper().map(addressDataList, AddressListWsDTO.class, fields);
 	}
+
+
+	@Secured(
+			{ "ROLE_CUSTOMERGROUP", "ROLE_TRUSTED_CLIENT", "ROLE_CUSTOMERMANAGERGROUP" })
+	@RequestMapping(value = "/wechat/addresses", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(value = "Get all the addresses", notes = "Returns all the addresses.")
+	@ApiBaseSiteIdParam
+	@ApiResponse(code = 200, message = "List of all the addresses")
+	public WechatAddressWsDTO getAddressList(
+			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(defaultValue = DEFAULT_FIELD_SET) final String fields)
+	{
+		final List<WechatAddressBodyData> addressList = wechatAddressFacade.getAddressList();
+		WechatAddressWsDTO wechatAddressWsDTO = new WechatAddressWsDTO();
+		wechatAddressWsDTO.setErrno(0);
+		WechatAddressHeaderData wechatAddressHeaderData = new WechatAddressHeaderData();
+		if(CollectionUtils.isNotEmpty(addressList))
+		{
+			wechatAddressHeaderData.setTotal(addressList.size());
+			wechatAddressHeaderData.setList(addressList);
+		}
+		wechatAddressWsDTO.setData(wechatAddressHeaderData);
+		return wechatAddressWsDTO;
+	}
+
+
+	@Secured(
+			{ "ROLE_CUSTOMERGROUP", "ROLE_TRUSTED_CLIENT", "ROLE_CUSTOMERMANAGERGROUP" })
+	@RequestMapping(value = "/{userId}/wechat/address", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(value = "user Id", notes = "Returns a certain addresses.")
+	@ApiBaseSiteIdAndUserIdParam
+	@ApiResponse(code = 200, message = "List of customer's addresses")
+	public WechatAddressWsDTO getAddressById(
+			@ApiParam("user Id.") @PathVariable final String userId,
+			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(defaultValue = DEFAULT_FIELD_SET) final String fields)
+	{
+		final List<WechatAddressBodyData> addressList = wechatAddressFacade.getAddressListByUserId(userId);
+		WechatAddressWsDTO wechatAddressWsDTO = new WechatAddressWsDTO();
+		wechatAddressWsDTO.setErrno(0);
+		WechatAddressHeaderData wechatAddressHeaderData = new WechatAddressHeaderData();
+		if(CollectionUtils.isNotEmpty(addressList))
+		{
+			wechatAddressHeaderData.setTotal(addressList.size());
+			wechatAddressHeaderData.setList(addressList);
+		}
+		wechatAddressWsDTO.setData(wechatAddressHeaderData);
+		return wechatAddressWsDTO;
+
+	}
+
+
+	@Secured(
+			{ "ROLE_CUSTOMERGROUP", "ROLE_TRUSTED_CLIENT", "ROLE_CUSTOMERMANAGERGROUP" })
+	@RequestMapping(value = "/{userId}/wechat/address/add", method = RequestMethod.PUT)
+	@ResponseBody
+	@ApiOperation(value = "address id", notes = "put address into the cart.")
+	@ApiBaseSiteIdAndUserIdParam
+	@ApiResponse(code = 200, message = "List of customer's addresses")
+	public void addAddressForCart(
+			@ApiParam("user Id.") @PathVariable final String userId,
+			@ApiParam("address Id.")@RequestParam final String addressId,
+			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(defaultValue = DEFAULT_FIELD_SET) final String fields) throws Exception {
+
+		wechatAddressFacade.addAddressForCart(addressId);
+	}
+
+
 
 
 	@Secured(

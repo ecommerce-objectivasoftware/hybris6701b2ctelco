@@ -311,4 +311,14 @@
 		<property name="customerNameStrategy" ref="customerNameStrategy"/>
 	</bean>
 
+	<bean id="wechatAddressFacade" class="de.hybris.electronics.facades.pages.address.impl.DefaultWechatAddressFacade"/>
+	<bean id="wechatAddressService" class="de.hybris.electronics.services.pages.address.impl.DefaultWechatAddressService"/>
+	<bean id="wechatAddressDao" class="de.hybris.electronics.daos.pages.address.impl.DefaultWechatAddressDao"/>
+	<alias name="defaultWechatAddressBodyDataConverter" alias="wechatAddressBodyDataConverter"/>
+	<bean id="defaultWechatAddressBodyDataConverter" parent="abstractPopulatingConverter">
+		<property name="targetClass" value="de.hybris.electronics.dto.address.WechatAddressBodyData" />
+		<property name="populators" ref="wechatAddressPopulator" />
+	</bean>
+	<bean id="wechatAddressPopulator" class="de.hybris.electronics.facades.pages.address.populator.WechatAddressPopulator"/>
+
 </beans>
