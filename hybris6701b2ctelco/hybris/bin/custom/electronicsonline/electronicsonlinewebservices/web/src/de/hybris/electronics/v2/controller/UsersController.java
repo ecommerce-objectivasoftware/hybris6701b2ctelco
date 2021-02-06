@@ -514,7 +514,7 @@ public class UsersController extends BaseCommerceController
 			@ApiParam("user Id.") @PathVariable final String userId,
 			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(defaultValue = DEFAULT_FIELD_SET) final String fields)
 	{
-		final List<WechatAddressBodyData> addressList = wechatAddressFacade.getAddressById(userId);
+		final List<WechatAddressBodyData> addressList = wechatAddressFacade.getAddressListByUserId(userId);
 		WechatAddressWsDTO wechatAddressWsDTO = new WechatAddressWsDTO();
 		wechatAddressWsDTO.setErrno(0);
 		WechatAddressHeaderData wechatAddressHeaderData = new WechatAddressHeaderData();
@@ -527,6 +527,23 @@ public class UsersController extends BaseCommerceController
 		return wechatAddressWsDTO;
 
 	}
+
+
+	@Secured(
+			{ "ROLE_CUSTOMERGROUP", "ROLE_TRUSTED_CLIENT", "ROLE_CUSTOMERMANAGERGROUP" })
+	@RequestMapping(value = "/{userId}/wechat/address/add", method = RequestMethod.PUT)
+	@ResponseBody
+	@ApiOperation(value = "address id", notes = "put address into the cart.")
+	@ApiBaseSiteIdAndUserIdParam
+	@ApiResponse(code = 200, message = "List of customer's addresses")
+	public void addAddressForCart(
+			@ApiParam("user Id.") @PathVariable final String userId,
+			@ApiParam("address Id.")@RequestParam final String addressId,
+			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(defaultValue = DEFAULT_FIELD_SET) final String fields) throws Exception {
+
+		wechatAddressFacade.addAddressForCart(addressId);
+	}
+
 
 
 
