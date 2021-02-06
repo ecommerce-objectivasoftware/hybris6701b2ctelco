@@ -5,7 +5,7 @@ import de.hybris.platform.core.model.user.AddressModel;
 import java.util.List;
 
 public interface WechatAddressDao {
-    List<AddressModel> getAddressById(String userId);
+    AddressModel getAddressById(String id);
 
     List<AddressModel> getAddressList();
 }

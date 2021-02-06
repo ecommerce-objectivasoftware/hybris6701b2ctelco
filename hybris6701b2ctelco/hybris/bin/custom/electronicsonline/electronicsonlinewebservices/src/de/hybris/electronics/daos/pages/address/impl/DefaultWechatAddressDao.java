@@ -1,6 +1,7 @@
 package de.hybris.electronics.daos.pages.address.impl;
 
 import de.hybris.electronics.daos.pages.address.WechatAddressDao;
+import de.hybris.platform.core.PK;
 import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.servicelayer.search.FlexibleSearchQuery;
 import de.hybris.platform.servicelayer.search.FlexibleSearchService;
@@ -19,15 +20,15 @@ public class DefaultWechatAddressDao implements WechatAddressDao {
 
     private static final String GET_ADDRESS_LIST = "select {"+AddressModel.PK + "} from {"
             + AddressModel._TYPECODE + "}";
-    private static final String GET_ADDRESS_BY_ID = "";
+    private static final String GET_ADDRESS_BY_ID = GET_ADDRESS_LIST + " Where {"+AddressModel.PK+"} =?id";
     @Resource
     private FlexibleSearchService flexibleSearchService;
 
     @Override
-    public List<AddressModel> getAddressById(String userId) {
+    public AddressModel getAddressById(String id) {
         final FlexibleSearchQuery query = new FlexibleSearchQuery(GET_ADDRESS_BY_ID);
-        query.addQueryParameter("userId", userId);
-        return flexibleSearchService.<AddressModel> search(query).getResult();
+        query.addQueryParameter("id", id);
+        return flexibleSearchService.<AddressModel> search(query).getResult().get(0);
 
     }
 

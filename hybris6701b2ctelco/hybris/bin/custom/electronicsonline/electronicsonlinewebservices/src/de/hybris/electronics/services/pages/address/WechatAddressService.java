@@ -1,5 +1,6 @@
 package de.hybris.electronics.services.pages.address;
 
+import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.core.model.user.AddressModel;
 
 import java.util.List;
@@ -7,5 +8,7 @@ import java.util.List;
 public interface WechatAddressService {
     List<AddressModel> getAddressList();
 
-    List<AddressModel> getAddressById(String userId);
+    AddressModel getAddressById(String id);
+
+    void addAddressForCart(CartModel sessionCart, String addressId) throws Exception;
 }

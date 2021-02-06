@@ -7,5 +7,9 @@ import java.util.List;
 public interface WechatAddressFacade {
     List<WechatAddressBodyData> getAddressList();
 
-    List<WechatAddressBodyData> getAddressById(String userId);
+    List<WechatAddressBodyData> getAddressListByUserId(String userId);
+
+    WechatAddressBodyData getAddressByAddressId(String addressId);
+
+    void addAddressForCart(String addressId) throws Exception;
 }
