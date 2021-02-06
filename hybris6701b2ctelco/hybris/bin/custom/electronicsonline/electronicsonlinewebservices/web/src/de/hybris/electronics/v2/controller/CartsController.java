@@ -11,20 +11,15 @@
 package de.hybris.electronics.v2.controller;
 
 import de.hybris.electronics.cart.impl.CommerceWebServicesCartFacade;
-import de.hybris.electronics.dto.address.WechatAddressBodyData;
 import de.hybris.electronics.dto.cart.WeChatAddToCartResponseData;
 import de.hybris.electronics.dto.cart.details.CartList;
 import de.hybris.electronics.dto.cart.details.CartTotal;
 import de.hybris.electronics.dto.cart.details.WeChatCartDetailsResponseData;
 import de.hybris.electronics.dto.cart.details.WeChatCartDetailsRootData;
-import de.hybris.electronics.dto.order.CheckedGood;
-import de.hybris.electronics.dto.order.WechatCartData;
-import de.hybris.electronics.dto.order.WechatCheckoutCartWsDTO;
 import de.hybris.electronics.exceptions.InvalidPaymentInfoException;
 import de.hybris.electronics.exceptions.NoCheckoutCartException;
 import de.hybris.electronics.exceptions.UnsupportedDeliveryModeException;
 import de.hybris.electronics.exceptions.UnsupportedRequestException;
-import de.hybris.electronics.facades.pages.address.WechatAddressFacade;
 import de.hybris.electronics.order.data.CartDataList;
 import de.hybris.electronics.order.data.OrderEntryDataList;
 import de.hybris.electronics.product.data.PromotionResultDataList;
@@ -35,7 +30,6 @@ import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.commercefacades.customer.CustomerFacade;
 import de.hybris.platform.commercefacades.order.SaveCartFacade;
 import de.hybris.platform.commercefacades.order.data.*;
-import de.hybris.platform.commercefacades.product.data.PriceData;
 import de.hybris.platform.commercefacades.product.data.PromotionResultData;
 import de.hybris.platform.commercefacades.product.data.StockData;
 import de.hybris.platform.commercefacades.promotion.CommercePromotionRestrictionFacade;
@@ -54,7 +48,6 @@ import de.hybris.platform.commercewebservicescommons.dto.product.PromotionResult
 import de.hybris.platform.commercewebservicescommons.dto.user.AddressWsDTO;
 import de.hybris.platform.commercewebservicescommons.dto.voucher.VoucherListWsDTO;
 import de.hybris.platform.commercewebservicescommons.errors.exceptions.*;
-import de.hybris.platform.jalo.order.Order;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.platform.webservicescommons.cache.CacheControl;
 import de.hybris.platform.webservicescommons.cache.CacheControlDirective;
@@ -83,7 +76,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 
 @Controller
@@ -116,8 +108,6 @@ public class CartsController extends BaseCommerceController
 	private SaveCartFacade saveCartFacade;
 	@Resource(name = "voucherFacade")
 	private VoucherFacade voucherFacade;
-	@Resource(name = "wechatAddressFacade")
-	private WechatAddressFacade wechatAddressFacade;
 	@Resource(name = "configurationService")
 	private ConfigurationService configurationService;
 
@@ -1148,86 +1138,6 @@ public class CartsController extends BaseCommerceController
 		weChatCartDetailsResponseData.setData(weChatCartDetailsRootData);
 		weChatCartDetailsResponseData.setErrno(0);
 		return weChatCartDetailsResponseData;
-	}
-
-
-	@Secured(
-			{ "ROLE_CUSTOMERGROUP", "ROLE_TRUSTED_CLIENT", "ROLE_CUSTOMERMANAGERGROUP" })
-	@RequestMapping(value = "/{cartId}/checkout", method = RequestMethod.GET)
-	@ResponseBody
-	@ApiOperation(value = "WeChat get a checkout cart with a given identifier.", notes = "WeChat returns the checkout cart with a given identifier.")
-	@ApiBaseSiteIdUserIdAndCartIdParam
-	public WechatCheckoutCartWsDTO getCheckoutCartForWeChat(
-			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(required = false, defaultValue = DEFAULT_FIELD_SET) final String fields) {
-		// CartMatchingFilter sets current cart based on cartId, so we can return cart from the session
-		final CartData cartData = getSessionCart();
-		// If no delivery address for the cart, we will use the default address.
-		if (Objects.isNull(cartData.getDeliveryAddress())) {
-			final AddressData defaultAddress = getUserFacade().getDefaultAddress();
-			if (Objects.nonNull(defaultAddress)) {
-				try {
-					wechatAddressFacade.addAddressForCart(defaultAddress.getId());
-				}
-				catch (final Exception e) {
-					LOG.error("Cannot set default address to the cart.");
-				}
-			}
-		}
-
-		final WechatCheckoutCartWsDTO wechatCheckoutCartWsDTO = new WechatCheckoutCartWsDTO();
-		// Set data
-		final WechatCartData wechatCartData = new WechatCartData();
-
-		// Set order entries for checkedGoodsList
-		if (CollectionUtils.isNotEmpty(cartData.getEntries())) {
-			final List<CheckedGood> checkedGoods = new ArrayList<>();
-			for (final OrderEntryData orderEntryData : cartData.getEntries()) {
-				final CheckedGood checkedGood = new CheckedGood();
-				checkedGood.setId(orderEntryData.getEntryNumber());
-				checkedGood.setGoodsName(orderEntryData.getProduct().getName());
-				checkedGood.setNumber(orderEntryData.getQuantity());
-				checkedGood.setPrice(getValueFromPriceData(orderEntryData.getTotalPrice()));
-				if (CollectionUtils.isNotEmpty(orderEntryData.getProduct().getCategories())) {
-					checkedGood.setSpecifications(orderEntryData.getProduct().getCategories().stream().findFirst().get().getName());
-				}
-				if (CollectionUtils.isNotEmpty(orderEntryData.getProduct().getImages())) {
-					checkedGood.setPicUrl(String.format("%s%s", getSiteUrl(), orderEntryData.getProduct().getImages().stream().findFirst().get().getUrl()));
-				}
-
-				checkedGoods.add(checkedGood);
-			}
-			wechatCartData.setCheckedGoodsList(checkedGoods);
-		}
-
-		// Set Delivery Address for checkedAddress
-		if (Objects.nonNull(cartData.getDeliveryAddress()) && StringUtils.isNotBlank(cartData.getDeliveryAddress().getId())) {
-			final WechatAddressBodyData wechatAddressBodyData = wechatAddressFacade.getAddressByAddressId(cartData.getDeliveryAddress().getId());
-			wechatCartData.setCheckedAddress(wechatAddressBodyData);
-			wechatCartData.setAddressId(wechatAddressBodyData.getId());
-		}
-
-		wechatCartData.setAvailableCouponLength(0);
-		wechatCartData.setActualPrice(getValueFromPriceData(cartData.getSubTotal()));
-		wechatCartData.setCouponPrice(0.0);
-		wechatCartData.setGrouponPrice(getValueFromPriceData(cartData.getSubTotal()));
-		wechatCartData.setFreightPrice(getValueFromPriceData(cartData.getDeliveryCost()));
-		wechatCartData.setGoodsTotalPrice(getValueFromPriceData(cartData.getSubTotal()));
-		wechatCartData.setOrderTotalPrice(getValueFromPriceData(cartData.getTotalPrice()));
-		wechatCartData.setCouponId(0);
-		wechatCartData.setUserCouponId(0);
-		wechatCartData.setGrouponRulesId(0);
-
-		wechatCheckoutCartWsDTO.setData(wechatCartData);
-		wechatCheckoutCartWsDTO.setErrno(0);
-		return wechatCheckoutCartWsDTO;
-	}
-
-	private Double getValueFromPriceData(final PriceData priceData) {
-		Double value = 0.0;
-		if (Objects.nonNull(priceData) && Objects.nonNull(priceData.getValue())) {
-			value = priceData.getValue().doubleValue();
-		}
-		return value;
 	}
 
 	private String getSiteUrl() {

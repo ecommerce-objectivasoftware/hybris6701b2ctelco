@@ -213,35 +213,6 @@
 		<property name="isDefault" type="Boolean"/>
 	</bean>
 
-	<bean class="de.hybris.electronics.dto.order.WechatCheckoutCartWsDTO">
-		<property name="data" type="de.hybris.electronics.dto.order.WechatCartData"/>
-		<property name="errno" type="Integer"/>
-	</bean>
-
-	<bean class="de.hybris.electronics.dto.order.WechatCartData">
-		<property name="checkedGoodsList" type="java.util.List&lt;de.hybris.electronics.dto.order.CheckedGood>"/>
-		<property name="checkedAddress" type="de.hybris.electronics.dto.address.WechatAddressBodyData"/>
-		<property name="availableCouponLength" type="Integer"/>
-		<property name="actualPrice" type="Double"/>
-		<property name="couponPrice" type="Double"/>
-		<property name="grouponPrice" type="Double"/>
-		<property name="freightPrice" type="Double"/>
-		<property name="goodsTotalPrice" type="Double"/>
-		<property name="orderTotalPrice" type="Double"/>
-		<property name="addressId" type="Long"/>
-		<property name="couponId" type="Integer"/>
-		<property name="userCouponId" type="Integer"/>
-		<property name="grouponRulesId" type="Integer"/>
-	</bean>
-
-	<bean class="de.hybris.electronics.dto.order.CheckedGood">
-		<property name="id" type="Integer"/>
-		<property name="picUrl" type="String"/>
-		<property name="goodsName" type="String"/>
-		<property name="number" type="Long"/>
-		<property name="specifications" type="String"/>
-		<property name="price" type="Double"/>
-	</bean>
 
 	<bean class="de.hybris.electronics.dto.order.WechatOrderWsDTO">
 		<property name="data" type="de.hybris.electronics.dto.order.WechatOrderHeaderData"/>
