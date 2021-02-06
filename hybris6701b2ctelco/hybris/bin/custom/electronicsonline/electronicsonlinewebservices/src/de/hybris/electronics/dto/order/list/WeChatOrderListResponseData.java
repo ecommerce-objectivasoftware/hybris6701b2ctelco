@@ -1,18 +1,18 @@
-package de.hybris.electronics.dto.order;
+package de.hybris.electronics.dto.order.list;
 
 import java.io.Serializable;
 
-public class WeChatOrderResponseData implements Serializable {
+public class WeChatOrderListResponseData implements Serializable {
 
-    private OrderRootData data;
+    private OrderListRootData data;
 
     private int errno;
 
-    public void setData(OrderRootData data) {
+    public void setData(OrderListRootData data) {
         this.data = data;
     }
 
-    public OrderRootData getData() {
+    public OrderListRootData getData() {
         return this.data;
     }
 
@@ -23,5 +23,4 @@ public class WeChatOrderResponseData implements Serializable {
     public int getErrno() {
         return this.errno;
     }
-
 }
