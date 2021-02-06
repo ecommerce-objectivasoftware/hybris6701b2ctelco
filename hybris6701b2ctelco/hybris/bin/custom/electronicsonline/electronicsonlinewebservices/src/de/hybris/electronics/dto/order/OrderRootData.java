@@ -1,6 +1,8 @@
 package de.hybris.electronics.dto.order;
 
-public class OrderRootData {
+import java.io.Serializable;
+
+public class OrderRootData implements Serializable {
 
     private String orderId;
     private String grouponLinkId;

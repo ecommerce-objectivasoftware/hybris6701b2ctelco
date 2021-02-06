@@ -12,16 +12,32 @@ package de.hybris.electronics.v2.controller;
 
 import de.hybris.electronics.dto.order.OrderRootData;
 import de.hybris.electronics.dto.order.WeChatOrderResponseData;
+import de.hybris.electronics.dto.order.list.GoodsList;
+import de.hybris.electronics.dto.order.list.OrderListData;
+import de.hybris.electronics.dto.order.list.OrderListRootData;
+import de.hybris.electronics.dto.order.list.WeChatOrderListResponseData;
 import de.hybris.electronics.wechat.order.WeChatOrderDemoFacade;
 import de.hybris.electronics.dto.order.WechatOrderHeaderData;
 import de.hybris.electronics.dto.order.WechatOrderWsDTO;
 import de.hybris.platform.commercefacades.order.OrderFacade;
 import de.hybris.platform.commercefacades.order.data.OrderData;
 import de.hybris.platform.commercefacades.order.data.OrderHistoriesData;
+import de.hybris.platform.commercefacades.product.data.ProductData;
+import de.hybris.platform.commerceservices.customer.CustomerAccountService;
+import de.hybris.platform.commerceservices.search.pagedata.PageableData;
+import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.commercewebservicescommons.dto.order.OrderHistoryListWsDTO;
 import de.hybris.platform.commercewebservicescommons.dto.order.OrderWsDTO;
 import de.hybris.platform.commercewebservicescommons.strategies.CartLoaderStrategy;
+import de.hybris.platform.core.model.order.OrderModel;
+import de.hybris.platform.core.model.product.ProductModel;
+import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.order.InvalidCartException;
+import de.hybris.platform.servicelayer.config.ConfigurationService;
+import de.hybris.platform.servicelayer.dto.converter.Converter;
+import de.hybris.platform.servicelayer.user.UserService;
+import de.hybris.platform.store.BaseStoreModel;
+import de.hybris.platform.store.services.BaseStoreService;
 import de.hybris.platform.webservicescommons.cache.CacheControl;
 import de.hybris.platform.webservicescommons.cache.CacheControlDirective;
 import de.hybris.platform.webservicescommons.errors.exceptions.WebserviceValidationException;
@@ -35,6 +51,7 @@ import de.hybris.electronics.v2.helper.OrdersHelper;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
@@ -52,6 +69,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -77,6 +96,16 @@ public class OrdersController extends BaseCommerceController
 	private OrdersHelper ordersHelper;
 	@Resource(name = "weChatOrderDemoFacade")
 	private WeChatOrderDemoFacade weChatOrderDemoFacade;
+	@Resource(name = "userService")
+	private UserService userService;
+	@Resource(name = "baseStoreService")
+	private BaseStoreService baseStoreService;
+	@Resource(name = "customerAccountService")
+	private CustomerAccountService customerAccountService;
+	@Resource(name = "configurationService")
+	private ConfigurationService configurationService;
+	@Resource(name = "productConverter")
+	private Converter<ProductModel, ProductData> productConverter;
 
 	@Secured("ROLE_TRUSTED_CLIENT")
 	@RequestMapping(value = "/orders/{code}", method = RequestMethod.GET)
@@ -241,15 +270,14 @@ public class OrdersController extends BaseCommerceController
 	}
 
 	@Secured(
-			{ "ROLE_CUSTOMERGROUP", "ROLE_CLIENT", "ROLE_CUSTOMERMANAGERGROUP", "ROLE_TRUSTED_CLIENT" })
+			{"ROLE_CUSTOMERGROUP", "ROLE_CLIENT", "ROLE_CUSTOMERMANAGERGROUP", "ROLE_TRUSTED_CLIENT"})
 	@RequestMapping(value = "/{userId}/order/prepay", method = RequestMethod.POST)
 	@ResponseBody
 	@ApiOperation(value = "pre pay a order", notes = "Authorizes the cart and places the order. The response contains the new order data.")
 	@ApiBaseSiteIdAndUserIdParam
 	public WechatOrderWsDTO prepayOrder(
 			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(defaultValue = DEFAULT_FIELD_SET) final String fields)
-			throws WebserviceValidationException
-	{
+			throws WebserviceValidationException {
 		WechatOrderWsDTO wechatOrderWsDTO = new WechatOrderWsDTO();
 		wechatOrderWsDTO.setErrno(0);
 		WechatOrderHeaderData wechatOrderHeaderData = new WechatOrderHeaderData();
@@ -262,29 +290,73 @@ public class OrdersController extends BaseCommerceController
 		return wechatOrderWsDTO;
 	}
 
-	@Secured({ "ROLE_CUSTOMERGROUP", "ROLE_TRUSTED_CLIENT", "ROLE_CUSTOMERMANAGERGROUP" })
+	@Secured({"ROLE_CUSTOMERGROUP", "ROLE_TRUSTED_CLIENT", "ROLE_CUSTOMERMANAGERGROUP"})
 	@CacheControl(directive = CacheControlDirective.PUBLIC, maxAge = 120)
 	@RequestMapping(value = "/users/{userId}/wechat-orders", method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "WeChat get order history for user", notes = "Returns order history data for all orders placed by a specified user for a specified base store. The response can display the results across multiple pages, if required.")
 	@ApiBaseSiteIdAndUserIdParam
-	public OrderHistoryListWsDTO getOrdersForWeChatUser(
+	public WeChatOrderListResponseData getOrdersForWeChatUser(
 			@ApiParam(value = "Filters only certain order statuses. For example, statuses=CANCELLED,CHECKED_VALID would only return orders with status CANCELLED or CHECKED_VALID.") @RequestParam(required = false) final String statuses,
 			@ApiParam(value = "The current result page requested.") @RequestParam(required = false, defaultValue = DEFAULT_CURRENT_PAGE) final int currentPage,
 			@ApiParam(value = "The number of results returned per page.") @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE) final int pageSize,
 			@ApiParam(value = "Sorting method applied to the return results.") @RequestParam(required = false) final String sort,
 			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(defaultValue = DEFAULT_FIELD_SET) final String fields,
-			final HttpServletResponse response)
-	{
+			final HttpServletResponse response) {
 		validateStatusesEnumValue(statuses);
 
-		final OrderHistoryListWsDTO orderHistoryList = ordersHelper.searchOrderHistory(statuses, currentPage, pageSize, sort,
-				addPaginationField(fields));
+		final CustomerModel currentCustomer = (CustomerModel) userService.getCurrentUser();
+		final BaseStoreModel currentBaseStore = baseStoreService.getCurrentBaseStore();
+		final PageableData pageableData = createPageableData(currentPage, pageSize, sort);
+		final SearchPageData<OrderModel> orderResults = customerAccountService.getOrderList(currentCustomer, currentBaseStore,
+				null, pageableData);
 
+		OrderListRootData orderListRootData = new OrderListRootData();
+
+		List<OrderListData> list = new ArrayList<>();
+		orderResults.getResults().forEach(order -> {
+
+			OrderListData orderListData = new OrderListData();
+			orderListData.setActualPrice(String.valueOf(order.getTotalPrice().doubleValue()));
+			List<GoodsList> goodsList = new ArrayList<>();
+			order.getEntries().forEach(entry -> {
+				GoodsList goods = new GoodsList();
+				goods.setGoodsName(entry.getProduct().getName());
+				goods.setId(entry.getProduct().getCode());
+				goods.setNumber(String.valueOf(entry.getQuantity()));
+
+				ProductData productData = productConverter.convert(entry.getProduct());
+				if (CollectionUtils.isNotEmpty(productData.getImages())) {
+					goods.setPicUrl(String.format("%s%s", getSiteUrl(), productData.getImages().iterator().next().getUrl()));
+				}
+				goodsList.add(goods);
+			});
+			orderListData.setGoodsList(goodsList);
+			orderListData.setId(order.getCode());
+			orderListData.setOrderSn(order.getCode());
+			orderListData.setOrderStatusText(order.getStatusDisplay());
+			list.add(orderListData);
+		});
+		orderListRootData.setList(list);
 		// X-Total-Count header
-		setTotalCountHeader(response, orderHistoryList.getPagination());
+		setTotalCountHeader(response, orderResults.getPagination());
 
-		return orderHistoryList;
+		orderListRootData.setPages(orderResults.getPagination().getPageSize());
+		WeChatOrderListResponseData weChatOrderListResponseData = new WeChatOrderListResponseData();
+		weChatOrderListResponseData.setData(orderListRootData);
+		weChatOrderListResponseData.setErrno(0);
+		return weChatOrderListResponseData;
 	}
 
+	protected PageableData createPageableData(final int currentPage, final int pageSize, final String sort) {
+		final PageableData pageable = new PageableData();
+		pageable.setCurrentPage(currentPage);
+		pageable.setPageSize(pageSize);
+		pageable.setSort(sort);
+		return pageable;
+	}
+
+	private String getSiteUrl() {
+		return configurationService.getConfiguration().getString("demo.image.url", "https://electronics.local:9002/electronicsonlinestorefront");
+	}
 }
