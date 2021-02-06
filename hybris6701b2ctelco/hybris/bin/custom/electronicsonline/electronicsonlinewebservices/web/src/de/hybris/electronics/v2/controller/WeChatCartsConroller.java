@@ -22,7 +22,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping(value = "/{baseSiteId}/users/{userId}/wechat-cart")
@@ -61,17 +63,13 @@ public class WeChatCartsConroller extends BaseCommerceController {
         cartDataList.setCarts(allCarts);
 
         WeChatMiniCartRootData weChatMiniCartRootData = new WeChatMiniCartRootData();
-        if (allCarts.isEmpty()) {
-            CartData cart = getSessionCart();
-            long qty = cart.getEntries().stream().mapToLong(OrderEntryData::getQuantity).sum();
-            weChatMiniCartRootData.setCartId(cart.getCode());
-            weChatMiniCartRootData.setTotalQty(String.valueOf(qty));
-        } else {
-            CartData cart = allCarts.stream().sorted().findFirst().get();
-            long qty = cart.getEntries().stream().mapToLong(OrderEntryData::getQuantity).sum();
-            weChatMiniCartRootData.setCartId(cart.getCode());
-            weChatMiniCartRootData.setTotalQty(String.valueOf(qty));
-        }
+
+        Optional<CartData> cartOptional = allCarts.stream().sorted(Comparator.comparing(CartData::getCode).reversed()).findFirst();
+        CartData cart = cartOptional.orElseGet(this::getSessionCart);
+        long qty = cart.getEntries().stream().mapToLong(OrderEntryData::getQuantity).sum();
+        weChatMiniCartRootData.setCartId(cart.getCode());
+        weChatMiniCartRootData.setTotalQty(String.valueOf(qty));
+
         WeChatMiniCartResponseData weChatMiniCartResponseData = new WeChatMiniCartResponseData();
         weChatMiniCartResponseData.setData(weChatMiniCartRootData);
         weChatMiniCartResponseData.setErrno(0);
