@@ -1,6 +1,7 @@
 package de.hybris.electronics.wechat.product.populators;
 
 import de.hybris.electronics.dto.pdp.*;
+import de.hybris.platform.basecommerce.enums.StockLevelStatus;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
@@ -8,10 +9,7 @@ import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import org.apache.commons.collections.CollectionUtils;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class WeChatProductDataPopulator implements Populator<ProductData, WeChatProductData> {
 
@@ -124,16 +122,25 @@ public class WeChatProductDataPopulator implements Populator<ProductData, WeChat
         List<ProductList> productListList = new ArrayList<>();
         ProductList productList = new ProductList();
         productList.setId(productData.getCode());
-        if (Boolean.TRUE.equals(productData.getPurchasable())) {
-            productList.setNumber(500);
-        } else {
+        if (isOutOfStock(productData)) {
             productList.setNumber(0);
+        } else {
+            productList.setNumber(500);
         }
 
         productList.setPrice(Double.parseDouble(productData.getPrice().getValue().toString()));
         productList.setSpecifications(productData.getName());
         productListList.add(productList);
         return productListList;
+    }
+
+    private boolean isOutOfStock(ProductData productData) {
+
+        if (Objects.isNull(productData.getStock())) {
+            return true;
+        }
+
+        return StockLevelStatus.OUTOFSTOCK.equals(productData.getStock().getStockLevelStatus());
     }
 
     private List<SpecificationList> getSpecificationList(ProductData productData) {
