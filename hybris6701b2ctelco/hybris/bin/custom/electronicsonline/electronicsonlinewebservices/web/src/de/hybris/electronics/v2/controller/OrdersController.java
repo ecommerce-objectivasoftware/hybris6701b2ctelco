@@ -202,7 +202,6 @@ public class OrdersController extends BaseCommerceController
 	@Secured(
 			{ "ROLE_CUSTOMERGROUP", "ROLE_CLIENT", "ROLE_CUSTOMERMANAGERGROUP", "ROLE_TRUSTED_CLIENT" })
 	@RequestMapping(value = "/users/{userId}/wechat/place-order", method = RequestMethod.POST)
-	@ResponseStatus(HttpStatus.CREATED)
 	@ResponseBody
 	@ApiOperation(value = "WeChat place a order", notes = "Authorizes the cart and places the order. The response contains the new order data.")
 	@ApiBaseSiteIdAndUserIdParam
@@ -261,6 +260,31 @@ public class OrdersController extends BaseCommerceController
 		wechatOrderHeaderData.setPaySign("MD5(appId=wxd678efh567hg6787&nonceStr=5K8264ILTKCH16CQ2502SI8ZNMTM67VS&package=prepay_id=wx2017033010242291fcfe0db70013231072&signType=MD5&timeStamp=1490840662&key=qazwsxedcrfvtgbyhnujmikolp111111) = 22D9B4E54AB1950F51E0649E8810ACD6");
 		wechatOrderWsDTO.setData(wechatOrderHeaderData);
 		return wechatOrderWsDTO;
+	}
+
+	@Secured({ "ROLE_CUSTOMERGROUP", "ROLE_TRUSTED_CLIENT", "ROLE_CUSTOMERMANAGERGROUP" })
+	@CacheControl(directive = CacheControlDirective.PUBLIC, maxAge = 120)
+	@RequestMapping(value = "/users/{userId}/wechat-orders", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(value = "WeChat get order history for user", notes = "Returns order history data for all orders placed by a specified user for a specified base store. The response can display the results across multiple pages, if required.")
+	@ApiBaseSiteIdAndUserIdParam
+	public OrderHistoryListWsDTO getOrdersForWeChatUser(
+			@ApiParam(value = "Filters only certain order statuses. For example, statuses=CANCELLED,CHECKED_VALID would only return orders with status CANCELLED or CHECKED_VALID.") @RequestParam(required = false) final String statuses,
+			@ApiParam(value = "The current result page requested.") @RequestParam(required = false, defaultValue = DEFAULT_CURRENT_PAGE) final int currentPage,
+			@ApiParam(value = "The number of results returned per page.") @RequestParam(required = false, defaultValue = DEFAULT_PAGE_SIZE) final int pageSize,
+			@ApiParam(value = "Sorting method applied to the return results.") @RequestParam(required = false) final String sort,
+			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(defaultValue = DEFAULT_FIELD_SET) final String fields,
+			final HttpServletResponse response)
+	{
+		validateStatusesEnumValue(statuses);
+
+		final OrderHistoryListWsDTO orderHistoryList = ordersHelper.searchOrderHistory(statuses, currentPage, pageSize, sort,
+				addPaginationField(fields));
+
+		// X-Total-Count header
+		setTotalCountHeader(response, orderHistoryList.getPagination());
+
+		return orderHistoryList;
 	}
 
 }

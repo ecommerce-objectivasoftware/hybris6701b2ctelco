@@ -7,9 +7,6 @@ import de.hybris.platform.commercefacades.order.SaveCartFacade;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.OrderEntryData;
 import de.hybris.platform.commerceservices.search.pagedata.PageableData;
-import de.hybris.platform.commercewebservicescommons.dto.order.CartListWsDTO;
-import de.hybris.platform.commercewebservicescommons.dto.order.CartWsDTO;
-import de.hybris.platform.commercewebservicescommons.dto.order.OrderEntryWsDTO;
 import de.hybris.platform.webservicescommons.cache.CacheControl;
 import de.hybris.platform.webservicescommons.cache.CacheControlDirective;
 import de.hybris.platform.webservicescommons.swagger.ApiBaseSiteIdAndUserIdParam;
@@ -63,17 +60,15 @@ public class WeChatCartsConroller extends BaseCommerceController {
         }
         cartDataList.setCarts(allCarts);
 
-        CartListWsDTO cartListWsDTO = getDataMapper().map(cartDataList, CartListWsDTO.class, fields);
-
         WeChatMiniCartRootData weChatMiniCartRootData = new WeChatMiniCartRootData();
-        if (cartListWsDTO.getCarts().isEmpty()) {
+        if (allCarts.isEmpty()) {
             CartData cart = getSessionCart();
             long qty = cart.getEntries().stream().mapToLong(OrderEntryData::getQuantity).sum();
             weChatMiniCartRootData.setCartId(cart.getCode());
             weChatMiniCartRootData.setTotalQty(String.valueOf(qty));
         } else {
-            CartWsDTO cart = cartListWsDTO.getCarts().stream().sorted().findFirst().get();
-            long qty = cart.getEntries().stream().mapToLong(OrderEntryWsDTO::getQuantity).sum();
+            CartData cart = allCarts.stream().sorted().findFirst().get();
+            long qty = cart.getEntries().stream().mapToLong(OrderEntryData::getQuantity).sum();
             weChatMiniCartRootData.setCartId(cart.getCode());
             weChatMiniCartRootData.setTotalQty(String.valueOf(qty));
         }
