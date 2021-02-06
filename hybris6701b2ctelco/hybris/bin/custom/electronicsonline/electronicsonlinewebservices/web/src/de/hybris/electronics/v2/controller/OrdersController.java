@@ -70,6 +70,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -314,7 +315,7 @@ public class OrdersController extends BaseCommerceController
 		OrderListRootData orderListRootData = new OrderListRootData();
 
 		List<OrderListData> list = new ArrayList<>();
-		orderResults.getResults().forEach(order -> {
+		orderResults.getResults().stream().sorted(Comparator.comparing(OrderModel::getCreationtime).reversed()).forEach(order -> {
 
 			OrderListData orderListData = new OrderListData();
 			orderListData.setActualPrice(String.valueOf(order.getTotalPrice().doubleValue()));
