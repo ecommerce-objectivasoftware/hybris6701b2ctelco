@@ -38,7 +38,7 @@ public class WechatProductDetailPopulator implements Populator<ProductModel, Wec
         wechatProductDetailData.setId(productModel.getCode());
         wechatProductDetailData.setName(productModel.getName());
         wechatProductDetailData.setRetailPrice(getRetailPrice(productModel));
-        String baseUrl = configurationService.getConfiguration().getString("media.electronics.https");
+        String baseUrl = configurationService.getConfiguration().getString("demo.image.url");
         wechatProductDetailData.setPicUrl(baseUrl.concat(productModel.getPicture().getURL()));
     }
 

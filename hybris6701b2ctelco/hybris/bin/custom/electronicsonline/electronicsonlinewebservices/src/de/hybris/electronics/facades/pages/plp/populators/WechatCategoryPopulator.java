@@ -28,7 +28,7 @@ public class WechatCategoryPopulator implements Populator<CategoryModel, WechatC
         wechatCategoryBodyData.setFrontName(categoryModel.getName());
         if(Objects.nonNull(categoryModel.getPicture()))
         {
-            final String siteUrl = configurationService.getConfiguration().getString("media.electronics.https");
+            final String siteUrl = configurationService.getConfiguration().getString("demo.image.url");
             wechatCategoryBodyData.setPicUrl(siteUrl.concat(categoryModel.getPicture().getURL()));
         }
     }
