@@ -1152,11 +1152,12 @@ public class CartsController extends BaseCommerceController
 	@RequestMapping(value = "/{cartId}/wechat/address/add", method = RequestMethod.PUT)
 	@ResponseBody
 	@ApiOperation(value = "address id", notes = "put address into the cart.")
-	@ApiBaseSiteIdAndUserIdParam
+	@ApiBaseSiteIdUserIdAndCartIdParam
 	@ApiResponse(code = 200, message = "List of customer's addresses")
 	public void addAddressForCart(
 			@ApiParam("address Id.")@RequestParam final String addressId,
-			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(defaultValue = DEFAULT_FIELD_SET) final String fields) throws Exception {
+			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(defaultValue = DEFAULT_FIELD_SET) final String fields) throws Exception
+	{
 
 		wechatAddressFacade.addAddressForCart(addressId);
 	}
