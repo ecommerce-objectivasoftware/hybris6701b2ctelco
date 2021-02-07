@@ -61,10 +61,7 @@ import de.hybris.platform.webservicescommons.cache.CacheControlDirective;
 import de.hybris.platform.webservicescommons.errors.exceptions.WebserviceValidationException;
 import de.hybris.platform.webservicescommons.swagger.ApiBaseSiteIdAndUserIdParam;
 import de.hybris.platform.webservicescommons.swagger.ApiBaseSiteIdUserIdAndCartIdParam;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.Authorization;
+import io.swagger.annotations.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
@@ -1148,6 +1145,20 @@ public class CartsController extends BaseCommerceController
 		weChatCartDetailsResponseData.setData(weChatCartDetailsRootData);
 		weChatCartDetailsResponseData.setErrno(0);
 		return weChatCartDetailsResponseData;
+	}
+
+	@Secured(
+			{ "ROLE_CUSTOMERGROUP", "ROLE_TRUSTED_CLIENT", "ROLE_CUSTOMERMANAGERGROUP" })
+	@RequestMapping(value = "/{cartId}/wechat/address/add", method = RequestMethod.PUT)
+	@ResponseBody
+	@ApiOperation(value = "address id", notes = "put address into the cart.")
+	@ApiBaseSiteIdAndUserIdParam
+	@ApiResponse(code = 200, message = "List of customer's addresses")
+	public void addAddressForCart(
+			@ApiParam("address Id.")@RequestParam final String addressId,
+			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(defaultValue = DEFAULT_FIELD_SET) final String fields) throws Exception {
+
+		wechatAddressFacade.addAddressForCart(addressId);
 	}
 
 
