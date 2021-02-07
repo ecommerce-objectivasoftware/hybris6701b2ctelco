@@ -63,37 +63,37 @@ public class WeChatHomePageController {
         Channel channel = new Channel();
         channel.setIconUrl("/static/images/category.png");
         channel.setId(590);
-        channel.setName("居家");
-        channelList.add(channel);
-
-        channel = new Channel();
-        channel.setIconUrl("/static/images/pendpay.png");
-        channel.setId(600);
-        channel.setName("餐厨");
-        channelList.add(channel);
-
-        channel = new Channel();
-        channel.setIconUrl("/static/images/about.png");
-        channel.setId(600);
-        channel.setName("饮食");
-        channelList.add(channel);
-
-        channel = new Channel();
-        channel.setIconUrl("/static/images/about.png");
-        channel.setId(602);
-        channel.setName("配件");
+        channel.setName("CANON");
         channelList.add(channel);
 
         channel = new Channel();
         channel.setIconUrl("/static/images/footprint.png");
         channel.setId(61603);
-        channel.setName("服装");
+        channel.setName("HUAWEI");
+        channelList.add(channel);
+
+        channel = new Channel();
+        channel.setIconUrl("/static/images/pendpay.png");
+        channel.setId(600);
+        channel.setName("SONY");
+        channelList.add(channel);
+
+        channel = new Channel();
+        channel.setIconUrl("/static/images/about.png");
+        channel.setId(600);
+        channel.setName("KODAK");
+        channelList.add(channel);
+
+        channel = new Channel();
+        channel.setIconUrl("/static/images/about.png");
+        channel.setId(602);
+        channel.setName("SAMSUNG");
         channelList.add(channel);
 
         channel = new Channel();
         channel.setIconUrl("/static/images/customer.png");
         channel.setId(62098);
-        channel.setName("婴童");
+        channel.setName("FUJIFILE");
         channelList.add(channel);
 
         return channelList;
