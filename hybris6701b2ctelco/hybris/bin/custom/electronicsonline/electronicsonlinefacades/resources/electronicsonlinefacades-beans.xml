@@ -19,4 +19,8 @@
 		<property name="code" type="String"/>
 		<property name="name" type="String"/>
 	</bean>
+
+	<bean class="de.hybris.platform.commercefacades.user.data.RegisterData">
+		<property name="mobilePhone" type="String"/>
+	</bean>
 </beans>

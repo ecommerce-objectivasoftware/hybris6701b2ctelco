@@ -57,6 +57,7 @@
 		<property name="regexp" value="^/[^/]+/users/([^/]+)" />
 		<property name="userService" ref="userService" />
 		<property name="sessionService" ref="sessionService" />
+		<property name="weChatCustomerFacade" ref="customerFacade" />
 	</bean>
 
 	<alias alias="restSessionFilterV2" name="defaultRestSessionFilterV2" />
