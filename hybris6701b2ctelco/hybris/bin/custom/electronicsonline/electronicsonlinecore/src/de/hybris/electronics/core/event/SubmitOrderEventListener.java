@@ -10,9 +10,11 @@
  */
 package de.hybris.electronics.core.event;
 
+import de.hybris.electronics.core.util.RotatePaymentCapturedUtil;
 import de.hybris.platform.acceleratorservices.site.AbstractAcceleratorSiteEventListener;
 import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
 import de.hybris.platform.commerceservices.enums.SiteChannel;
+import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.order.events.SubmitOrderEvent;
 import de.hybris.platform.orderprocessing.model.OrderProcessModel;
@@ -119,15 +121,21 @@ public class SubmitOrderEventListener extends AbstractAcceleratorSiteEventListen
 			}
 			else
 			{
-				final String processCode = fulfilmentProcessDefinitionName + "-" + order.getCode() + "-" + System.currentTimeMillis();
-				final OrderProcessModel businessProcessModel = getBusinessProcessService().createProcess(processCode,
-						fulfilmentProcessDefinitionName);
-				businessProcessModel.setOrder(order);
-				getModelService().save(businessProcessModel);
-				getBusinessProcessService().startProcess(businessProcessModel);
-				if (LOG.isInfoEnabled())
-				{
-					LOG.info(String.format("Started the process %s", processCode));
+				if (RotatePaymentCapturedUtil.rotateCaptured()) {
+					final String processCode = fulfilmentProcessDefinitionName + "-" + order.getCode() + "-" + System.currentTimeMillis();
+					final OrderProcessModel businessProcessModel = getBusinessProcessService().createProcess(processCode,
+							fulfilmentProcessDefinitionName);
+					businessProcessModel.setOrder(order);
+					getModelService().save(businessProcessModel);
+					getBusinessProcessService().startProcess(businessProcessModel);
+					if (LOG.isInfoEnabled())
+					{
+						LOG.info(String.format("Started the process %s", processCode));
+					}
+				}
+				else {
+					order.setStatus(OrderStatus.PAYMENT_NOT_CAPTURED);
+					getModelService().save(order);
 				}
 			}
 		}

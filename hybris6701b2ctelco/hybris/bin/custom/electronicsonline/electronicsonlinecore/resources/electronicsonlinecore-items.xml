@@ -109,6 +109,11 @@
                     </attribute>
                 </attributes>
             </itemtype>
+
+            <itemtype code="UnpaidOrderCancellationCronJob" autocreate="true"
+                      generate="true" extends="CronJob"
+                      jaloclass="de.hybris.electronics.core.jalo.UnpaidOrderCancellationCronJob">
+            </itemtype>
         </typegroup>
 
         <typegroup name="WeChat">
