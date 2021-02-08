@@ -551,4 +551,33 @@
 		<property name="itemCleanupHooks" ref="csTicketRetentionHooks"/>
 		<property name="ticketBusinessService" ref="ticketBusinessService"/>
 	</bean>
+
+	<util:map id="acceleratorStatusDisplayMap">
+		<entry key="CREATED" value="created"/>
+		<entry key="OPEN" value="open"/>
+		<entry key="CANCELLED" value="cancelled"/>
+		<entry key="CANCELLING" value="cancelling"/>
+		<entry key="COMPLETED" value="completed"/>
+		<entry key="CHECKED_INVALID" value="error"/>
+		<entry key="PAYMENT_AMOUNT_NOT_RESERVED" value="error"/>
+		<entry key="PAYMENT_NOT_AUTHORIZED" value="error"/>
+		<entry key="PAYMENT_NOT_CAPTURED" value="unpaid"/>
+		<entry key="PROCESSING_ERROR" value="error"/>
+	</util:map>
+
+	<bean id="unpaidOrderCancellationJob" class="de.hybris.electronics.core.job.UnpaidOrderCancellationJob"
+		  parent="abstractJobPerformable">
+		<property name="electronicsOrderService" ref="electronicsOrderService"/>
+	</bean>
+
+	<bean id="electronicsOrderService" class="de.hybris.electronics.core.order.impl.DefaultElectronicsOrderService"
+		  parent="orderService">
+		<property name="electronicsOrderDao" ref="electronicsOrderDao"/>
+	</bean>
+
+	<bean id="electronicsOrderDao" class="de.hybris.electronics.core.order.impl.DefaultElectronicsOrderDao"
+		  parent="orderDao">
+		<property name="configurationService" ref="configurationService"/>
+	</bean>
+
 </beans>
