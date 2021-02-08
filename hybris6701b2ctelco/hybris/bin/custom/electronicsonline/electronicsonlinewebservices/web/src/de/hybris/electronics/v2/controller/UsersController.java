@@ -1289,11 +1289,11 @@ public class UsersController extends BaseCommerceController
 			@ApiParam(value = "Customer's password.", required = true) @RequestParam final String password)
 			throws PasswordMismatchException, RequestParameterException //NOSONAR
 	{
-		if (!EmailValidator.getInstance().isValid(userId))
-		{
-			throw new RequestParameterException("Login [" + userId + "] is not a valid e-mail address!",
-					RequestParameterException.INVALID, "newLogin");
-		}
+//		if (!EmailValidator.getInstance().isValid(userId))
+//		{
+//			throw new RequestParameterException("Login [" + userId + "] is not a valid e-mail address!",
+//					RequestParameterException.INVALID, "newLogin");
+//		}
 		return weChatDemoUserFacade.weChatUserLogin(userId, password);
 	}
 }

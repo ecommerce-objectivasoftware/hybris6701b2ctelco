@@ -10,12 +10,14 @@
  */
 package de.hybris.electronics.v2.filter;
 
+import de.hybris.electronics.facades.wechat.WeChatCustomerFacade;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.servicelayer.user.UserService;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -46,6 +48,7 @@ public class UserMatchingFilter extends AbstractUrlMatchingFilter
 	private String regexp;
 	private UserService userService;
 	private SessionService sessionService;
+	private WeChatCustomerFacade weChatCustomerFacade;
 
 	@Override
 	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response,
@@ -151,22 +154,43 @@ public class UserMatchingFilter extends AbstractUrlMatchingFilter
 		return false;
 	}
 
-	protected void setCurrentUser(final String uid)
-	{
-		try
-		{
-			final UserModel userModel = userService.getUserForUID(uid);
+	protected void setCurrentUser(final String uid) {
+
+		UserModel userModel = getUserByPhone(uid);
+
+		try {
+			if (Objects.isNull(userModel)) {
+				userModel = userService.getUserForUID(uid);
+			}
 			userService.setCurrentUser(userModel);
-		}
-		catch (final UnknownIdentifierException ex)
-		{
+		} catch (final UnknownIdentifierException ex) {
 			LOG.debug(ex.getMessage());
 			throw ex;
 		}
 	}
 
+	private UserModel getUserByPhone(final String uid) {
+		try {
+			Long.parseLong(uid);
+			return getWeChatCustomerFacade().getUserByPhoneNumber(uid);
+		} catch (NumberFormatException ex) {
+			//nothing to do
+		}
+
+		return null;
+	}
+
+
 	protected void setCurrentUser(final UserModel user)
 	{
 		userService.setCurrentUser(user);
+	}
+
+	public WeChatCustomerFacade getWeChatCustomerFacade() {
+		return weChatCustomerFacade;
+	}
+
+	public void setWeChatCustomerFacade(WeChatCustomerFacade weChatCustomerFacade) {
+		this.weChatCustomerFacade = weChatCustomerFacade;
 	}
 }

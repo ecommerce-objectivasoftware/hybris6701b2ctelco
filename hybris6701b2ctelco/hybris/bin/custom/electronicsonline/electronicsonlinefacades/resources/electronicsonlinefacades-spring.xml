@@ -189,4 +189,10 @@
 	</bean>
 
 	<bean id="genderData" class="de.hybris.electronics.facades.product.data.GenderData" scope="prototype"/>
+
+	<alias name="defaultWeChatCustomerFacade" alias="customerFacade"/>
+	<bean id="defaultWeChatCustomerFacade" class="de.hybris.electronics.facades.wechat.impl.DefaultWeChatCustomerFacade" parent="defaultCustomerFacade">
+		<property name="flexibleSearchService" ref="flexibleSearchService"/>
+	</bean>
+
 </beans>

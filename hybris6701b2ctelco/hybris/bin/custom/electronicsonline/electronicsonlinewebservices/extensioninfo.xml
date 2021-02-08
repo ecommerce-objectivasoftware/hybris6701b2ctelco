@@ -14,11 +14,12 @@
 	<extension abstractclassprefix="Generated" classprefix="Ycommercewebservices" name="electronicsonlinewebservices" usemaven="false">
 
 		<requires-extension name="acceleratorwebservicesaddon"/>
-<requires-extension name="commercefacades"/>
+		<requires-extension name="commercefacades"/>
 		<requires-extension name="commerceservices"/>
 		<requires-extension name="commercewebservicescommons"/>
 		<requires-extension name="webservicescommons"/>
-	
+		<requires-extension name="electronicsonlinefacades"/>
+
 		<coremodule generated="true" manager="de.hybris.platform.jalo.extension.GenericManager" packageroot="de.hybris.electronics"/>
 
 
