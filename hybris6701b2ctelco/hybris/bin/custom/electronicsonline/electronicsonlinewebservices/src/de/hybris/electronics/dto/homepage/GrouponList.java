@@ -16,9 +16,9 @@ public class GrouponList implements Serializable {
 
     private String brief;
 
-    private int retailPrice;
+    private double retailPrice;
 
-    private int grouponPrice;
+    private double grouponPrice;
 
     public void setId(int id){
         this.id = id;
@@ -56,16 +56,24 @@ public class GrouponList implements Serializable {
     public String getBrief(){
         return this.brief;
     }
-    public void setRetailPrice(int retailPrice){
+
+    public double getRetailPrice()
+    {
+        return retailPrice;
+    }
+
+    public void setRetailPrice(final double retailPrice)
+    {
         this.retailPrice = retailPrice;
     }
-    public int getRetailPrice(){
-        return this.retailPrice;
+
+    public double getGrouponPrice()
+    {
+        return grouponPrice;
     }
-    public void setGrouponPrice(int grouponPrice){
+
+    public void setGrouponPrice(final double grouponPrice)
+    {
         this.grouponPrice = grouponPrice;
-    }
-    public int getGrouponPrice(){
-        return this.grouponPrice;
     }
 }

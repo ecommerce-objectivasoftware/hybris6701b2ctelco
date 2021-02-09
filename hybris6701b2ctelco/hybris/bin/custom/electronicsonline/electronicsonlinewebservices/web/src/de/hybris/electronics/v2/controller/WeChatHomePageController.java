@@ -116,14 +116,14 @@ public class WeChatHomePageController {
     private List<GrouponList> getGrouponList() {
 
         GrouponList grouponList = new GrouponList();
-        grouponList.setBrief("PL60 Silver");
+        grouponList.setBrief("ADIN1100");
         grouponList.setExpireTime("2021-12-31 00:00:00");
         grouponList.setGrouponMember(2);
-        grouponList.setGrouponPrice(180);
-        grouponList.setId(1981415);
-        grouponList.setName("PL60 Silver");
-        grouponList.setPicUrl("https://68.79.44.72:9002/electronicsonlinestorefront/medias/?context=bWFzdGVyfGltYWdlc3wyMjQ0OHxpbWFnZS9qcGVnfGltYWdlcy9oYTAvaDk5Lzg3OTY4MTk5NDc1NTAuanBnfGFlNTI5OWFkZWY4NmVmNzQwNjcxMjVlYmVkZDUyNWI5MjVhOGM2Mzc1MTZjMWVkODdiM2YxYzkwZmJhZGVlYjA");
-        grouponList.setRetailPrice(191);
+        grouponList.setGrouponPrice(3.00);
+        grouponList.setId(9001);
+        grouponList.setName("ADIN1100");
+        grouponList.setPicUrl("https://68.79.44.72:9002/backoffice/medias/9001.png?context=bWFzdGVyfGltYWdlc3w2MzEwNHxpbWFnZS9wbmd8aW1hZ2VzL2g2ZC9oNzEvODc5ODk3NDIxNDE3NC5wbmd8OWJmNjY0ZTQzMjNmNWMzODQxODBiN2JhOTcxODNlZDU1NDMyMTgxOWJiZWRhMzdkMDkwOTE4YjBjM2JmNDg0NA");
+        grouponList.setRetailPrice(3.24);
 
         return Arrays.asList(grouponList);
     }
@@ -133,31 +133,31 @@ public class WeChatHomePageController {
         List<NewGoodsList> list = new ArrayList<>();
 
         NewGoodsList newGoodsList = new NewGoodsList();
-        newGoodsList.setId(String.valueOf(1981415));
-        newGoodsList.setName("PL60 Silver");
-        newGoodsList.setPicUrl("https://68.79.44.72:9002/electronicsonlinestorefront/medias/?context=bWFzdGVyfGltYWdlc3wyMjQ0OHxpbWFnZS9qcGVnfGltYWdlcy9oYTAvaDk5Lzg3OTY4MTk5NDc1NTAuanBnfGFlNTI5OWFkZWY4NmVmNzQwNjcxMjVlYmVkZDUyNWI5MjVhOGM2Mzc1MTZjMWVkODdiM2YxYzkwZmJhZGVlYjA");
-        newGoodsList.setRetailPrice(String.valueOf(191));
+        newGoodsList.setId(String.valueOf(9001));
+        newGoodsList.setName("ADIN1100");
+        newGoodsList.setPicUrl("https://68.79.44.72:9002/backoffice/medias/9001.png?context=bWFzdGVyfGltYWdlc3w2MzEwNHxpbWFnZS9wbmd8aW1hZ2VzL2g2ZC9oNzEvODc5ODk3NDIxNDE3NC5wbmd8OWJmNjY0ZTQzMjNmNWMzODQxODBiN2JhOTcxODNlZDU1NDMyMTgxOWJiZWRhMzdkMDkwOTE4YjBjM2JmNDg0NA");
+        newGoodsList.setRetailPrice(String.valueOf(3.72));
         list.add(newGoodsList);
 
         newGoodsList = new NewGoodsList();
-        newGoodsList.setId(String.valueOf(280916));
-        newGoodsList.setName("Web Camera Black");
-        newGoodsList.setPicUrl("https://68.79.44.72:9002/electronicsonlinestorefront/medias/?context=bWFzdGVyfGltYWdlc3wxMTY1N3xpbWFnZS9qcGVnfGltYWdlcy9oODQvaGJmLzg3OTY4MjQxNDE4NTQuanBnfDcxNjliN2RlM2I4OWYxNTMwYzE3NmJmYWI1Njg4NDQ4MWI2MTM1MjMzN2I0NTliMGY4NDZiNWUwY2Y2Y2QzOTY");
-        newGoodsList.setRetailPrice(String.valueOf(8.2));
+        newGoodsList.setId(String.valueOf(9002));
+        newGoodsList.setName("FIDO5100 - Real-Time Ethernet Multiprotocol (REM) Switch");
+        newGoodsList.setPicUrl("https://68.79.44.72:9002/backoffice/medias/9002.png?context=bWFzdGVyfGltYWdlc3w5OTkzOXxpbWFnZS9wbmd8aW1hZ2VzL2g3My9oMzQvODc5ODk3NDYwNzM5MC5wbmd8Njg4MDU3YzJmYjk0MGU2MmZmOTBkM2I4ZmU1Y2VjNDhmZTRiNzc0ZmFkMGQ4ZGY4ZWY2ZmMyNGI3ZjhlOTAxNg");
+        newGoodsList.setRetailPrice(String.valueOf(7.55));
         list.add(newGoodsList);
 
         newGoodsList = new NewGoodsList();
-        newGoodsList.setId(String.valueOf(289540));
-        newGoodsList.setName("Light HVL-20DW2");
-        newGoodsList.setPicUrl("https://68.79.44.72:9002/electronicsonlinestorefront/medias/?context=bWFzdGVyfGltYWdlc3wyMDk1MHxpbWFnZS9qcGVnfGltYWdlcy9oZjMvaDBiLzg3OTY4MjQ2MDA2MDYuanBnfGU2ZmJmY2RlMmQxOTJmZjE0MzgxOWNjN2MwNzFjNGUxY2JkNmY3MjNjOWUxNGY2MzlmNTg0MTk3YmU1MzBlNmQ");
-        newGoodsList.setRetailPrice(String.valueOf(154.65));
+        newGoodsList.setId(String.valueOf(9003));
+        newGoodsList.setName("FIDO5200 - Real-Time Ethernet Multiprotocol (REM) Switch");
+        newGoodsList.setPicUrl("https://68.79.44.72:9002/backoffice/medias/9003.png?context=bWFzdGVyfGltYWdlc3w5OTUzOXxpbWFnZS9wbmd8aW1hZ2VzL2gyZC9oYTQvODc5ODk3NTAwMDYwNi5wbmd8ODc5ODE2ZmNlOTdjOTAxMTg2OTdjMDUwZTk4ZWJjZDBiZDAyYzQzNzQ3MDJhZGQ5NmZhYTMzNGY0MDg0OTI5NA");
+        newGoodsList.setRetailPrice(String.valueOf(652));
         list.add(newGoodsList);
 
         newGoodsList = new NewGoodsList();
-        newGoodsList.setId(String.valueOf(479742));
+        newGoodsList.setId(String.valueOf(9005));
         newGoodsList.setName("QuickCam for Notebooks Pro");
-        newGoodsList.setPicUrl("https://68.79.44.72:9002/electronicsonlinestorefront/medias/?context=bWFzdGVyfGltYWdlc3wxOTMwM3xpbWFnZS9qcGVnfGltYWdlcy9oNTMvaDcwLzg3OTY4MzE4NzUxMDIuanBnfDkxNjM5N2Q1YjIxOTQzZmQxMTQxODc0MTVhMGY0MDMwZWIxYzNiNjg3N2U1NjhmYmNjOTlkMTVlMmE4YzA3N2M");
-        newGoodsList.setRetailPrice(String.valueOf(86.37));
+        newGoodsList.setPicUrl("https://68.79.44.72:9002/backoffice/medias/9005.png?context=bWFzdGVyfGltYWdlc3wxMDg3Mjl8aW1hZ2UvcG5nfGltYWdlcy9oZTcvaGM1Lzg3OTg5NzU3ODcwMzgucG5nfDFkYjEzNjRhNmQ0NjY2M2JlM2JmZGI1Yjk4ODRkODc1M2VkMWE1Yjg2ZGEwNjg1YjBhMzJjYzdkNDQzOWM1MzE");
+        newGoodsList.setRetailPrice(String.valueOf(400));
         list.add(newGoodsList);
 
         return list;
