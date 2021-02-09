@@ -1126,7 +1126,7 @@ public class CartsController extends BaseCommerceController
 			if (CollectionUtils.isNotEmpty(entry.getProduct().getImages())) {
 				cartList.setPicUrl(String.format("%s%s", getSiteUrl(), entry.getProduct().getImages().iterator().next().getUrl()));
 			}
-			cartList.setPrice(String.valueOf(entry.getTotalPrice().getValue()));
+			cartList.setPrice(String.valueOf(entry.getBasePrice().getValue()));
 			cartList.setProductId(entry.getProduct().getCode());
 			cartList.setSpecifications(entry.getProduct().getName());
 			weChatCartDetailsRootData.getCartList().add(cartList);
@@ -1134,10 +1134,10 @@ public class CartsController extends BaseCommerceController
 
 		CartTotal cartTotal = new CartTotal();
 		long qty = cartData.getEntries().stream().mapToLong(OrderEntryData::getQuantity).sum();
-		cartTotal.setCheckedGoodsAmount(String.valueOf(qty));
-		cartTotal.setCheckedGoodsCount(String.valueOf(cartData.getEntries().size()));
-		cartTotal.setGoodsAmount(String.valueOf(qty));
-		cartTotal.setGoodsCount(String.valueOf(cartData.getEntries().size()));
+		cartTotal.setCheckedGoodsAmount(String.valueOf(cartData.getTotalPrice().getValue()));
+		cartTotal.setCheckedGoodsCount(String.valueOf(qty));
+		cartTotal.setGoodsAmount(String.valueOf(cartData.getTotalPrice().getValue()));
+		cartTotal.setGoodsCount(String.valueOf(qty));
 
 		weChatCartDetailsRootData.setCartTotal(cartTotal);
 
