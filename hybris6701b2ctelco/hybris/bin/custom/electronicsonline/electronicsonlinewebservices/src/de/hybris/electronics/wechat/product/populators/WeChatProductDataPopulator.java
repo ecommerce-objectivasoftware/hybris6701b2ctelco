@@ -38,7 +38,8 @@ public class WeChatProductDataPopulator implements Populator<ProductData, WeChat
         Info info = new Info();
         info.setId(productData.getCode());
         info.setRetailPrice(productData.getPrice().getValue().doubleValue());
-        info.setCounterPrice(productData.getPrice().getValue().doubleValue() * 0.9);
+        //TODO
+//        info.setCounterPrice(productData.getPrice().getValue().doubleValue() * 0.9);
         info.setName(productData.getName());
         info.setDetail(productData.getDescription());
         List<String> gallery = new ArrayList<>();
