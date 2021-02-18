@@ -10,6 +10,7 @@
  */
 package de.hybris.electronics.storefront.controllers.pages;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hybris.platform.acceleratorfacades.flow.impl.SessionOverrideCheckoutFlowFacade;
 import de.hybris.platform.acceleratorservices.controllers.page.PageType;
 import de.hybris.platform.acceleratorstorefrontcommons.annotations.RequireHardLogIn;
@@ -56,7 +57,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;

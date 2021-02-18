@@ -22,6 +22,7 @@ import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.acceleratorstorefrontcommons.consent.data.ConsentCookieData;
 import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
@@ -46,7 +47,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;

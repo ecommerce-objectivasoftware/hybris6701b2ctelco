@@ -10,9 +10,10 @@
  */
 package de.hybris.electronics.cronjob;
 
-import de.hybris.electronics.model.OldCartRemovalCronJobModel;
+//import de.hybris.electronics.model.OldCartRemovalCronJobModel;
 import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
 import de.hybris.platform.commerceservices.order.dao.CommerceCartDao;
+import de.hybris.platform.commercewebservicescommons.model.OldCartRemovalCronJobModel;
 import de.hybris.platform.core.model.order.CartModel;
 import de.hybris.platform.cronjob.enums.CronJobResult;
 import de.hybris.platform.cronjob.enums.CronJobStatus;

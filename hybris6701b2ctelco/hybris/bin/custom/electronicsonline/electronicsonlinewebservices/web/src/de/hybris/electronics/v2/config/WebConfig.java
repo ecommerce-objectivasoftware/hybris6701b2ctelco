@@ -11,6 +11,7 @@
 package de.hybris.electronics.v2.config;
 
 
+import de.hybris.electronics.constants.YcommercewebservicesConstants;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.electronics.request.mapping.handler.CommerceHandlerMapping;
 
@@ -20,13 +21,16 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import de.hybris.platform.webservicescommons.swagger.services.ApiVendorExtensionService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.format.support.FormattingConversionService;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
@@ -37,7 +41,7 @@ import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolv
 
 import com.google.common.collect.ImmutableSet;
 
-import net.sourceforge.pmd.util.StringUtil;
+import org.springframework.web.servlet.resource.ResourceUrlProvider;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -59,23 +63,27 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  */
 @EnableSwagger2
 @Configuration
-@ImportResource(
-{ "WEB-INF/config/v2/springmvc-v2-servlet.xml" })
+@ImportResource({ "WEB-INF/config/v2/springmvc-v2-servlet.xml" })
 public class WebConfig extends WebMvcConfigurationSupport
 {
-	private static final String PASSWORD_AUTHORIZATION_SCOPE = "electronicsonlinewebservices.oauth2.password.scope";
-	private static final String CLIENT_CREDENTIAL_AUTHORIZATION_SCOPE = "electronicsonlinewebservices.oauth2.clientCredentials.scope";
-	private static final String AUTHORIZATION_URL = "electronicsonlinewebservices.oauth2.tokenUrl";
+	private static final String PASSWORD_AUTHORIZATION_SCOPE = "training.oauth2.password.scope";
+	private static final String CLIENT_CREDENTIAL_AUTHORIZATION_SCOPE = "training.oauth2.clientCredentials.scope";
+	private static final String AUTHORIZATION_URL = "training.oauth2.tokenUrl";
 
-	private static final String DESC = "electronicsonlinewebservices.v2.description";
-	private static final String TITLE = "electronicsonlinewebservices.v2.title";
-	private static final String VERSION = "electronicsonlinewebservices.v2.version";
+	private static final String DESC = "training.v2.description";
+	private static final String TITLE = "training.v2.title";
+	private static final String VERSION = "training.v2.version";
+	private static final String LICENSE = "training.v2.license";
+	private static final String LICENSE_URL = "training.v2.license.url";
 
 	private static final String PASSWORD_AUTHORIZATION_NAME = "oauth2_Password";
 	private static final String CLIENT_CREDENTIAL_AUTHORIZATION_NAME = "oauth2_client_credentials";
 
 	@Resource(name = "configurationService")
 	private ConfigurationService configurationService;
+
+	@Resource(name = "apiVendorExtensionService")
+	private ApiVendorExtensionService apiVendorExtensionService;
 
 	@Resource(name = "messageConvertersV2")
 	private List<HttpMessageConverter<?>> messageConvertersV2;
@@ -85,15 +93,21 @@ public class WebConfig extends WebMvcConfigurationSupport
 
 	private ApplicationContext applicationContext;
 
+	@SuppressWarnings({ "deprecation", "squid:CallToDeprecatedMethod" })
 	@Override
 	@Bean
-	public RequestMappingHandlerMapping requestMappingHandlerMapping()
+	public RequestMappingHandlerMapping requestMappingHandlerMapping(final ContentNegotiationManager mvcContentNegotiationManager,
+																	 final FormattingConversionService mvcConversionService, final ResourceUrlProvider mvcResourceUrlProvider)
 	{
 		final CommerceHandlerMapping handlerMapping = new CommerceHandlerMapping("v2");
 		handlerMapping.setOrder(0);
 		handlerMapping.setDetectHandlerMethodsInAncestorContexts(true);
-		handlerMapping.setInterceptors(getInterceptors());
-		handlerMapping.setContentNegotiationManager(mvcContentNegotiationManager());
+		handlerMapping.setInterceptors(getInterceptors(mvcConversionService, mvcResourceUrlProvider));
+		handlerMapping.setContentNegotiationManager(mvcContentNegotiationManager);
+		/*
+		 * For more details about deprecation see: https://github.com/spring-projects/spring-framework/issues/24179
+		 */
+		handlerMapping.setUseRegisteredSuffixPatternMatch(true);
 		return handlerMapping;
 	}
 
@@ -137,12 +151,14 @@ public class WebConfig extends WebMvcConfigurationSupport
 		return new Docket(DocumentationType.SWAGGER_2).apiInfo(apiInfo()).select().paths(PathSelectors.any()).build()
 				.produces(ImmutableSet.of("application/json", "application/xml"))
 				.securitySchemes(Arrays.asList(clientCredentialFlow(), passwordFlow()))
-				.securityContexts(Arrays.asList(securityContext()));
+				.securityContexts(Arrays.asList(securityContext())) //
+				.extensions(apiVendorExtensionService.getAllVendorExtensions(YcommercewebservicesConstants.EXTENSIONNAME));
 	}
 
 	private ApiInfo apiInfo()
 	{
-		return new ApiInfoBuilder().title(getTitle()).description(getDescription()).version(getVersion()).build();
+		return new ApiInfoBuilder().title(getTitle()).description(getDescription()).license(getLicense())
+				.licenseUrl(getLicenseUrl()).version(getVersion()).build();
 	}
 
 	protected OAuth passwordFlow()
@@ -172,12 +188,12 @@ public class WebConfig extends WebMvcConfigurationSupport
 				new SecurityReference(CLIENT_CREDENTIAL_AUTHORIZATION_NAME, authorizationScopes));
 	}
 
-	private List<AuthorizationScope> getAuthorizationScopes(final String properyName)
+	private List<AuthorizationScope> getAuthorizationScopes(final String propertyName)
 	{
-		final List<AuthorizationScope> authorizationScopes = new ArrayList<AuthorizationScope>();
+		final List<AuthorizationScope> authorizationScopes = new ArrayList<>();
 
-		final String strScopes = configurationService.getConfiguration().getString(properyName);
-		if (StringUtil.isNotEmpty(strScopes))
+		final String strScopes = configurationService.getConfiguration().getString(propertyName);
+		if (StringUtils.isNotEmpty(strScopes))
 		{
 			final String[] scopes = strScopes.split(",");
 			for (final String scope : scopes)
@@ -208,4 +224,15 @@ public class WebConfig extends WebMvcConfigurationSupport
 	{
 		return configurationService.getConfiguration().getString(DESC);
 	}
+
+	private String getLicense()
+	{
+		return configurationService.getConfiguration().getString(LICENSE);
+	}
+
+	private String getLicenseUrl()
+	{
+		return configurationService.getConfiguration().getString(LICENSE_URL);
+	}
+
 }

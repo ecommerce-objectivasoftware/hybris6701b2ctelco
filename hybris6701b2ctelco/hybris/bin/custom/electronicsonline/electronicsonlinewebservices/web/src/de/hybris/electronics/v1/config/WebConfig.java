@@ -26,7 +26,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.format.support.FormattingConversionService;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
@@ -37,7 +39,8 @@ import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolv
 
 import com.google.common.collect.ImmutableSet;
 
-import net.sourceforge.pmd.util.StringUtil;
+//import net.sourceforge.pmd.util.StringUtil;
+import org.springframework.web.servlet.resource.ResourceUrlProvider;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -60,16 +63,16 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 @Configuration
 @ImportResource(
-{ "WEB-INF/config/v1/springmvc-v1-servlet.xml" })
+		{ "WEB-INF/config/v1/springmvc-v1-servlet.xml" })
 public class WebConfig extends WebMvcConfigurationSupport
 {
-	private static final String PASSWORD_AUTHORIZATION_SCOPE = "electronicsonlinewebservices.oauth2.password.scope";
-	private static final String CLIENT_CREDENTIAL_AUTHORIZATION_SCOPE = "electronicsonlinewebservices.oauth2.clientCredentials.scope";
-	private static final String AUTHORIZATION_URL = "electronicsonlinewebservices.oauth2.tokenUrl";
+	private static final String PASSWORD_AUTHORIZATION_SCOPE = "training.oauth2.password.scope";
+	private static final String CLIENT_CREDENTIAL_AUTHORIZATION_SCOPE = "training.oauth2.clientCredentials.scope";
+	private static final String AUTHORIZATION_URL = "training.oauth2.tokenUrl";
 
-	private static final String DESC = "electronicsonlinewebservices.v1.description";
-	private static final String TITLE = "electronicsonlinewebservices.v1.title";
-	private static final String VERSION = "electronicsonlinewebservices.v1.version";
+	private static final String DESC = "training.v1.description";
+	private static final String TITLE = "training.v1.title";
+	private static final String VERSION = "training.v1.version";
 
 	private static final String PASSWORD_AUTHORIZATION_NAME = "oauth2_Password";
 	private static final String CLIENT_CREDENTIAL_AUTHORIZATION_NAME = "oauth2_client_credentials";
@@ -87,13 +90,14 @@ public class WebConfig extends WebMvcConfigurationSupport
 
 	@Override
 	@Bean
-	public RequestMappingHandlerMapping requestMappingHandlerMapping()
+	public RequestMappingHandlerMapping requestMappingHandlerMapping(final ContentNegotiationManager mvcContentNegotiationManager,
+																	 final FormattingConversionService mvcConversionService, final ResourceUrlProvider mvcResourceUrlProvider)
 	{
 		final CommerceHandlerMapping handlerMapping = new CommerceHandlerMapping("v1");
 		handlerMapping.setOrder(0);
 		handlerMapping.setDetectHandlerMethodsInAncestorContexts(true);
-		handlerMapping.setInterceptors(getInterceptors());
-		handlerMapping.setContentNegotiationManager(mvcContentNegotiationManager());
+		handlerMapping.setInterceptors(getInterceptors(mvcConversionService, mvcResourceUrlProvider));
+		handlerMapping.setContentNegotiationManager(mvcContentNegotiationManager);
 		return handlerMapping;
 	}
 
@@ -177,7 +181,7 @@ public class WebConfig extends WebMvcConfigurationSupport
 		final List<AuthorizationScope> authorizationScopes = new ArrayList<AuthorizationScope>();
 
 		final String strScopes = configurationService.getConfiguration().getString(properyName);
-		if (StringUtil.isNotEmpty(strScopes))
+		if (StringUtils.isNotEmpty(strScopes))
 		{
 			final String[] scopes = strScopes.split(",");
 			for (final String scope : scopes)

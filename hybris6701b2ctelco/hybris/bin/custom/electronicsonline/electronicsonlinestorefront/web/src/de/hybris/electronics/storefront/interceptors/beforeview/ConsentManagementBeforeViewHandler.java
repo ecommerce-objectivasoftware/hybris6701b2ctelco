@@ -10,6 +10,7 @@
  */
 package de.hybris.electronics.storefront.interceptors.beforeview;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hybris.platform.acceleratorstorefrontcommons.consent.data.ConsentCookieData;
 import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.interceptors.BeforeViewHandler;
@@ -40,7 +41,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.WebUtils;
 

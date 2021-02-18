@@ -68,7 +68,7 @@
 --><project name="electronicsonlinestorefront_buildcallbacks">
 	<property location="${ext.electronicsonlinestorefront.path}/web/webroot/WEB-INF/lib/less-rhino-1.7.3.js" name="tool.less"/>
 	<property location="${ext.electronicsonlinestorefront.path}/web/webroot/WEB-INF/lib/lessc-rhino-1.7.3.js" name="tool.lessc"/>
-	<property location="${platformhome}/resources/ant/lib/rhino-1.7.7.jar" name="tool.rhino"/>
+	<property location="${ext.electronicsonlinestorefront.path}/web/webroot/WEB-INF/lib/rhino-1.7.7.jar" name="tool.rhino"/>
 	<property location="${ext.electronicsonlinestorefront.path}" name="ext.electronicsonlinestorefront.mapperToPath"/>
 	<property name="wro.addons.template.path" value="${ext.electronicsonlinestorefront.path}/wro_addons_template.xml"/>
 	<property name="wro.addons.dest.path" value="${ext.electronicsonlinestorefront.path}/resources/wro_addons.xml"/>

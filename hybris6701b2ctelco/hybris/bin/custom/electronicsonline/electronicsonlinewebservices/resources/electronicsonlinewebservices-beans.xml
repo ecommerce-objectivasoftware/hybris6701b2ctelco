@@ -50,11 +50,6 @@
 		          type="java.util.List&lt;de.hybris.platform.commercefacades.order.data.CardTypeData>"/>
 	</bean>
 
-	<bean class="de.hybris.platform.commercefacades.order.data.CartModificationDataList">
-		<property name="cartModificationList"
-		          type="java.util.List&lt;de.hybris.platform.commercefacades.order.data.CartModificationData>"/>
-	</bean>
-
 	<!-- product data -->
 
 	<bean class="de.hybris.electronics.product.data.ProductDataList">
@@ -115,10 +110,10 @@
 	</bean>
 
 	<!-- Additional title property for CustomerData -->
-	<bean class="de.hybris.platform.commercefacades.user.data.CustomerData"
-	      extends="de.hybris.platform.commercefacades.user.data.PrincipalData">
-		<property name="title" type="String"/>
-	</bean>
+<!--	<bean class="de.hybris.platform.commercefacades.user.data.CustomerData"-->
+<!--	      extends="de.hybris.platform.commercefacades.user.data.PrincipalData">-->
+<!--		<property name="title" type="String"/>-->
+<!--	</bean>-->
 
 	<bean class="de.hybris.electronics.user.data.LoginChangeResponse">
 		<property name="success" type="boolean"/>

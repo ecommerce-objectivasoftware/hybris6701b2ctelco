@@ -10,6 +10,7 @@
  */
 package de.hybris.electronics.storefront.controllers.pages;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hybris.electronics.storefront.controllers.ControllerConstants;
 import de.hybris.platform.acceleratorstorefrontcommons.consent.data.ConsentCookieData;
 import de.hybris.platform.acceleratorstorefrontcommons.constants.WebConstants;
@@ -26,7 +27,6 @@ import de.hybris.platform.commercefacades.user.data.RegisterData;
 import de.hybris.platform.commerceservices.customer.DuplicateUidException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -157,7 +157,7 @@ public class LoginPageController extends AbstractLoginPageController
 		data.setLogin(form.getEmail());
 		data.setPassword(form.getPwd());
 		data.setTitleCode(form.getTitleCode());
-		data.setMobilePhone(form.getMobileNumber());
+		//data.setMobilePhone(form.getMobileNumber());
 
 		try
 		{

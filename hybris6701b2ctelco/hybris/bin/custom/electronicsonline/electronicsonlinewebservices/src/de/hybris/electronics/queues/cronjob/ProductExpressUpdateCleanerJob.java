@@ -10,11 +10,11 @@
  */
 package de.hybris.electronics.queues.cronjob;
 
+import de.hybris.platform.commercewebservicescommons.model.expressupdate.cron.ProductExpressUpdateCleanerCronJobModel;
 import de.hybris.platform.cronjob.enums.CronJobResult;
 import de.hybris.platform.cronjob.enums.CronJobStatus;
 import de.hybris.platform.servicelayer.cronjob.AbstractJobPerformable;
 import de.hybris.platform.servicelayer.cronjob.PerformResult;
-import de.hybris.electronics.model.expressupdate.cron.ProductExpressUpdateCleanerCronJobModel;
 import de.hybris.electronics.queues.impl.ProductExpressUpdateQueue;
 
 import java.util.Date;
