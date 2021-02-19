@@ -17,7 +17,7 @@
 	<div class="container-lg col-md-6">
 		<div class="account-section-content">
 			<div class="account-section-form">
-				<form:form action="update-email" method="post" commandName="updateEmailForm">
+				<form:form action="update-email" method="post" modelAttribute="updateEmailForm">
 					<formElement:formInputBox idKey="profile.email" labelKey="profile.email" path="email" inputCSS="text" mandatory="true"/>
 					<formElement:formInputBox idKey="profile.checkEmail"  labelKey="profile.checkEmail" path="chkEmail" inputCSS="text" mandatory="true"/>
 					<formElement:formPasswordBox idKey="profile.pwd" labelKey="profile.pwd" path="password" inputCSS="text form-control" mandatory="true"/>

@@ -19,7 +19,7 @@
 <spring:theme code="text.quote.dateformat.datepicker.selection" var="dateFormatForDatePicker" />
 <spring:theme code="text.quote.dateformat.datepicker.selection.hint" var="dateFormatHint" />
 
-<form:form method="post" commandName="quoteForm" id="quoteForm" action="#">
+<form:form method="post" modelAttribute="quoteForm" id="quoteForm" action="#">
     <c:if test="${cartData.totalPrice.value lt 0}">
         <div class="alert alert-danger getAccAlert" role="alert">
             <button type="button" class="close closeAccAlert" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>

@@ -28,7 +28,7 @@
                     </div>
                 </div>
                 <div class="place-order-form hidden-xs">
-                    <form:form action="${placeOrderUrl}" id="placeOrderForm1" commandName="placeOrderForm">
+                    <form:form action="${placeOrderUrl}" id="placeOrderForm1" modelAttribute="placeOrderForm">
                         <div class="checkbox">
                             <label> <form:checkbox id="Terms1" path="termsCheck" />
                                 <spring:theme var="termsAndConditionsHtml" code="checkout.summary.placeOrder.readTermsAndConditions" arguments="${fn:escapeXml(getTermsAndConditionsUrl)}" text="Terms and Conditions" htmlEscape="false"/>

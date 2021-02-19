@@ -17,7 +17,7 @@
 	<div class="container-lg col-md-6">
 		<div class="account-section-content">
 			<div class="account-section-form">
-				<form:form action="${action}" method="post" commandName="updatePasswordForm">
+				<form:form action="${action}" method="post" modelAttribute="updatePasswordForm">
 
 					<formElement:formPasswordBox idKey="currentPassword"
 												 labelKey="profile.currentPassword" path="currentPassword" inputCSS="form-control"

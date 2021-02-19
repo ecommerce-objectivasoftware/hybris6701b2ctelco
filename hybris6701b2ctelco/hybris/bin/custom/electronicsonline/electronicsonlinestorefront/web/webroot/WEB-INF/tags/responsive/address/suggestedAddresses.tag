@@ -39,7 +39,7 @@
                     </ul>
                 </div>
                 <div class="span-5 suggested_address_submit last">
-                    <form:form method="post" commandName="addressForm" action="${selectSuggestedAddressUrl}">
+                    <form:form method="post" modelAttribute="addressForm" action="${selectSuggestedAddressUrl}">
                         <form:hidden path="addressId" class="add_edit_delivery_address_id"/>
                         <form:hidden path="defaultAddress" value="${fn:escapeXml(inputAddress.defaultAddress)}"/>
                         <input id="titleCode" name="titleCode" type="hidden" value="${fn:escapeXml(suggestedAddress.titleCode)}"/>
@@ -95,7 +95,7 @@
             </div>
             <div class="span-5 suggested_address_submit last">
                 <c:if test="${customerBypass}">
-                    <form:form method="post" commandName="addressForm" action="${selectSuggestedAddressUrl}">
+                    <form:form method="post" modelAttribute="addressForm" action="${selectSuggestedAddressUrl}">
                         <form:hidden path="addressId" class="add_edit_delivery_address_id"/>
                         <form:hidden path="defaultAddress" value="${fn:escapeXml(inputAddress.defaultAddress)}"/>
                         <input id="titleCode" name="titleCode" type="hidden" value="${fn:escapeXml(inputAddress.titleCode)}"/>

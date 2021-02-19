@@ -20,7 +20,7 @@
         </div>
 
         <div class="account-section-content import-csv__content">
-            <form:form commandName="importCSVSavedCartForm" enctype="multipart/form-data" method="post" action="${importCSVSavedCartLink}" class="import-csv__form">
+            <form:form modelAttribute="importCSVSavedCartForm" enctype="multipart/form-data" method="post" action="${importCSVSavedCartLink}" class="import-csv__form">
             </form:form>
             <div class="well well-quaternary well-md import-csv__well">
                 <div class="row">

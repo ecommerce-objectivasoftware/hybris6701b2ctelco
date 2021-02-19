@@ -18,7 +18,7 @@
     <div class="container-lg col-md-6">
         <div class="account-section-content">
             <div class="account-section-form">
-                <form:form action="update-profile" method="post" commandName="updateProfileForm">
+                <form:form action="update-profile" method="post" modelAttribute="updateProfileForm">
 
                     <formElement:formSelectBox idKey="profile.title" labelKey="profile.title" path="titleCode" mandatory="true" skipBlank="false" skipBlankMessageKey="form.select.empty" items="${titleData}" selectCSSClass="form-control"/>
                     <formElement:formInputBox idKey="profile.firstName" labelKey="profile.firstName" path="firstName" inputCSS="text" mandatory="true"/>
