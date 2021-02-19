@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- [y] hybris Platform
-
- Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
-
- This software is the confidential and proprietary information of SAP
- ("Confidential Information"). You shall not disclose such Confidential
- Information and shall use it only in accordance with the terms of the
- license agreement you entered into with SAP.
+ Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
 		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -15,7 +8,7 @@
 		 xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans.xsd
            http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd">
-    
+
 	<bean id="cwsProductFacade" parent="defaultProductFacade">
 		<property name="productConfiguredPopulator" ref="cwsProductConfiguredPopulator"/>
 		<property name="productConverter" ref="cwsProductConverter"/>
@@ -262,63 +255,32 @@
         <property name="idPattern" value="[0-9a-f]{40}|[0-9a-f-]{36}"/>
     </bean>
 
-	<alias name="defaultWechatCategoryDataConverter" alias="wechatCategoryDataConverter"/>
-	<bean id="defaultWechatCategoryDataConverter" parent="abstractPopulatingConverter">
-		<property name="targetClass" value="de.hybris.electronics.dto.plp.WechatCategoryBodyData" />
-		<property name="populators" ref="wechatCategoryPopulator" />
+	<!-- Beans for user matching in commerce web services -->
+	<alias name="defaultWsUserFacade" alias="wsUserFacade"/>
+	<bean id="defaultWsUserFacade" parent="defaultUserFacade">
+		<property name="userMatchingService" ref="wsUserMatchingService"/>
 	</bean>
 
-	<bean id="wechatCategoryPopulator" class="de.hybris.electronics.facades.pages.plp.populators.WechatCategoryPopulator"/>
-
-	<bean id="wechatCategoryFacade" class="de.hybris.electronics.facades.pages.plp.impl.DefaultWechatCategoryFacade"/>
-
-	<bean id="wechatCategoryService" class="de.hybris.electronics.services.pages.plp.impl.DefaultWechatCategoryService"/>
-
-	<bean id="wechatCategoryDao" class="de.hybris.electronics.daos.pages.plp.impl.DefaultWechatCategoryDao"/>
-
-	<bean id="weChatProductDataPopulator"
-		  class="de.hybris.electronics.wechat.product.populators.WeChatProductDataPopulator">
-		<property name="configurationService" ref="configurationService"/>
+	<alias name="defaultWsCustomerFacade" alias="wsCustomerFacade"/>
+	<bean id="defaultWsCustomerFacade" parent="defaultCustomerFacade">
+		<property name="userMatchingService" ref="wsUserMatchingService"/>
+		<property name="userFacade" ref="wsUserFacade"/>
 	</bean>
 
-	<bean id="weChatDemoUserFacade"
-		  class="de.hybris.electronics.wechat.user.impl.DefaultWeChatDemoUserFacade">
-		<property name="userService" ref="userService"/>
-		<property name="passwordEncoderService" ref="passwordEncoderService"/>
-		<property name="customerNameStrategy" ref="customerNameStrategy"/>
+	<alias name="defaultWsCustomerGroupFacade" alias="wsCustomerGroupFacade"/>
+	<bean id="defaultWsCustomerGroupFacade" parent="defaultCustomerGroupFacade">
+		<property name="userMatchingService" ref="wsUserMatchingService"/>
 	</bean>
 
-	<alias name="defaultWechatProductDetailDataConverter" alias="wechatProductDetailDataConverter"/>
-	<bean id="defaultWechatProductDetailDataConverter" parent="abstractPopulatingConverter">
-		<property name="targetClass" value="de.hybris.electronics.dto.plp.WechatProductDetailData" />
-		<property name="populators" ref="wechatProductDetailPopulator" />
+	<alias name="defaultWsUserMatchingService" alias="wsUserMatchingService"/>
+	<bean id="defaultWsUserMatchingService" parent="defaultUserMatchingService">
+		<property name="matchingStrategies">
+			<list>
+				<ref bean="customerIdMatchingStrategy"/>
+				<ref bean="userUIDMatchingStrategy"/>
+				<ref bean="externalCustomerIdMatchingStrategy"/>
+			</list>
+		</property>
 	</bean>
-
-    <bean id="wechatProductDetailPopulator" class="de.hybris.electronics.facades.pages.plp.populators.WechatProductDetailPopulator"/>
-
-	<bean id="wechatProductFacade" class="de.hybris.electronics.facades.pages.plp.impl.DefaultWechatProductFacade"/>
-
-	<bean id="wechatProductService" class="de.hybris.electronics.services.pages.plp.impl.DefaultWechatProductService"/>
-
-	<bean id="wechatProductDao" class="de.hybris.electronics.daos.pages.plp.impl.DefaultWechatProductDao"/>
-
-	<bean id="weChatOrderDemoFacade"
-		  class="de.hybris.electronics.wechat.order.impl.DefaultWeChatOrderDemoFacade">
-		<property name="checkoutFacade" ref="checkoutFacade"/>
-		<property name="cartFacade" ref="commerceWebServicesCartFacade2"/>
-		<property name="userService" ref="userService"/>
-		<property name="i18NFacade" ref="i18NFacade"/>
-		<property name="customerNameStrategy" ref="customerNameStrategy"/>
-	</bean>
-
-	<bean id="wechatAddressFacade" class="de.hybris.electronics.facades.pages.address.impl.DefaultWechatAddressFacade"/>
-	<bean id="wechatAddressService" class="de.hybris.electronics.services.pages.address.impl.DefaultWechatAddressService"/>
-	<bean id="wechatAddressDao" class="de.hybris.electronics.daos.pages.address.impl.DefaultWechatAddressDao"/>
-	<alias name="defaultWechatAddressBodyDataConverter" alias="wechatAddressBodyDataConverter"/>
-	<bean id="defaultWechatAddressBodyDataConverter" parent="abstractPopulatingConverter">
-		<property name="targetClass" value="de.hybris.electronics.dto.address.WechatAddressBodyData" />
-		<property name="populators" ref="wechatAddressPopulator" />
-	</bean>
-	<bean id="wechatAddressPopulator" class="de.hybris.electronics.facades.pages.address.populator.WechatAddressPopulator"/>
 
 </beans>

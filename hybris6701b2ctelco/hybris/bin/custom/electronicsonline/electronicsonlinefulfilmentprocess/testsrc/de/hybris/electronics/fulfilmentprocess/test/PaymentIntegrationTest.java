@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.fulfilmentprocess.test;
 
@@ -55,6 +48,7 @@ import de.hybris.platform.spring.ctx.ScopeTenantIgnoreDocReader;
 import de.hybris.platform.task.RetryLaterException;
 import de.hybris.platform.task.TaskModel;
 import de.hybris.platform.task.impl.DefaultTaskService;
+import de.hybris.platform.testframework.PropertyConfigSwitcher;
 import de.hybris.platform.util.Utilities;
 import de.hybris.electronics.fulfilmentprocess.test.actions.TestActionTemp;
 
@@ -101,6 +95,8 @@ public class PaymentIntegrationTest extends ServicelayerTest
 	@Resource
 	private DeliveryService deliveryService;
 
+	private static final PropertyConfigSwitcher canJoinPreviousNodeSwitcher = new PropertyConfigSwitcher("processengine.process.canjoinpreviousnode.default");
+
 	private static DefaultBusinessProcessService processService;
 	private static ProcessDefinitionFactory definitonFactory;
 
@@ -117,6 +113,7 @@ public class PaymentIntegrationTest extends ServicelayerTest
 		Registry.activateStandaloneMode();
 		Utilities.setJUnitTenant();
 		LOG.debug("Preparing...");
+		canJoinPreviousNodeSwitcher.switchToValue("false");
 
 		final ApplicationContext appCtx = Registry.getGlobalApplicationContext();
 
@@ -212,6 +209,7 @@ public class PaymentIntegrationTest extends ServicelayerTest
 		processService.setTaskService(appCtx.getBean("taskService", DefaultTaskService.class));
 		definitonFactory = null;
 		processService = null;
+		canJoinPreviousNodeSwitcher.switchBackToDefault();
 	}
 
 	@After

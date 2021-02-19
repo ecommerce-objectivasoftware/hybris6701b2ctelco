@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.validator;
 
@@ -23,12 +16,11 @@ import org.springframework.validation.Validator;
 
 /**
  * Implementation of {@link org.springframework.validation.Validator} that validate instances of {@link AddressData}.
- * 
+ * <p>
  * The {@code CountryAwareAddressValidator} does not validate all fields itself, but delegates to other Validators
  * {@link #countrySpecificAddressValidators}. {@code AddressValidator} uses the country.isocode field to select a
  * suitable validator for a specific country. If a matching validator cannot be found, {@link #commonAddressValidator}
  * is used.
- * 
  */
 public class CountryAwareAddressValidator implements Validator
 {
@@ -53,8 +45,8 @@ public class CountryAwareAddressValidator implements Validator
 		if (addressData == null || addressData.getCountry() == null || addressData.getCountry().getIsocode() == null
 				|| addressData.getCountry().getIsocode().length() > MAX_ISOCODE_LENGTH)
 		{
-			errors.rejectValue(COUNTRY_ISO, FIELD_REQUIRED_AND_NOT_TOO_LONG_MESSAGE_ID, new String[]
-			{ String.valueOf(MAX_ISOCODE_LENGTH) }, null);
+			errors.rejectValue(COUNTRY_ISO, FIELD_REQUIRED_AND_NOT_TOO_LONG_MESSAGE_ID,
+					new String[] { String.valueOf(MAX_ISOCODE_LENGTH) }, null);
 			throw new WebserviceValidationException(errors);
 		}
 

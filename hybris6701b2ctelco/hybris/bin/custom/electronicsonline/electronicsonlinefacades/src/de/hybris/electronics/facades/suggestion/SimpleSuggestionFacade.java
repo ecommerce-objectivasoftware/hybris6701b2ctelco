@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.facades.suggestion;
 
@@ -39,7 +32,7 @@ public interface SimpleSuggestionFacade
 	 * @deprecated Since 5.0. Use getReferencesForPurchasedInCategory(String categoryCode, List
 	 *             <ProductReferenceTypeEnum> referenceTypes, boolean excludePurchased, Integer limit) instead.
 	 */
-	@Deprecated
+	@Deprecated(since = "5.0", forRemoval = true)
 	List<ProductData> getReferencesForPurchasedInCategory(String categoryCode, ProductReferenceTypeEnum referenceType,
 			boolean excludePurchased, Integer limit);
 

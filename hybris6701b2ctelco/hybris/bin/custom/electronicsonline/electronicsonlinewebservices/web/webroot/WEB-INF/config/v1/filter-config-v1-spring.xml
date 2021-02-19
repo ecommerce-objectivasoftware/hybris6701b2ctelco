@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- [y] hybris Platform
-
- Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
-
- This software is the confidential and proprietary information of SAP
- ("Confidential Information"). You shall not disclose such Confidential
- Information and shall use it only in accordance with the terms of the
- license agreement you entered into with SAP.
+ Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
 -->
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
@@ -29,26 +22,42 @@
 		<ref bean="sessionFilter" />
 
 		<!-- occ v1 WebAppMediaFilter -->
+        <ref bean="polyglotPersistenceCallbackFilter"/>
 		<ref bean="commerceWebServicesV1WebAppMediaFilter" />
 
 		<!-- commerceWebservices filters -->
-		<ref bean="commerceWebServicesBaseSiteFilterV1" />
-		<ref bean="commerceWebServicesSessionAttributesFilterV1" />
+        <ref bean="commerceWebServicesBaseSiteFilterV1" />
+		<ref bean="commerceWebServicesEurope1AttributesFilterV1" />
+		<ref bean="commerceWebServicesSessionCurrencyFilterV1" />
+		<ref bean="commerceWebServicesSessionLanguageFilterV1" />
 		<ref bean="baseSiteCheckFilterV1" />
 
 		<!-- Security -->
 		<ref bean="springSecurityFilterChain" />
+
+		<!-- commerceWebservices consent filter for V1-->
+		<ref bean="commerceWebServicesConsentFilterV1"/>
+
+		<!-- guest role filter for V1-->
 		<ref bean="guestRoleFilterV1" />
+		
 	</util:list>
 
 	<bean id="commerceWebServicesBaseSiteFilterV1" class="de.hybris.electronics.filter.BaseSiteFilter">
 		<property name="contextInformationLoader" ref="wsContextInformationLoaderV1" />
 	</bean>
 
-	<bean id="commerceWebServicesSessionAttributesFilterV1" class="de.hybris.electronics.filter.SessionAttributesFilter">
-		<property name="contextInformationLoader" ref="wsContextInformationLoaderV1" />
+	<bean id="commerceWebServicesEurope1AttributesFilterV1" class="de.hybris.electronics.filter.Europe1AttributesFilter">
 		<property name="baseStoreService" ref="baseStoreService" />
 		<property name="sessionService" ref="sessionService" />
+	</bean>
+
+	<bean id="commerceWebServicesSessionCurrencyFilterV1" class="de.hybris.electronics.filter.SessionCurrencyFilter">
+		<property name="contextInformationLoader" ref="wsContextInformationLoaderV1" />
+	</bean>
+
+	<bean id="commerceWebServicesSessionLanguageFilterV1" class="de.hybris.electronics.filter.SessionLanguageFilter">
+		<property name="contextInformationLoader" ref="wsContextInformationLoaderV1" />
 	</bean>
 
 	<alias alias="baseSiteCheckFilterV1" name="defaultBaseSiteCheckFilterV1" />
@@ -57,11 +66,18 @@
 		<property name="cartService" ref="cartService" />
 	</bean>
 
+	<bean id="commerceWebServicesConsentFilterV1" class="de.hybris.electronics.filter.ConsentFilter">
+		<property name="userFacade" ref="userFacade"/>
+		<property name="baseSiteService" ref="baseSiteService"/>
+		<property name="anonymousConsentFacade" ref="anonymousConsentFacade"/>
+		<property name="customerConsentDataStrategy" ref="customerConsentDataStrategy"/>
+	</bean>
+
 	<bean id="guestRoleFilterV1" class="de.hybris.electronics.auth.GuestRoleFilter">
 		<property name="authenticationEventPublisher">
 			<bean class="org.springframework.security.authentication.DefaultAuthenticationEventPublisher" />
 		</property>
-		<property name="userService" ref="userService" />
+		<property name="userFacade" ref="userFacade" />
 		<property name="cartService" ref="cartService" />
 		<property name="guestRole" value="ROLE_GUEST" />
 	</bean>

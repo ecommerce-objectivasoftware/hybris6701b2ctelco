@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.storefront.controllers.misc;
 
@@ -241,7 +234,7 @@ public class AddToCartController extends AbstractController
 	}
 
 	@RequestMapping(value = "/entrygroups/cart/addToEntryGroup", method =
-	{ RequestMethod.POST, RequestMethod.GET })
+	{ RequestMethod.POST, RequestMethod.GET }) //NOSONAR
 	public String addEntryGroupToCart(final Model model, @Valid final AddToEntryGroupForm form, final BindingResult bindingErrors)
 	{
 		if (bindingErrors.hasErrors())

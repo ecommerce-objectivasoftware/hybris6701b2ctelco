@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.populator;
 
@@ -36,6 +29,7 @@ import org.springframework.util.Assert;
  * <li>titleCode</li>
  * <li>firstName</li>
  * <li>lastName</li>
+ * <li>email</li>
  * <li>line1</li>
  * <li>line2</li>
  * <li>town</li>
@@ -45,12 +39,9 @@ import org.springframework.util.Assert;
  * <li>shippingAddress</li>
  * <li>billingAddress</li>
  * </ul>
- *
+ * <p>
  * You can set a parameter prefix.. I.e 'billingAddress'. Then the populator would search parameters with the prefix,
  * i.e : 'billingAddress.firstName', etc..
- *
- *
- *
  */
 @Component("httpRequestAddressDataPopulator")
 @Scope("prototype")
@@ -62,13 +53,16 @@ public class HttpRequestAddressDataPopulator extends AbstractHttpRequestDataPopu
 	private static final String TITLE_CODE = "titleCode";
 	private static final String FIRST_NAME = "firstName";
 	private static final String LAST_NAME = "lastName";
+	private static final String EMAIL = "email";
 	private static final String LINE1 = "line1";
 	private static final String LINE2 = "line2";
 	private static final String TOWN = "town";
 	private static final String POSTCODE = "postalCode";
 	private static final String PHONE = "phone";
+	private static final String CELLPHONE = "cellphone";
 	private static final String COUNTRY = "country.isocode";
 	private static final String REGION = "region.isocode";
+	private static final String DISTRICT = "district";
 	private static final String DEFAULT_ADDRESS = "defaultAddress";
 
 	private String addressPrefix;
@@ -89,13 +83,16 @@ public class HttpRequestAddressDataPopulator extends AbstractHttpRequestDataPopu
 		addressData.setTitleCode(updateStringValueFromRequest(request, TITLE_CODE, addressData.getTitleCode()));
 		addressData.setFirstName(updateStringValueFromRequest(request, FIRST_NAME, addressData.getFirstName()));
 		addressData.setLastName(updateStringValueFromRequest(request, LAST_NAME, addressData.getLastName()));
+		addressData.setEmail(updateStringValueFromRequest(request, EMAIL, addressData.getEmail()));
 		addressData.setLine1(updateStringValueFromRequest(request, LINE1, addressData.getLine1()));
 		addressData.setLine2(updateStringValueFromRequest(request, LINE2, addressData.getLine2()));
 		addressData.setTown(updateStringValueFromRequest(request, TOWN, addressData.getTown()));
 		addressData.setPostalCode(updateStringValueFromRequest(request, POSTCODE, addressData.getPostalCode()));
 		addressData.setPhone(updateStringValueFromRequest(request, PHONE, addressData.getPhone()));
+		addressData.setCellphone(updateStringValueFromRequest(request, CELLPHONE, addressData.getCellphone()));
 		addressData.setCountry(updateCountryFromRequest(request, addressData.getCountry()));
 		addressData.setRegion(updateRegionFromRequest(request, addressData.getRegion()));
+		addressData.setDistrict(updateStringValueFromRequest(request, DISTRICT, addressData.getDistrict()));
 		addressData.setDefaultAddress(updateBooleanValueFromRequest(request, DEFAULT_ADDRESS, addressData.isDefaultAddress()));
 	}
 

@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- [y] hybris Platform
-
- Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
-
- This software is the confidential and proprietary information of SAP
- ("Confidential Information"). You shall not disclose such Confidential
- Information and shall use it only in accordance with the terms of the
- license agreement you entered into with SAP.
+ Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:mvc="http://www.springframework.org/schema/mvc"
@@ -65,6 +58,7 @@
 		<property name="cartService" ref="cartService"/>
 	</bean>
 
+
 	<!--  MVC Interceptors -->
 	<alias name="defaultBeforeControllerHandlersList" alias="beforeControllerHandlersList" />
 	<util:list id="defaultBeforeControllerHandlersList" >
@@ -80,15 +74,25 @@
 		<bean class="de.hybris.electronics.storefront.interceptors.beforecontroller.SetLanguageBeforeControllerHandler" />
 		<bean class="de.hybris.electronics.storefront.interceptors.beforecontroller.SetUiExperienceBeforeControllerHandler" />
 		<bean class="de.hybris.electronics.storefront.interceptors.beforecontroller.ThemeBeforeControllerHandler" />
+		<bean class="de.hybris.electronics.storefront.interceptors.beforecontroller.SecurityEmailCheckBeforeControllerHandler" />
 	</util:list>
-	
+
+	<!--UI Theme-->
+	<bean id="uiThemeUtils" class="de.hybris.electronics.storefront.util.UiThemeUtils">
+		<property name="defaultThemeName" value="blue" />
+		<property name="uiExperienceService" ref="uiExperienceService"/>
+		<property name="cmsSiteService" ref="cmsSiteService"/>
+		<property name="siteConfigService" ref="siteConfigService"/>
+		<property name="requiredAddOnsNameProvider" ref="reqAddOnsNameProvider"/>
+		<property name="uiExperienceViewResolver" ref="viewResolver"/>
+	</bean>
+
+
 	<alias name="defaultBeforeViewHandlersList" alias="beforeViewHandlersList" />
 	<util:list id="defaultBeforeViewHandlersList"  >
 	<!-- The CmsPageBeforeViewHandler could change the target view, so it should be run first. -->
 		<bean class="de.hybris.electronics.storefront.interceptors.beforeview.CmsPageBeforeViewHandler" />
-		<bean class="de.hybris.electronics.storefront.interceptors.beforeview.UiThemeResourceBeforeViewHandler" >
-			<property name="defaultThemeName" value="blue"/>
-		</bean>
+		<bean class="de.hybris.electronics.storefront.interceptors.beforeview.UiThemeResourceBeforeViewHandler" />
 		<bean class="de.hybris.electronics.storefront.interceptors.beforeview.SeoRobotsFollowBeforeViewHandler" >
 			<property name="robotIndexForJSONMapping">
 				<map>
@@ -97,7 +101,9 @@
 			</property>
 		</bean>
 		<bean class="de.hybris.electronics.storefront.interceptors.beforeview.UiExperienceMetadataViewHandler"  />
-		<bean class="de.hybris.electronics.storefront.interceptors.beforeview.AnalyticsPropertiesBeforeViewHandler" />
+		<bean class="de.hybris.electronics.storefront.interceptors.beforeview.AnalyticsPropertiesBeforeViewHandler" >
+			<property name="hostConfigService" ref="hostConfigService" />
+		</bean>
 		<bean class="de.hybris.electronics.storefront.interceptors.beforeview.ConfigWro4jBeforeViewHandler" >
 			<property name="siteConfigService" ref="siteConfigService"/>
 		</bean>
@@ -227,6 +233,7 @@
 		<property name="productModelUrlResolver" ref="productModelUrlResolver"/>
 		<property name="categoryModelUrlResolver" ref="categoryModelUrlResolver"/>
 		<property name="productService" ref="productService"/>
+		<property name="productAndCategoryHelper" ref="productAndCategoryHelper"/>
 	</bean>
 
 	<bean id="searchBreadcrumbBuilder" class="de.hybris.platform.acceleratorstorefrontcommons.breadcrumb.impl.SearchBreadcrumbBuilder" >
@@ -284,7 +291,6 @@
 		<entry key="checkout-login" value="/login/checkout"/>
 		<entry key="forgottenPassword" value="/login/pw/request"/>
 		<entry key="updatePassword" value="/my-account/update-password"/>
-		<entry key="notFound" value="/error"/>
 
 		<!--Configuration WCMS Mobile Page to URL -->
 		<entry key="mobile-homepage" value="/"/>
@@ -322,6 +328,7 @@
 		<property name="cmsSiteService" ref="cmsSiteService"/>
 		<property name="commerceCategoryService" ref="commerceCategoryService"/>
 		<property name="productService" ref="productService"/>
+		<property name="productAndCategoryHelper" ref="productAndCategoryHelper"/>
 	</bean>
 
 	<alias name="defaultVariantSortStrategy" alias="variantSortStrategy" />
@@ -356,4 +363,5 @@
 		<property name="cmsSiteService" ref="cmsSiteService"/>
 		<property name="defaultTheme" value="blue"/>
 	</bean>
+
 </beans>

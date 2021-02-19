@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.core.setup;
 
@@ -78,7 +71,7 @@ public class CoreSystemSetup extends AbstractSystemSetup
 
 		final List<String> extensionNames = getExtensionNames();
 
-		processCockpit(context, importAccessRights, extensionNames, "cmscockpit",
+		processCockpit(context, importAccessRights, extensionNames, "cmsbackoffice",
 				"/electronicsonlinecore/import/cockpits/cmscockpit/cmscockpit-users.impex",
 				"/electronicsonlinecore/import/cockpits/cmscockpit/cmscockpit-access-rights.impex");
 
@@ -87,18 +80,9 @@ public class CoreSystemSetup extends AbstractSystemSetup
 				"/electronicsonlinecore/import/cockpits/productcockpit/productcockpit-access-rights.impex",
 				"/electronicsonlinecore/import/cockpits/productcockpit/productcockpit-constraints.impex");
 
-		processCockpit(context, importAccessRights, extensionNames, "cscockpit",
+		processCockpit(context, importAccessRights, extensionNames, "customersupportbackoffice",
 				"/electronicsonlinecore/import/cockpits/cscockpit/cscockpit-users.impex",
 				"/electronicsonlinecore/import/cockpits/cscockpit/cscockpit-access-rights.impex");
-
-		processCockpit(context, importAccessRights, extensionNames, "reportcockpit",
-				"/electronicsonlinecore/import/cockpits/reportcockpit/reportcockpit-users.impex",
-				"/electronicsonlinecore/import/cockpits/reportcockpit/reportcockpit-access-rights.impex");
-
-		if (extensionNames.contains("mcc"))
-		{
-			importImpexFile(context, "/electronicsonlinecore/import/common/mcc-sites-links.impex");
-		}
 	}
 
 	protected void processCockpit(final SystemSetupContext context, final boolean importAccessRights,
@@ -116,10 +100,5 @@ public class CoreSystemSetup extends AbstractSystemSetup
 	protected List<String> getExtensionNames()
 	{
 		return Registry.getCurrentTenant().getTenantSpecificExtensionNames();
-	}
-
-	protected <T> T getBeanForName(final String name)
-	{
-		return (T) Registry.getApplicationContext().getBean(name);
 	}
 }

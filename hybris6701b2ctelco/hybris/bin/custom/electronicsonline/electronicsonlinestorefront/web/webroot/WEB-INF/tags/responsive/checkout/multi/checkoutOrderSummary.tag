@@ -39,11 +39,11 @@
 </div>
 
 <div class="visible-xs clearfix">
-    <form:form action="${placeOrderUrl}" id="placeOrderForm1" commandName="placeOrderForm" class="place-order-form col-xs-12">
+    <form:form action="${placeOrderUrl}" id="placeOrderForm1" modelAttribute="placeOrderForm" class="place-order-form col-xs-12">
         <div class="checkbox">
             <label> <form:checkbox id="Terms1" path="termsCheck" />
-                <spring:theme var="readTermsAndConditions" code="checkout.summary.placeOrder.readTermsAndConditions" arguments="${fn:escapeXml(getTermsAndConditionsUrl)}" htmlEscape="false"/>
-            ${ycommerce:sanitizeHTML(readTermsAndConditions)}
+                <spring:theme var="termsAndConditionsHtml" code="checkout.summary.placeOrder.readTermsAndConditions" arguments="${fn:escapeXml(getTermsAndConditionsUrl)}" htmlEscape="false"/>
+            	${ycommerce:sanitizeHTML(termsAndConditionsHtml)}
             </label>
         </div>
 

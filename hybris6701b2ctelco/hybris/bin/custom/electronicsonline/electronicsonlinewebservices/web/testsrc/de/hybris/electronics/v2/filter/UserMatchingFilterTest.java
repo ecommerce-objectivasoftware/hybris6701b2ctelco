@@ -1,30 +1,23 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.v2.filter;
 
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
+import de.hybris.platform.commerceservices.user.UserMatchingService;
 import de.hybris.platform.core.model.user.CustomerModel;
+import de.hybris.platform.core.model.user.UserModel;
+import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
+import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.servicelayer.user.UserService;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -34,6 +27,10 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 
 /**
@@ -55,6 +52,10 @@ public class UserMatchingFilterTest
 	private FilterChain filterChain;
 	@Mock
 	private UserService userService;
+	@Mock
+	private UserMatchingService userMatchingService;
+	@Mock
+	private SessionService sessionService;
 	@Mock
 	private CustomerModel principalUserModel;
 	@Mock
@@ -81,6 +82,8 @@ public class UserMatchingFilterTest
 		};
 		userMatchingFilter.setRegexp(DEFAULT_REGEXP);
 		userMatchingFilter.setUserService(userService);
+		userMatchingFilter.setUserMatchingService(userMatchingService);
+		userMatchingFilter.setSessionService(sessionService);
 		authorities = new ArrayList<>();
 		given(userService.getAnonymousUser()).willReturn(anonymousUserModel);
 	}
@@ -91,7 +94,9 @@ public class UserMatchingFilterTest
 		authorities.add(grantedAuthority);
 		given(authentication.getAuthorities()).willReturn(authorities);
 		given(authentication.getPrincipal()).willReturn(principal);
-		given(userService.getUserForUID(principal)).willReturn(principalUserModel);
+		given(principalUserModel.getUid()).willReturn(principal);
+		given(userMatchingService.getUserByProperty(principal, UserModel.class)).willReturn(principalUserModel);
+
 	}
 
 	public void testNullPathInfo(final String role, final String principal) throws ServletException, IOException
@@ -154,12 +159,12 @@ public class UserMatchingFilterTest
 		userMatchingFilter.doFilter(httpServletRequest, httpServletResponse, filterChain);
 	}
 
-	public void testMatchingPathForCustomerManagingUser(final String role, final String principal) throws IOException,
-			ServletException
+	public void testMatchingPathForCustomerManagingUser(final String role, final String principal)
+			throws IOException, ServletException
 	{
 		given(httpServletRequest.getPathInfo()).willReturn("/wsTest/users/" + CUSTOMER_UID + "/and/more");
 		createAuthority(role, principal);
-		given(userService.getUserForUID(CUSTOMER_UID)).willReturn(customerUserModel);
+		given(userMatchingService.getUserByProperty(CUSTOMER_UID, UserModel.class)).willReturn(customerUserModel);
 
 		userMatchingFilter.doFilter(httpServletRequest, httpServletResponse, filterChain);
 
@@ -195,6 +200,7 @@ public class UserMatchingFilterTest
 	public void testFailMatchingPathForUnauthenticatedCustomer() throws ServletException, IOException
 	{
 		given(httpServletRequest.getPathInfo()).willReturn("/wsTest/users/admin/and/more");
+		given(userMatchingService.getUserByProperty("admin", UserModel.class)).willThrow(UnknownIdentifierException.class);
 		createAuthority(UserMatchingFilter.ROLE_CUSTOMERGROUP, CUSTOMER_UID);
 
 		userMatchingFilter.doFilter(httpServletRequest, httpServletResponse, filterChain);

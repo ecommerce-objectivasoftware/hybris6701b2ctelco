@@ -1,26 +1,20 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.v2.controller;
 
 import de.hybris.platform.commercewebservicescommons.dto.queues.OrderStatusUpdateElementListWsDTO;
+import de.hybris.platform.webservicescommons.swagger.ApiFieldsParam;
 import de.hybris.electronics.formatters.WsDateFormatter;
 import de.hybris.electronics.queues.data.OrderStatusUpdateElementData;
 import de.hybris.electronics.queues.data.OrderStatusUpdateElementDataList;
 import de.hybris.electronics.queues.impl.OrderStatusUpdateQueue;
 
+import javax.annotation.Resource;
+
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.annotation.Resource;
 
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
@@ -46,17 +40,17 @@ public class FeedsController extends BaseController
 	@Resource(name = "orderStatusUpdateQueue")
 	private OrderStatusUpdateQueue orderStatusUpdateQueue;
 
-
 	@Secured("ROLE_TRUSTED_CLIENT")
 	@RequestMapping(value = "/orders/statusfeed", method = RequestMethod.GET)
 	@ResponseBody
-	@ApiOperation(value = "Get a list of orders with status updates", notes = "Returns the orders that have changed status. Returns only the elements from the "
-			+ "current baseSite that have been updated after the provided timestamp.", authorizations =
-	{ @Authorization(value = "oauth2_client_credentials") })
-	public OrderStatusUpdateElementListWsDTO orderStatusFeed(
+	@ApiOperation(nickname = "getOrderStatusFeed", value = "Get a list of orders with status updates.", notes =
+			"Returns the orders that have changed status. Returns only the elements from the "
+					+ "current baseSite that have been updated after the provided timestamp.", authorizations = {
+			@Authorization(value = "oauth2_client_credentials") })
+	public OrderStatusUpdateElementListWsDTO getOrderStatusFeed(
 			@ApiParam(value = "Only items newer than the given parameter are retrieved. This parameter should be in ISO-8601 format (for example, 2018-01-09T16:28:45+0000).", required = true) @RequestParam final String timestamp,
 			@ApiParam(value = "Base site identifier", required = true) @PathVariable final String baseSiteId,
-			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(required = false, defaultValue = DEFAULT_FIELD_SET) final String fields)
+			@ApiFieldsParam @RequestParam(defaultValue = DEFAULT_FIELD_SET) final String fields)
 	{
 		final Date timestampDate = wsDateFormatter.toDate(timestamp);
 		final List<OrderStatusUpdateElementData> orderStatusUpdateElements = orderStatusUpdateQueue.getItems(timestampDate);

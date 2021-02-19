@@ -1,31 +1,22 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.util.ws.impl;
+
+import javax.annotation.PostConstruct;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.springframework.beans.BeansException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
@@ -40,16 +31,14 @@ import com.google.common.collect.Lists;
  */
 public class AddonAwareMessageSource extends ReloadableResourceBundleMessageSource implements ApplicationContextAware
 {
-	private static final Logger LOG = Logger.getLogger(AddonAwareMessageSource.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AddonAwareMessageSource.class);
 
 	protected boolean scanForAddons;
 	protected ContextResource baseAddonDir;
-	private ApplicationContext applicationContext;
-
 	protected Predicate<String> fileFilter;
 	protected Predicate<String> dirFilter;
-
 	protected List<String> basenames;
+	private ApplicationContext applicationContext;
 
 	public AddonAwareMessageSource()
 	{
@@ -67,7 +56,7 @@ public class AddonAwareMessageSource extends ReloadableResourceBundleMessageSour
 	@PostConstruct
 	public void setupAddonMessages()
 	{
-		final List<String> basenameList = new ArrayList<String>();
+		final List<String> basenameList = new ArrayList<>();
 
 		if (baseAddonDir == null)
 		{
@@ -99,7 +88,7 @@ public class AddonAwareMessageSource extends ReloadableResourceBundleMessageSour
 		final String[] result = basenameList.toArray(new String[basenameList.size()]);
 		if (LOG.isDebugEnabled())
 		{
-			LOG.log(Level.DEBUG, "Loaded message bundles: " + Arrays.toString(result));
+			LOG.debug("Loaded message bundles: {}", basenameList);
 		}
 		super.setBasenames(result);
 	}
@@ -152,9 +141,9 @@ public class AddonAwareMessageSource extends ReloadableResourceBundleMessageSour
 	 * empty, invalid and duplicated entries.
 	 *
 	 * @param addonsPath
-	 *           paths to transform
+	 * 		paths to transform
 	 * @param basePath
-	 *           from where result path should start
+	 * 		from where result path should start
 	 * @return collection of paths to message bundles
 	 */
 	protected Collection<String> mapAddonLocation(final Collection<String> addonsPath, final String basePath)
@@ -211,7 +200,7 @@ public class AddonAwareMessageSource extends ReloadableResourceBundleMessageSour
 
 	/**
 	 * @param scanForAddons
-	 *           the scanForAddons to set
+	 * 		the scanForAddons to set
 	 */
 	public void setScanForAddons(final boolean scanForAddons)
 	{
@@ -228,7 +217,7 @@ public class AddonAwareMessageSource extends ReloadableResourceBundleMessageSour
 
 	/**
 	 * @param baseAddonDir
-	 *           the baseAddonDir to set
+	 * 		the baseAddonDir to set
 	 */
 	public void setBaseAddonDir(final ContextResource baseAddonDir)
 	{
@@ -245,7 +234,7 @@ public class AddonAwareMessageSource extends ReloadableResourceBundleMessageSour
 
 	/**
 	 * @param fileFilter
-	 *           the fileFilter to set
+	 * 		the fileFilter to set
 	 */
 	public void setFileFilter(final Predicate<String> fileFilter)
 	{
@@ -262,7 +251,7 @@ public class AddonAwareMessageSource extends ReloadableResourceBundleMessageSour
 
 	/**
 	 * @param dirFilter
-	 *           the dirFilter to set
+	 * 		the dirFilter to set
 	 */
 	public void setDirFilter(final Predicate<String> dirFilter)
 	{
@@ -270,7 +259,7 @@ public class AddonAwareMessageSource extends ReloadableResourceBundleMessageSour
 	}
 
 	@Override
-	public void setApplicationContext(final ApplicationContext arg0) throws BeansException //NOSONAR
+	public void setApplicationContext(final ApplicationContext arg0)
 	{
 		applicationContext = arg0;
 	}

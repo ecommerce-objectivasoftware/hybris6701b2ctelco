@@ -1,17 +1,12 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.context.impl;
 
+// <v1-api>
 import de.hybris.platform.basecommerce.exceptions.BaseSiteActivationException;
 import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
+// </v1-api>
 import de.hybris.platform.basecommerce.strategies.ActivateBaseSiteInSessionStrategy;
 import de.hybris.platform.commerceservices.i18n.CommerceCommonI18NService;
 import de.hybris.platform.core.model.c2l.CurrencyModel;
@@ -29,7 +24,9 @@ import de.hybris.platform.store.services.BaseStoreService;
 import de.hybris.platform.webservicescommons.util.YSanitizer;
 import de.hybris.electronics.constants.YcommercewebservicesConstants;
 import de.hybris.electronics.context.ContextInformationLoader;
+// <v1-api>
 import de.hybris.electronics.exceptions.InvalidResourceException;
+// </v1-api>
 import de.hybris.electronics.exceptions.RecalculationException;
 import de.hybris.electronics.exceptions.UnsupportedCurrencyException;
 import de.hybris.electronics.exceptions.UnsupportedLanguageException;
@@ -51,8 +48,7 @@ import org.springframework.beans.factory.annotation.Required;
  */
 public class DefaultContextInformationLoader implements ContextInformationLoader
 {
-	private static final String[] urlSplitters =
-	{ "/v1/", "/v2/" };
+	private static final String[] urlSplitters = { "/v1/", "/v2/" };
 
 	private static final Logger LOG = Logger.getLogger(DefaultContextInformationLoader.class);
 
@@ -126,12 +122,12 @@ public class DefaultContextInformationLoader implements ContextInformationLoader
 		{
 			throw new IllegalStateException("No current base store was set!");
 		}
-		return currentBaseStore.getLanguages() == null ? Collections.<LanguageModel> emptySet() : currentBaseStore.getLanguages();
+		return currentBaseStore.getLanguages() == null ? Collections.<LanguageModel>emptySet() : currentBaseStore.getLanguages();
 	}
 
 	@Override
-	public CurrencyModel setCurrencyFromRequest(final HttpServletRequest request) throws UnsupportedCurrencyException,
-			RecalculationException
+	public CurrencyModel setCurrencyFromRequest(final HttpServletRequest request)
+			throws UnsupportedCurrencyException, RecalculationException
 	{
 		final String currencyString = request.getParameter(YcommercewebservicesConstants.HTTP_REQUEST_PARAM_CURRENCY);
 		CurrencyModel currencyToSet = null;
@@ -205,27 +201,28 @@ public class DefaultContextInformationLoader implements ContextInformationLoader
 		}
 	}
 
+
+	// <v1-api>
 	/**
 	 * Method resolves base site uid from request URL and set it as current site i.e<br>
 	 * <i>/rest/v1/mysite/cart</i>, or <br>
 	 * <i>/rest/v1/mysite/customers/current</i><br>
 	 * would try to set base site with uid=mysite as a current site.<br>
-	 *
+	 * <p>
 	 * One should define the path which is expected to be before the site resource in the project properties file
 	 * (<b>commercewebservices.rootcontext</b>).<br>
 	 * Default and fallback value equals to <i>/rest/v1/</i><br>
-	 *
+	 * <p>
 	 * Method uses also a comma separated list of url special characters that are used to parse the site id resource. You
 	 * can reconfigure it in properties file (<b>commercewebservices.url.special.characters</b>). The default and
 	 * fallback value is equal to <i>"?,/</i>".
-	 *
+	 * <p>
 	 * Method will throw {@link InvalidResourceException} if it fails to find the site which is in the resource url.<br>
 	 * However, you can configure exceptions that doesn't require the site mapping in the resource path. You can
 	 * configure them in a spring bean called 'baseFilterResourceExceptions'.<br>
 	 *
 	 * @param request
-	 *           - request from which we should get base site uid
-	 *
+	 * 		- request from which we should get base site uid
 	 * @return baseSite set as current site or null
 	 * @throws InvalidResourceException
 	 */
@@ -321,9 +318,9 @@ public class DefaultContextInformationLoader implements ContextInformationLoader
 
 	protected String[] getSpecialUrlCharacters()
 	{
-		final String configurationString = getConfigurationService().getConfiguration().getString(
-				YcommercewebservicesConstants.URL_SPECIAL_CHARACTERS_PROPERTY,
-				YcommercewebservicesConstants.DEFAULT_URL_SPECIAL_CHARACTERS);
+		final String configurationString = getConfigurationService().getConfiguration()
+				.getString(YcommercewebservicesConstants.URL_SPECIAL_CHARACTERS_PROPERTY,
+						YcommercewebservicesConstants.DEFAULT_URL_SPECIAL_CHARACTERS);
 		return configurationString.split(",");
 	}
 
@@ -345,6 +342,8 @@ public class DefaultContextInformationLoader implements ContextInformationLoader
 		}
 	}
 
+	// </v1-api>
+ 
 	public ConfigurationService getConfigurationService()
 	{
 		return configurationService;

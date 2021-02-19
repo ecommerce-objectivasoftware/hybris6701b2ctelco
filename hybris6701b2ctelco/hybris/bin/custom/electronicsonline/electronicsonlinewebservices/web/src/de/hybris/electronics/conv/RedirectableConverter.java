@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.conv;
 
@@ -20,9 +13,9 @@ public interface RedirectableConverter extends Converter
 {
 	/**
 	 * Sets given converter as a target of redirection.
-	 * 
+	 *
 	 * @param converter
-	 *           converter to be used instead of current converter.
+	 * 		converter to be used instead of current converter.
 	 */
 	void setTargetConverter(final Converter converter);
 

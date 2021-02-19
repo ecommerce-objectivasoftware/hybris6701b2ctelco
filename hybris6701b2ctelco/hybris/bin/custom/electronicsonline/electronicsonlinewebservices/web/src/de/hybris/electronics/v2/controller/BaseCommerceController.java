@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.v2.controller;
 
@@ -15,7 +8,6 @@ import de.hybris.platform.commercefacades.order.CheckoutFacade;
 import de.hybris.platform.commercefacades.order.data.CCPaymentInfoData;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
-import de.hybris.platform.commercefacades.order.data.CartModificationDataList;
 import de.hybris.platform.commercefacades.user.UserFacade;
 import de.hybris.platform.commercefacades.user.data.AddressData;
 import de.hybris.platform.commercefacades.voucher.VoucherFacade;
@@ -27,30 +19,39 @@ import de.hybris.platform.converters.Populator;
 import de.hybris.platform.order.InvalidCartException;
 import de.hybris.platform.webservicescommons.errors.exceptions.WebserviceValidationException;
 import de.hybris.platform.webservicescommons.validators.EnumValueValidator;
-import de.hybris.electronics.constants.YcommercewebservicesConstants;
 import de.hybris.electronics.exceptions.InvalidPaymentInfoException;
 import de.hybris.electronics.exceptions.NoCheckoutCartException;
 import de.hybris.electronics.exceptions.UnsupportedDeliveryModeException;
+import de.hybris.platform.commercefacades.order.data.CartModificationDataList;
 import de.hybris.electronics.populator.options.PaymentInfoOption;
 import de.hybris.electronics.validator.PlaceOrderCartValidator;
+import de.hybris.electronics.validator.CartVoucherValidator;
+import de.hybris.electronics.validation.data.CartVoucherValidationData;
+import de.hybris.electronics.validation.data.CartVoucherValidationDataList;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.log4j.Logger;
+import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import static de.hybris.electronics.constants.YcommercewebservicesConstants.ENUM_VALUES_SEPARATOR;
+
 
 public class BaseCommerceController extends BaseController
 {
-	private static final Logger LOG = Logger.getLogger(BaseCommerceController.class);
-	//TODO change commerceWebServicesCartFacade2 to commerceWebServicesCartFacade after removing it in commercefacades
+	protected static final String API_COMPATIBILITY_B2C_CHANNELS = "api.compatibility.b2c.channels";
+
+	private static final Logger LOG = LoggerFactory.getLogger(BaseCommerceController.class);
+
 	@Resource(name = "commerceWebServicesCartFacade2")
 	private CartFacade cartFacade;
 	@Resource(name = "checkoutFacade")
@@ -77,8 +78,10 @@ public class BaseCommerceController extends BaseController
 	private PlaceOrderCartValidator placeOrderCartValidator;
 	@Resource(name = "orderStatusValueValidator")
 	private EnumValueValidator orderStatusValueValidator;
+	@Resource(name = "cartVoucherValidator")
+	private CartVoucherValidator cartVoucherValidator;
 
-	protected AddressData createAddressInternal(final HttpServletRequest request) throws WebserviceValidationException //NOSONAR
+	protected AddressData createAddressInternal(final HttpServletRequest request)
 	{
 		final AddressData addressData = new AddressData();
 		httpRequestAddressDataPopulator.populate(request, addressData);
@@ -100,12 +103,9 @@ public class BaseCommerceController extends BaseController
 		return addressData;
 	}
 
-	protected CartData setCartDeliveryAddressInternal(final String addressId) throws NoCheckoutCartException
+	protected CartData setCartDeliveryAddressInternal(final String addressId)
 	{
-		if (LOG.isDebugEnabled())
-		{
-			LOG.debug("setCartDeliveryAddressInternal: " + logParam("addressId", addressId));
-		}
+		LOG.debug("setCartDeliveryAddressInternal: {}", logParam("addressId", addressId));
 		final AddressData address = new AddressData();
 		address.setId(addressId);
 		final Errors errors = new BeanPropertyBindingResult(address, "addressData");
@@ -119,16 +119,14 @@ public class BaseCommerceController extends BaseController
 		{
 			return getSessionCart();
 		}
-		throw new CartAddressException("Address given by id " + sanitize(addressId)
-				+ " cannot be set as delivery address in this cart", CartAddressException.CANNOT_SET, addressId);
+		throw new CartAddressException(
+				"Address given by id " + sanitize(addressId) + " cannot be set as delivery address in this cart",
+				CartAddressException.CANNOT_SET, addressId);
 	}
 
 	protected CartData setCartDeliveryModeInternal(final String deliveryModeId) throws UnsupportedDeliveryModeException
 	{
-		if (LOG.isDebugEnabled())
-		{
-			LOG.debug("setCartDeliveryModeInternal: " + logParam("deliveryModeId", deliveryModeId));
-		}
+		LOG.debug("setCartDeliveryModeInternal: {}", logParam("deliveryModeId", deliveryModeId));
 		if (checkoutFacade.setDeliveryMode(deliveryModeId))
 		{
 			return getSessionCart();
@@ -136,13 +134,10 @@ public class BaseCommerceController extends BaseController
 		throw new UnsupportedDeliveryModeException(deliveryModeId);
 	}
 
-	protected CartData applyVoucherForCartInternal(final String voucherId) throws NoCheckoutCartException,
-			VoucherOperationException
+	protected CartData applyVoucherForCartInternal(final String voucherId)
+			throws NoCheckoutCartException, VoucherOperationException
 	{
-		if (LOG.isDebugEnabled())
-		{
-			LOG.debug("apply voucher: " + logParam("voucherId", voucherId));
-		}
+		LOG.debug("apply voucher: {}", logParam("voucherId", voucherId));
 		if (!checkoutFacade.hasCheckoutCart())
 		{
 			throw new NoCheckoutCartException("Cannot apply voucher. There was no checkout cart created yet!");
@@ -152,13 +147,10 @@ public class BaseCommerceController extends BaseController
 		return getSessionCart();
 	}
 
-	protected CartData addPaymentDetailsInternal(final HttpServletRequest request) 
-			throws WebserviceValidationException, InvalidPaymentInfoException, NoCheckoutCartException //NOSONAR
+	protected CartData addPaymentDetailsInternal(final HttpServletRequest request)
+			throws InvalidPaymentInfoException, NoCheckoutCartException
 	{
-		if (LOG.isDebugEnabled())
-		{
-			LOG.debug("addPaymentInfo");
-		}
+		LOG.debug("addPaymentInfo");
 		if (!checkoutFacade.hasCheckoutCart())
 		{
 			throw new NoCheckoutCartException("Cannot add PaymentInfo. There was no checkout cart created yet!");
@@ -206,10 +198,7 @@ public class BaseCommerceController extends BaseController
 
 	protected CartData setPaymentDetailsInternal(final String paymentDetailsId) throws InvalidPaymentInfoException
 	{
-		if (LOG.isDebugEnabled())
-		{
-			LOG.debug("setPaymentDetailsInternal: " + logParam("paymentDetailsId", paymentDetailsId));
-		}
+		LOG.debug("setPaymentDetailsInternal: {}", logParam("paymentDetailsId", paymentDetailsId));
 		if (checkoutFacade.setPaymentDetails(paymentDetailsId))
 		{
 			return getSessionCart();
@@ -217,8 +206,7 @@ public class BaseCommerceController extends BaseController
 		throw new InvalidPaymentInfoException(paymentDetailsId);
 	}
 
-	protected void validateCartForPlaceOrder() 
-			throws NoCheckoutCartException, InvalidCartException, WebserviceValidationException //NOSONAR
+	protected void validateCartForPlaceOrder() throws NoCheckoutCartException, InvalidCartException
 	{
 		if (!checkoutFacade.hasCheckoutCart())
 		{
@@ -226,6 +214,14 @@ public class BaseCommerceController extends BaseController
 		}
 
 		final CartData cartData = getSessionCart();
+
+		final List<CartVoucherValidationData> validateDataList = cartVoucherValidator.validate(cartData.getAppliedVouchers());
+		if(CollectionUtils.isNotEmpty(validateDataList))
+		{
+			final CartVoucherValidationDataList cartVoucherValidationDataList = new CartVoucherValidationDataList();
+			cartVoucherValidationDataList.setCartVoucherValidationDataList(validateDataList);
+			throw new WebserviceValidationException(cartVoucherValidationDataList);
+		}
 
 		final Errors errors = new BeanPropertyBindingResult(cartData, "sessionCart");
 		placeOrderCartValidator.validate(cartData, errors);
@@ -267,7 +263,7 @@ public class BaseCommerceController extends BaseController
 			return;
 		}
 
-		final String[] statusesStrings = statuses.split(YcommercewebservicesConstants.OPTIONS_SEPARATOR);
+		final String[] statusesStrings = statuses.split(ENUM_VALUES_SEPARATOR);
 		validate(statusesStrings, "", orderStatusValueValidator);
 	}
 
@@ -383,6 +379,11 @@ public class BaseCommerceController extends BaseController
 			final ConfigurablePopulator<HttpServletRequest, CCPaymentInfoData, PaymentInfoOption> httpRequestPaymentInfoPopulator)
 	{
 		this.httpRequestPaymentInfoPopulator = httpRequestPaymentInfoPopulator;
+	}
+	
+	protected CartVoucherValidator getCartVoucherValidator()
+	{
+		return cartVoucherValidator;
 	}
 
 }

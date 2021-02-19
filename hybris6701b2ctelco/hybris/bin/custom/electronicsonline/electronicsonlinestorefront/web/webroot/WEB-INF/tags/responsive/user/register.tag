@@ -4,12 +4,12 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<%@ taglib prefix="formElement"
-	tagdir="/WEB-INF/tags/responsive/formElement"%>
-<%@ taglib prefix="theme" tagdir="/WEB-INF/tags/shared/theme"%>
+<%@ taglib prefix="formElement" tagdir="/WEB-INF/tags/responsive/formElement"%>
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="template" tagdir="/WEB-INF/tags/responsive/template"%>
+
+<spring:htmlEscape defaultHtmlEscape="true" />
 
 <spring:url value="/login/register/termsandconditions" var="getTermsAndConditionsUrl"/>
 
@@ -20,11 +20,11 @@
 	<spring:theme code="register.description" />
 </p>
 
-<form:form method="post" commandName="registerForm" action="${action}">
-	<formElement:formSelectBox idKey="register.title"
+<form:form method="post" modelAttribute="registerForm" action="${action}">
+	<formElement:formSelectBoxDefaultEnabled idKey="register.title"
 		labelKey="register.title" selectCSSClass="form-control"
 		path="titleCode" mandatory="true" skipBlank="false"
-		skipBlankMessageKey="form.select.empty" items="${titles}" />
+		skipBlankMessageKey="form.select.none" items="${titles}" />
 	<formElement:formInputBox idKey="register.firstName"
 		labelKey="register.firstName" path="firstName" inputCSS="form-control"
 		mandatory="true" />
@@ -34,9 +34,6 @@
 	<formElement:formInputBox idKey="register.email"
 		labelKey="register.email" path="email" inputCSS="form-control"
 		mandatory="true" />
-    <formElement:formInputBox idKey="register.mobileNumber"
-        labelKey="register.mobileNumber" path="mobileNumber" inputCSS="form-control"
-        mandatory="true" />
 	<formElement:formPasswordBox idKey="password" labelKey="register.pwd"
 		path="pwd" inputCSS="form-control password-strength" mandatory="true" />
 	<formElement:formPasswordBox idKey="register.checkPwd"
@@ -59,11 +56,12 @@
 
     </c:if>
 
+	<spring:theme code="register.termsConditions" arguments="${getTermsAndConditionsUrl}" var="termsConditionsHtml" htmlEscape="false" />
 	<template:errorSpanField path="termsCheck">
 		<div class="checkbox">
 			<label class="control-label uncased">
 				<form:checkbox id="registerChkTermsConditions" path="termsCheck" disabled="true"/>
-				<spring:theme code="register.termsConditions" arguments="${getTermsAndConditionsUrl}" />
+				${ycommerce:sanitizeHTML(termsConditionsHtml)}
 			</label>
 		</div>
 	</template:errorSpanField>

@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.oauth2;
 
@@ -27,9 +20,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
  * Filter sets current user by userService depending on current principal. <br>
  * This should happen only when there is a customer context. Anonymous credentials are also applicable, because special
  * 'anonymous' user is available for that purpose. Customer context is not available during client credential flow.
- * 
- *
- * 
  */
 public class HybrisOauth2UserFilter implements Filter
 {

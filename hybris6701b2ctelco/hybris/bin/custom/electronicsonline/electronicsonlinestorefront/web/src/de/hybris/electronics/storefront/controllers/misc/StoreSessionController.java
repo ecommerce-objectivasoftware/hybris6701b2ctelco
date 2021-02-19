@@ -1,15 +1,11 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.storefront.controllers.misc;
 
+import de.hybris.platform.acceleratorfacades.urlencoder.UrlEncoderFacade;
+import de.hybris.platform.acceleratorfacades.urlencoder.data.UrlEncoderData;
+import de.hybris.platform.acceleratorservices.constants.AcceleratorServicesConstants;
 import de.hybris.platform.acceleratorservices.uiexperience.UiExperienceService;
 import de.hybris.platform.acceleratorservices.urlencoder.UrlEncoderService;
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.AbstractController;
@@ -19,6 +15,7 @@ import de.hybris.platform.commercefacades.user.UserFacade;
 import de.hybris.platform.commerceservices.enums.UiExperienceLevel;
 import de.hybris.platform.enumeration.EnumerationService;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
+import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.electronics.storefront.filters.StorefrontFilter;
 
 import java.util.Arrays;
@@ -59,16 +56,22 @@ public class StoreSessionController extends AbstractController
 	@Resource(name = "enumerationService")
 	private EnumerationService enumerationService;
 
+	@Resource(name = "urlEncoderFacade")
+	private UrlEncoderFacade urlEncoderFacade;
+
 	@Resource(name = "urlEncoderService")
 	private UrlEncoderService urlEncoderService;
 
+	@Resource(name = "sessionService")
+	private SessionService sessionService;
 
 	@RequestMapping(value = "/language", method =
-	{ RequestMethod.GET, RequestMethod.POST })
+	{ RequestMethod.GET, RequestMethod.POST }) //NOSONAR
 	public String selectLanguage(@RequestParam("code") final String isoCode, final HttpServletRequest request)
 	{
 		final String previousLanguage = storeSessionFacade.getCurrentLanguage().getIsocode();
 		storeSessionFacade.setCurrentLanguage(isoCode);
+		updateUrlEncodingData(AcceleratorServicesConstants.LANGUAGE_ENCODING, isoCode);
 		if (!userFacade.isAnonymousUser())
 		{
 			userFacade.syncSessionLanguage();
@@ -78,7 +81,7 @@ public class StoreSessionController extends AbstractController
 	}
 
 	@RequestMapping(value = "/currency", method =
-	{ RequestMethod.GET, RequestMethod.POST })
+	{ RequestMethod.GET, RequestMethod.POST }) //NOSONAR
 	public String selectCurrency(@RequestParam("code") final String isoCode, final HttpServletRequest request)
 	{
 		final String previousCurrency = storeSessionFacade.getCurrentCurrency().getIsocode();
@@ -89,7 +92,7 @@ public class StoreSessionController extends AbstractController
 	}
 
 	@RequestMapping(value = "/ui-experience", method =
-	{ RequestMethod.GET, RequestMethod.POST })
+	{ RequestMethod.GET, RequestMethod.POST }) //NOSONAR
 	public String selectUiExperienceLevel(@RequestParam("level") final String uiExperienceLevelString,
 			final HttpServletRequest request)
 	{
@@ -156,7 +159,7 @@ public class StoreSessionController extends AbstractController
 	}
 
 	@RequestMapping(value = "/ui-experience-level-prompt", method =
-	{ RequestMethod.GET, RequestMethod.POST })
+	{ RequestMethod.GET, RequestMethod.POST }) //NOSONAR
 	public String selectUiExperienceLevelPrompt(@RequestParam("hide") final boolean hideFlag, final HttpServletRequest request)
 	{
 		setHideUiExperienceLevelOverridePrompt(request, hideFlag);
@@ -212,6 +215,18 @@ public class StoreSessionController extends AbstractController
 			return REDIRECT_PREFIX + StringUtils.replace(referer, "/" + old + "/", "/" + current + "/");
 		}
 		return REDIRECT_PREFIX + referer;
+	}
+
+	protected void updateUrlEncodingData(final String attributeName, final String value)
+	{
+		for (final UrlEncoderData urlEncoderData : urlEncoderFacade.getCurrentUrlEncodingData())
+		{
+			if (attributeName.equals(urlEncoderData.getAttributeName()))
+			{
+				urlEncoderData.setCurrentValue(value);
+			}
+		}
+
 	}
 
 	@ExceptionHandler(UnknownIdentifierException.class)

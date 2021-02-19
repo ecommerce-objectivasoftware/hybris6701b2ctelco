@@ -11,7 +11,14 @@
 <spring:theme code="${code}" text="/" var="imagePath" htmlEscape="false"/>
 <c:choose>
 	<c:when test="${originalContextPath ne null}">
-		<c:url value="${imagePath}" var="imageUrl" context="${originalContextPath}"/>
+		<c:choose>
+			<c:when test='${fn:startsWith(imagePath, originalContextPath)}'>	
+				<c:url value="${imagePath}" var="imageUrl" context="/"/>
+			</c:when>
+			<c:otherwise>
+				<c:url value="${imagePath}" var="imageUrl" context="${originalContextPath}"/>
+			</c:otherwise>
+		</c:choose>
 	</c:when>
 	<c:otherwise>
 		<c:url value="${imagePath}" var="imageUrl" />

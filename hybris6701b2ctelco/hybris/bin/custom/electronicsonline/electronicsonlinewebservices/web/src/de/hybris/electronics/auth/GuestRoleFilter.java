@@ -1,29 +1,22 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.auth;
 
+import de.hybris.platform.commercefacades.user.UserFacade;
 import de.hybris.platform.commerceservices.enums.CustomerType;
 import de.hybris.platform.core.model.user.CustomerModel;
-import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.order.CartService;
-import de.hybris.platform.servicelayer.user.UserService;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.authentication.AuthenticationEventPublisher;
@@ -41,7 +34,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
  */
 public class GuestRoleFilter extends OncePerRequestFilter
 {
-	private UserService userService;
+	private UserFacade userFacade;
 
 	private CartService cartService;
 
@@ -49,37 +42,43 @@ public class GuestRoleFilter extends OncePerRequestFilter
 
 	private String guestRole;
 
+	protected static boolean canProcessAuthentication(final CustomerModel customerModel)
+	{
+		final Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
+		return currentAuth == null || !currentAuth.getClass().equals(GuestAuthenticationToken.class) || !customerModel.getUid()
+				.equals(currentAuth.getName());
+	}
+
 	@Override
 	protected void doFilterInternal(final HttpServletRequest httpservletrequest, final HttpServletResponse httpservletresponse,
 			final FilterChain filterchain) throws ServletException, IOException
 	{
-		final Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
+		final Optional<CustomerModel> guest = getGuest();
+		guest.filter(GuestRoleFilter::canProcessAuthentication)//
+				.map(CustomerModel::getUid)//
+				.ifPresent(this::processAuthentication);
 
-		if (userService.isAnonymousUser(userService.getCurrentUser()) && cartService.hasSessionCart())
-		{
-			final UserModel um = cartService.getSessionCart().getUser();
-			if (um != null && CustomerModel.class.isAssignableFrom(um.getClass()))
-			{
-				final CustomerModel cm = (CustomerModel) um;
-
-				if (isGuest(cm))
-				{
-					if (currentAuth == null)
-					{
-						processAuthentication(cm.getUid());
-					}
-					else if (!currentAuth.getClass().equals(GuestAuthenticationToken.class))
-					{
-						processAuthentication(cm.getUid());
-					}
-					else if (!cm.getUid().equals(currentAuth.getName()))
-					{
-						processAuthentication(cm.getUid());
-					}
-				}
-			}
-		}
 		filterchain.doFilter(httpservletrequest, httpservletresponse);
+	}
+
+	protected Optional<CustomerModel> getGuest()
+	{
+		if (getUserFacade().isAnonymousUser())
+		{
+			return getSessionCartUser().filter(this::isGuest);
+		}
+		return Optional.empty();
+	}
+
+	protected Optional<CustomerModel> getSessionCartUser()
+	{
+		if (cartService.hasSessionCart())
+		{
+			return Optional.ofNullable(cartService.getSessionCart().getUser())
+					.filter(user -> CustomerModel.class.isAssignableFrom(user.getClass()))//
+					.map(CustomerModel.class::cast);
+		}
+		return Optional.empty();
 	}
 
 	protected void processAuthentication(final String uid)
@@ -91,22 +90,14 @@ public class GuestRoleFilter extends OncePerRequestFilter
 
 	protected Authentication createGuestAuthentication(final String uid)
 	{
-		final Collection<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
+		final Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 		grantedAuthorities.add(new SimpleGrantedAuthority(this.guestRole));
 		return new GuestAuthenticationToken(uid, grantedAuthorities);
 	}
 
 	protected boolean isGuest(final CustomerModel cm)
 	{
-		if (cm == null || cm.getType() == null)
-		{
-			return false;
-		}
-		if (cm.getType().toString().equals(CustomerType.GUEST.getCode()))
-		{
-			return true;
-		}
-		return false;
+		return cm != null && CustomerType.GUEST.equals(cm.getType());
 	}
 
 	public AuthenticationEventPublisher getAuthenticationEventPublisher()
@@ -131,15 +122,14 @@ public class GuestRoleFilter extends OncePerRequestFilter
 		this.guestRole = guestRole;
 	}
 
-	public UserService getUserService()
+	public UserFacade getUserFacade()
 	{
-		return userService;
+		return userFacade;
 	}
 
-	@Required
-	public void setUserService(final UserService userService)
+	public void setUserFacade(final UserFacade userFacade)
 	{
-		this.userService = userService;
+		this.userFacade = userFacade;
 	}
 
 	public CartService getCartService()

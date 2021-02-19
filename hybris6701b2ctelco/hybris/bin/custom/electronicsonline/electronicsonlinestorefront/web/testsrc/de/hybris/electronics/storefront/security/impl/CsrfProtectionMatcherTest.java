@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.storefront.security.impl;
 
@@ -41,11 +34,11 @@ public class CsrfProtectionMatcherTest extends HybrisJUnit4Test
 	public void setUp()
 	{
 		excludeUrlListBackup = Config.getParameter(CSRF_PROTECTION_EXCLUDE_URLS);
-		Config.setParameter(CSRF_PROTECTION_EXCLUDE_URLS, "/[^/]+(/[^?]*)+(excludeMeOne)$");
+		Config.setParameter(CSRF_PROTECTION_EXCLUDE_URLS, "^(/[^/?]+)*(/excludeMeOne)$");
 
 		csrfProtectionMatcher = new CsrfProtectionMatcher();
 		final List<String> excludeUrlList = new ArrayList<String>();
-		excludeUrlList.add("/[^/]+(/[^?]*)+(excludeMeTwo)$");
+		excludeUrlList.add("^(/[^/?]+)*(/excludeMeTwo)$");
 		csrfProtectionMatcher.setCsrfAllowedUrlPatterns(excludeUrlList);
 
 		request = new MockHttpServletRequest();

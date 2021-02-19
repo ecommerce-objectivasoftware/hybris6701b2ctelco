@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- [y] hybris Platform
-
- Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
-
- This software is the confidential and proprietary information of SAP
- ("Confidential Information"). You shall not disclose such Confidential
- Information and shall use it only in accordance with the terms of the
- license agreement you entered into with SAP.
+ Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -34,12 +27,15 @@
 	      parent="abstractCustomMapper"/>
 	<bean class="de.hybris.electronics.mapping.mappers.ImageUrlMapper"
 	      parent="abstractCustomMapper"/>
+	<bean class="de.hybris.electronics.mapping.mappers.StockDataMapper"
+	      parent="abstractCustomMapper"/>
 
 	<!-- Orika : Converters -->
 	<bean class="de.hybris.electronics.mapping.converters.StockLevelStatusConverter"/>
 	<bean class="de.hybris.electronics.mapping.converters.OrderStatusConverter"/>
 	<bean class="de.hybris.electronics.mapping.converters.ConsignmentStatusConverter"/>
 	<bean class="de.hybris.electronics.mapping.converters.DeliveryStatusConverter"/>
+	<bean class="de.hybris.electronics.mapping.converters.StatusSummaryConverter"/>
 	<bean class="de.hybris.electronics.mapping.converters.ProductReferenceTypeEnumConverter"/>
 	<bean class="de.hybris.electronics.mapping.converters.VoucherConverter">
 		<property name="dataMapper" ref="dataMapper" />
@@ -87,6 +83,33 @@
 	</bean>
 
 	<!-- Field Mappings : Cart -->
+
+	<bean id="cartDataFieldMapper" parent="fieldMapper">
+		<property name="sourceClass"
+				  value="de.hybris.platform.commercefacades.order.data.CartData"/>
+		<property name="destClass"
+				  value="de.hybris.platform.commercewebservicescommons.dto.order.CartWsDTO"/>
+		<property name="fieldMapping">
+			<map>
+				<entry key="rootGroups" value="entryGroups"/>
+			</map>
+		</property>
+	</bean>
+
+	<bean id="entryGroupDataFieldMapper" parent="fieldMapper">
+		<property name="sourceClass"
+				  value="de.hybris.platform.commercefacades.order.EntryGroupData"/>
+		<property name="destClass"
+				  value="de.hybris.platform.commercewebservicescommons.dto.order.EntryGroupWsDTO"/>
+		<property name="fieldMapping">
+			<map>
+				<entry key="groupNumber" value="entryGroupNumber"/>
+				<entry key="children" value="entryGroups"/>
+				<entry key="orderEntries" value="entries"/>
+				<entry key="groupType" value="type"/>
+			</map>
+		</property>
+	</bean>
 
 	<bean id="cartModificationListFieldMapper" parent="fieldMapper">
 		<property name="sourceClass"
@@ -187,6 +210,50 @@
 			<map>
 				<entry key="totalNumberOfResults" value="totalResults"/>
 				<entry key="numberOfPages" value="totalPages"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- Field Mappings : Consents -->
+	<bean id="consentTemplateFieldMapper" parent="fieldMapper">
+		<property name="sourceClass"
+		          value="de.hybris.platform.commercefacades.consent.data.ConsentTemplateData"/>
+		<property name="destClass"
+		          value="de.hybris.platform.commercewebservicescommons.dto.consent.ConsentTemplateWsDTO"/>
+		<property name="fieldMapping">
+			<map>
+				<entry key="consentData" value="currentConsent"/>
+			</map>
+		</property>
+	</bean>
+
+	<!-- Field Mappings : OrderEntry -->
+
+	<bean id="orderEntryFieldMapper" parent="fieldMapper">
+		<property name="sourceClass"
+				  value="de.hybris.platform.commercefacades.order.data.OrderEntryData"/>
+		<property name="destClass"
+				  value="de.hybris.platform.commercewebservicescommons.dto.order.OrderEntryWsDTO"/>
+		<property name="fieldMapping">
+			<map>
+				<entry key="cancellableQty" value="cancellableQuantity"/>
+                <entry key="returnableQty" value="returnableQuantity"/>
+                <entry key="statusSummaryMap" value="statusSummaryList"/>
+			</map>
+		</property>
+	</bean>
+
+	<!-- Field Mappings : ReturnRequest -->
+
+	<bean id="returnRequestFieldMapper" parent="fieldMapper">
+		<property name="sourceClass"
+				  value="de.hybris.platform.ordermanagementfacades.returns.data.ReturnRequestData"/>
+		<property name="destClass"
+				  value="de.hybris.platform.commercewebservicescommons.dto.order.ReturnRequestWsDTO"/>
+		<property name="fieldMapping">
+			<map>
+				<entry key="total" value="totalPrice"/>
+				<entry key="subtotal" value="subTotal"/>
 			</map>
 		</property>
 	</bean>

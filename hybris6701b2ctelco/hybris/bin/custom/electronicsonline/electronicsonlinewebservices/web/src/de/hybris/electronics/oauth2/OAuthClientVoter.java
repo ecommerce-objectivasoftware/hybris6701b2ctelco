@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.oauth2;
 
@@ -21,19 +14,18 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 
 /**
  * Votes to grant access if current OAuth Client ID matches with any config attribute
- * 
+ * <p>
  * Only config attributes starting with 'prefix' will be took into consideration. Default prefix is 'CLIENT_'. Prefix
  * can be customized, in particular when null all config attributes will be analyzed.
- * 
+ * <p>
  * If none of the configuration attributes starts with 'prefix', the voter abstains from voting.
- * 
+ * <p>
  * If there are some configuration attributes starting with prefix but none matches, the voter denies access.
- * 
+ * <p>
  * Comparisions are case insensitive.
- * 
+ * <p>
  * Example: if config attribute = 'CLIENT_MOBILE_ANDROID' and client id is 'mobile_android' access by this voter is
  * granted
- * 
  */
 public class OAuthClientVoter implements AccessDecisionVoter<Object>
 {
@@ -57,10 +49,9 @@ public class OAuthClientVoter implements AccessDecisionVoter<Object>
 
 	/**
 	 * This implementation supports any type of class, because it does not query the presented secure object.
-	 * 
+	 *
 	 * @param clazz
-	 *           the secure object
-	 * 
+	 * 		the secure object
 	 * @return always <code>true</code>
 	 */
 	@Override

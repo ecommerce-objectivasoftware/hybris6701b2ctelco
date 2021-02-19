@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.v1.controller;
 
@@ -18,22 +11,27 @@ import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.PaginationData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.core.enums.OrderStatus;
-import de.hybris.electronics.constants.YcommercewebservicesConstants;
 import de.hybris.electronics.formatters.WsDateFormatter;
 import de.hybris.electronics.queues.data.OrderStatusUpdateElementData;
 import de.hybris.electronics.queues.data.OrderStatusUpdateElementDataList;
 import de.hybris.electronics.queues.impl.OrderStatusUpdateQueue;
+
+import javax.annotation.Resource;
 
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.annotation.Resource;
-
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import static de.hybris.electronics.constants.YcommercewebservicesConstants.ENUM_VALUES_SEPARATOR;
 
 
 /**
@@ -175,7 +173,7 @@ public class OrderController extends BaseController
 
 	protected Set<OrderStatus> extractOrderStatuses(final String statuses)
 	{
-		final String[] statusesStrings = statuses.split(YcommercewebservicesConstants.OPTIONS_SEPARATOR);
+		final String[] statusesStrings = statuses.split(ENUM_VALUES_SEPARATOR);
 
 		final Set<OrderStatus> statusesEnum = new HashSet<>();
 		for (final String status : statusesStrings)

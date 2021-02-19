@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.facades.suggestion.impl;
 
@@ -73,8 +66,8 @@ public class DefaultSimpleSuggestionFacade implements SimpleSuggestionFacade
 			products.addAll(getAllBaseProducts(product));
 		}
 
-		final List<ProductModel> suggestions = getSimpleSuggestionService().getReferencesForProducts(
-				new LinkedList<ProductModel>(products), referenceTypes, user, excludePurchased, limit);
+		final List<ProductModel> suggestions = getSimpleSuggestionService()
+				.getReferencesForProducts(new LinkedList<ProductModel>(products), referenceTypes, user, excludePurchased, limit);
 
 		return Converters.convertAll(suggestions, getProductConverter());
 	}
@@ -90,9 +83,9 @@ public class DefaultSimpleSuggestionFacade implements SimpleSuggestionFacade
 			{
 				products.addAll(getAllBaseProducts(entry.getProduct()));
 			}
-			return Converters.convertAll(
-					getSimpleSuggestionService().getReferencesForProducts(new LinkedList<ProductModel>(products), referenceTypes,
-							getUserService().getCurrentUser(), excludePurchased, limit), getProductConverter());
+			return Converters
+					.convertAll(getSimpleSuggestionService().getReferencesForProducts(new LinkedList<ProductModel>(products),
+							referenceTypes, getUserService().getCurrentUser(), excludePurchased, limit), getProductConverter());
 		}
 		return Collections.emptyList();
 	}
@@ -119,7 +112,7 @@ public class DefaultSimpleSuggestionFacade implements SimpleSuggestionFacade
 	/**
 	 * @deprecated Since 5.0.
 	 */
-	@Deprecated
+	@Deprecated(since = "5.0", forRemoval = true)
 	@Override
 	public List<ProductData> getReferencesForPurchasedInCategory(final String categoryCode,
 			final ProductReferenceTypeEnum referenceType, final boolean excludePurchased, final Integer limit)

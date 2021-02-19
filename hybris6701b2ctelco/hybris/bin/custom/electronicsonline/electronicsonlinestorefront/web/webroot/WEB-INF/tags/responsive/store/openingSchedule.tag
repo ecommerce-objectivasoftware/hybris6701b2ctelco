@@ -14,17 +14,14 @@
 <c:if test="${not empty openingSchedule}">
     {
         <c:forEach items="${openingSchedule.weekDayOpeningList}" var="weekDay" varStatus="weekDayNumber">
-            <c:set var="dayOfTheWeekHTML" value="${fn:escapeXml(weekDay.weekDay)}"/>
-            <c:set var="openingTimeHTML" value="${fn:escapeXml(weekDay.openingTime.formattedHour)}"/>
-            <c:set var="closingTimeHTML" value="${fn:escapeXml(weekDay.closingTime.formattedHour)}"/>
             <c:choose>
                 <c:when test="${weekDay.closed}">
-                		<spring:theme code="storeDetails.table.opening.closed" var="closedTextHTML"/>
-                    "${ycommerce:encodeJSON(dayOfTheWeekHTML)}":"${ycommerce:encodeJSON(closedTextHTML)}"<c:if
+                		<spring:theme code="storeDetails.table.opening.closed" htmlEscape="false" var="closedText"/>
+                    "${ycommerce:encodeJSON(weekDay.weekDay)}":"${ycommerce:encodeJSON(closedText)}"<c:if
                         test="${!weekDayNumber.last}">,</c:if>
                 </c:when>
                 <c:otherwise>
-                    "${ycommerce:encodeJSON(dayOfTheWeekHTML)}":"${ycommerce:encodeJSON(openingTimeHTML)} - ${ycommerce:encodeJSON(closingTimeHTML)}"<c:if
+                    "${ycommerce:encodeJSON(weekDay.weekDay)}":"${ycommerce:encodeJSON(weekDay.openingTime.formattedHour)} - ${ycommerce:encodeJSON(weekDay.closingTime.formattedHour)}"<c:if
                         test="${!weekDayNumber.last}">,</c:if>
                 </c:otherwise>
             </c:choose>

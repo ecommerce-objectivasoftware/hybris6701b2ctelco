@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!--
- [y] hybris Platform
-
- Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
-
- This software is the confidential and proprietary information of SAP
- ("Confidential Information"). You shall not disclose such Confidential
- Information and shall use it only in accordance with the terms of the
- license agreement you entered into with SAP.
+ Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
 -->
 <web-app id="electronicsonlinewebservices" version="3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xmlns="http://java.sun.com/xml/ns/javaee"
@@ -48,22 +41,20 @@
 	</filter>
 
 	<filter>
-		<filter-name>CORS</filter-name>
-		<filter-class>com.thetransactioncompany.cors.CORSFilter</filter-class>
-		<init-param>
-			<param-name>cors.supportedMethods</param-name>
-			<param-value>GET, POST, HEAD, PUT, PATCH, DELETE, OPTIONS</param-value>
-		</init-param>
-		<init-param>
-			<!-- fix for http://code.google.com/p/chromium/issues/detail?id=108394 -->
-			<param-name>cors.supportedHeaders</param-name>
-			<param-value>origin, content-type, accept, authorization</param-value>
-		</init-param>
-	</filter>
-
-	<filter>
 		<filter-name>XSSFilter</filter-name>
 		<filter-class>de.hybris.platform.servicelayer.web.XSSFilter</filter-class>
+	</filter>
+	<filter>
+		<filter-name>characterEncodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+		<init-param>
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value>
+		</init-param>
 	</filter>
 
 	<!-- This filter was created only because of compatibility reason to redirect /rest/oauth/token -> /authorizationserver/oauth/token.
@@ -83,6 +74,10 @@
 		<filter-name>XSSFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
+	<filter-mapping>
+		<filter-name>characterEncodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
 
 	<!--	<filter-mapping>
 			<filter-name>clientCredentialsTokenEndpointFilter</filter-name>
@@ -100,15 +95,11 @@
 	</filter-mapping>
 
 	<filter-mapping>
-		<filter-name>CORS</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-
-	<filter-mapping>
 		<filter-name>commerceWebServicesFilterChain</filter-name>
 		<servlet-name>springmvc</servlet-name>
 	</filter-mapping>
 
+	<!-- <v1-api> -->
 	<!-- Uncomment to make v1 version available -->
 	<!--
 	<filter>
@@ -158,6 +149,7 @@
 	</servlet-mapping>
 	-->
 	<!-- END Uncomment to make v1 version available -->
+	<!-- </v1-api> -->
 
 	<servlet>
 		<servlet-name>springmvc</servlet-name>

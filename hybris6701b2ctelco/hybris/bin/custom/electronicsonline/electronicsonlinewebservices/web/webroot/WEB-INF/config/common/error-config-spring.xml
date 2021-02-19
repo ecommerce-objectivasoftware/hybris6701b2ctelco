@@ -1,21 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- [y] hybris Platform
-
- Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
-
- This software is the confidential and proprietary information of SAP
- ("Confidential Information"). You shall not disclose such Confidential
- Information and shall use it only in accordance with the terms of the
- license agreement you entered into with SAP.
+ Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
 -->
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/beans"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
-		http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/util
-		http://www.springframework.org/schema/util/spring-util.xsd">
+		http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<bean id="messageSource" class="de.hybris.electronics.util.ws.impl.AddonAwareMessageSource">
+	<bean id="messageSource" class="de.hybris.electronics.util.ws.impl.MessageSourceComposite">
+		<constructor-arg name="addonAwareMessageSource" ref="addonAwareMessageSource"/>
+		<constructor-arg name="classpathAwareMessageSource" ref="classpathAwareMessageSource"/>
+		<property name="defaultEncoding" value="UTF-8" />
+	</bean>
+
+	<bean id="addonAwareMessageSource" class="de.hybris.electronics.util.ws.impl.AddonAwareMessageSource">
 		<property name="baseAddonDir" value="/WEB-INF/messages/addons/" />
 		<property name="basenames">
 			<list>
@@ -25,6 +22,12 @@
 		<property name="defaultEncoding" value="UTF-8" />
 	</bean>
 
+	<bean id="classpathAwareMessageSource"
+		  class="de.hybris.electronics.util.ws.impl.ClasspathAwareMessageSource">
+		<constructor-arg name="baseOccExtensionDir" value="/occ/v2/*occ/messages/"/>
+		<property name="defaultEncoding" value="UTF-8"/>
+	</bean>
+
 	<!-- webservice error factory & converters -->
 
 	<alias alias="webserviceErrorFactory" name="defaultWebserviceErrorFactory" />
@@ -32,6 +35,7 @@
 		<property name="converters">
 			<list>
 				<ref bean="validationErrorConverter" />
+				<ref bean="cartVoucherValidationListErrorConverter" />
 				<ref bean="cartModificationDataListErrorConverter" />
 				<ref bean="webserviceExceptionConverter" />
 				<ref bean="exceptionConverter" />
@@ -48,6 +52,18 @@
 	<bean name="defaultValidationErrorConverter" class="de.hybris.platform.webservicescommons.errors.converters.ValidationErrorConverter"
 		parent="abstractLocalizedErrorConverter">
 		<property name="i18NService" ref="i18NService" />
+	</bean>
+
+	<alias alias="cartVoucherValidationErrorConverter" name="defaultCartVoucherValidationErrorConverter" />
+	<bean name="defaultCartVoucherValidationErrorConverter" class="de.hybris.electronics.errors.converters.CartVoucherValidationErrorConverter">
+		<constructor-arg ref="i18NService" />
+		<constructor-arg ref="messageSource" />
+		<property name="targetClass" value="de.hybris.platform.webservicescommons.dto.error.ErrorWsDTO"/>
+	</bean>
+
+	<alias alias="cartVoucherValidationListErrorConverter" name="defaultCartVoucherValidationListErrorConverter" />
+	<bean name="defaultCartVoucherValidationListErrorConverter" class="de.hybris.electronics.errors.converters.CartVoucherValidationListErrorConverter">
+		<constructor-arg ref="cartVoucherValidationErrorConverter" />
 	</bean>
 
 	<alias alias="webserviceExceptionConverter" name="defaultWebserviceExceptionConverter" />

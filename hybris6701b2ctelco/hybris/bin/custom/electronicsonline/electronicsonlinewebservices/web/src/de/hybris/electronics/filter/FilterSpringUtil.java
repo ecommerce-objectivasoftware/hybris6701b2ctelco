@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.filter;
 
@@ -33,21 +26,20 @@ public class FilterSpringUtil
 	private FilterSpringUtil()
 	{
 	}
-	
+
 	/**
 	 * Returns the Spring bean with name <code>beanName</code> and of type <code>beanClass</code>. If no bean could be
 	 * resolved for the specified name, the bean is looked up using type.
-	 * 
+	 *
 	 * @param <T>
-	 *           type of the bean
+	 * 		type of the bean
 	 * @param httpRequest
-	 *           the http request
+	 * 		the http request
 	 * @param beanName
-	 *           name of the bean or <code>null</code> if it should be automatically resolved using type
+	 * 		name of the bean or <code>null</code> if it should be automatically resolved using type
 	 * @param beanClass
-	 *           expected type of the bean
+	 * 		expected type of the bean
 	 * @return the bean matching the given arguments or <code>null</code> if no bean could be resolved
-	 * 
 	 */
 	public static <T> T getSpringBean(final HttpServletRequest httpRequest, final String beanName, final Class<T> beanClass)
 	{
@@ -86,7 +78,7 @@ public class FilterSpringUtil
 			else
 			{
 				final Map<String, T> beansOfType = appContext.getBeansOfType(beanClass);
-				if (beansOfType != null && !beansOfType.isEmpty())
+				if (!beansOfType.isEmpty())
 				{
 					if (beansOfType.size() > 1)
 					{

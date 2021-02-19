@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.queues.populators;
 
@@ -24,7 +17,7 @@ import org.springframework.util.Assert;
 public class ProductExpressUpdateElementPopulator implements Populator<ProductModel, ProductExpressUpdateElementData>
 {
 	@Override
-	public void populate(final ProductModel source, final ProductExpressUpdateElementData target) 
+	public void populate(final ProductModel source, final ProductExpressUpdateElementData target)
 			throws ConversionException //NOSONAR
 	{
 		Assert.notNull(source, "Parameter source cannot be null.");

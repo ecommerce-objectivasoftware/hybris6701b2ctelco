@@ -1,23 +1,16 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.v2.filter;
 
 import de.hybris.platform.commercewebservicescommons.strategies.CartLoaderStrategy;
 
-import java.io.IOException;
-
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Required;
 
@@ -30,7 +23,7 @@ public class CartMatchingFilter extends AbstractUrlMatchingFilter
 	public static final String REFRESH_CART_PARAM = "refreshCart";
 	private String regexp;
 	private CartLoaderStrategy cartLoaderStrategy;
-	private boolean cartRefreshedByDefault = true;
+	private boolean cartRefreshedByDefault = false;
 
 	@Override
 	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response,

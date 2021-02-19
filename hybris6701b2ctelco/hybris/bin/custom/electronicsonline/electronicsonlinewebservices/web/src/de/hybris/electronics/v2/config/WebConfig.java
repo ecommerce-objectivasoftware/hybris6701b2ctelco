@@ -1,27 +1,20 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.v2.config;
 
 
-import de.hybris.electronics.constants.YcommercewebservicesConstants;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
+import de.hybris.platform.webservicescommons.swagger.services.ApiVendorExtensionService;
+import de.hybris.electronics.constants.YcommercewebservicesConstants;
 import de.hybris.electronics.request.mapping.handler.CommerceHandlerMapping;
+
+import javax.annotation.Resource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.Resource;
-
-import de.hybris.platform.webservicescommons.swagger.services.ApiVendorExtensionService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -38,10 +31,10 @@ import org.springframework.web.servlet.mvc.annotation.ResponseStatusExceptionRes
 import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
+import org.springframework.web.servlet.resource.ResourceUrlProvider;
 
 import com.google.common.collect.ImmutableSet;
 
-import org.springframework.web.servlet.resource.ResourceUrlProvider;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -59,22 +52,21 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 /**
  * Spring configuration which replace <mvc:annotation-driven> tag. It allows override default
  * RequestMappingHandlerMapping with our own mapping handler
- *
  */
 @EnableSwagger2
 @Configuration
 @ImportResource({ "WEB-INF/config/v2/springmvc-v2-servlet.xml" })
 public class WebConfig extends WebMvcConfigurationSupport
 {
-	private static final String PASSWORD_AUTHORIZATION_SCOPE = "training.oauth2.password.scope";
-	private static final String CLIENT_CREDENTIAL_AUTHORIZATION_SCOPE = "training.oauth2.clientCredentials.scope";
-	private static final String AUTHORIZATION_URL = "training.oauth2.tokenUrl";
+	private static final String PASSWORD_AUTHORIZATION_SCOPE = "electronicsonlinewebservices.oauth2.password.scope";
+	private static final String CLIENT_CREDENTIAL_AUTHORIZATION_SCOPE = "electronicsonlinewebservices.oauth2.clientCredentials.scope";
+	private static final String AUTHORIZATION_URL = "electronicsonlinewebservices.oauth2.tokenUrl";
 
-	private static final String DESC = "training.v2.description";
-	private static final String TITLE = "training.v2.title";
-	private static final String VERSION = "training.v2.version";
-	private static final String LICENSE = "training.v2.license";
-	private static final String LICENSE_URL = "training.v2.license.url";
+	private static final String DESC = "electronicsonlinewebservices.v2.description";
+	private static final String TITLE = "electronicsonlinewebservices.v2.title";
+	private static final String VERSION = "electronicsonlinewebservices.v2.version";
+	private static final String LICENSE = "electronicsonlinewebservices.v2.license";
+	private static final String LICENSE_URL = "electronicsonlinewebservices.v2.license.url";
 
 	private static final String PASSWORD_AUTHORIZATION_NAME = "oauth2_Password";
 	private static final String CLIENT_CREDENTIAL_AUTHORIZATION_NAME = "oauth2_client_credentials";
@@ -97,7 +89,7 @@ public class WebConfig extends WebMvcConfigurationSupport
 	@Override
 	@Bean
 	public RequestMappingHandlerMapping requestMappingHandlerMapping(final ContentNegotiationManager mvcContentNegotiationManager,
-																	 final FormattingConversionService mvcConversionService, final ResourceUrlProvider mvcResourceUrlProvider)
+			final FormattingConversionService mvcConversionService, final ResourceUrlProvider mvcResourceUrlProvider)
 	{
 		final CommerceHandlerMapping handlerMapping = new CommerceHandlerMapping("v2");
 		handlerMapping.setOrder(0);

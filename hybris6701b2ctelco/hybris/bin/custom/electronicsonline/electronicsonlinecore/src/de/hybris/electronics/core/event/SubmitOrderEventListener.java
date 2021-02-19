@@ -1,20 +1,11 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.core.event;
 
-import de.hybris.electronics.core.util.RotatePaymentCapturedUtil;
 import de.hybris.platform.acceleratorservices.site.AbstractAcceleratorSiteEventListener;
 import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
 import de.hybris.platform.commerceservices.enums.SiteChannel;
-import de.hybris.platform.core.enums.OrderStatus;
 import de.hybris.platform.core.model.order.OrderModel;
 import de.hybris.platform.order.events.SubmitOrderEvent;
 import de.hybris.platform.orderprocessing.model.OrderProcessModel;
@@ -121,21 +112,15 @@ public class SubmitOrderEventListener extends AbstractAcceleratorSiteEventListen
 			}
 			else
 			{
-				if (RotatePaymentCapturedUtil.rotateCaptured()) {
-					final String processCode = fulfilmentProcessDefinitionName + "-" + order.getCode() + "-" + System.currentTimeMillis();
-					final OrderProcessModel businessProcessModel = getBusinessProcessService().createProcess(processCode,
-							fulfilmentProcessDefinitionName);
-					businessProcessModel.setOrder(order);
-					getModelService().save(businessProcessModel);
-					getBusinessProcessService().startProcess(businessProcessModel);
-					if (LOG.isInfoEnabled())
-					{
-						LOG.info(String.format("Started the process %s", processCode));
-					}
-				}
-				else {
-					order.setStatus(OrderStatus.PAYMENT_NOT_CAPTURED);
-					getModelService().save(order);
+				final String processCode = fulfilmentProcessDefinitionName + "-" + order.getCode() + "-" + System.currentTimeMillis();
+				final OrderProcessModel businessProcessModel = getBusinessProcessService().createProcess(processCode,
+						fulfilmentProcessDefinitionName);
+				businessProcessModel.setOrder(order);
+				getModelService().save(businessProcessModel);
+				getBusinessProcessService().startProcess(businessProcessModel);
+				if (LOG.isInfoEnabled())
+				{
+					LOG.info(String.format("Started the process %s", processCode));
 				}
 			}
 		}

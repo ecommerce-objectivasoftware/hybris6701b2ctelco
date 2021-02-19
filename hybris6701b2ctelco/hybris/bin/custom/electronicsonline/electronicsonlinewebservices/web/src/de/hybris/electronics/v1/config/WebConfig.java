@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.v1.config;
 
@@ -36,11 +29,10 @@ import org.springframework.web.servlet.mvc.annotation.ResponseStatusExceptionRes
 import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
+import org.springframework.web.servlet.resource.ResourceUrlProvider;
 
 import com.google.common.collect.ImmutableSet;
 
-//import net.sourceforge.pmd.util.StringUtil;
-import org.springframework.web.servlet.resource.ResourceUrlProvider;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -66,13 +58,13 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 		{ "WEB-INF/config/v1/springmvc-v1-servlet.xml" })
 public class WebConfig extends WebMvcConfigurationSupport
 {
-	private static final String PASSWORD_AUTHORIZATION_SCOPE = "training.oauth2.password.scope";
-	private static final String CLIENT_CREDENTIAL_AUTHORIZATION_SCOPE = "training.oauth2.clientCredentials.scope";
-	private static final String AUTHORIZATION_URL = "training.oauth2.tokenUrl";
+	private static final String PASSWORD_AUTHORIZATION_SCOPE = "electronicsonlinewebservices.oauth2.password.scope";
+	private static final String CLIENT_CREDENTIAL_AUTHORIZATION_SCOPE = "electronicsonlinewebservices.oauth2.clientCredentials.scope";
+	private static final String AUTHORIZATION_URL = "electronicsonlinewebservices.oauth2.tokenUrl";
 
-	private static final String DESC = "training.v1.description";
-	private static final String TITLE = "training.v1.title";
-	private static final String VERSION = "training.v1.version";
+	private static final String DESC = "electronicsonlinewebservices.v1.description";
+	private static final String TITLE = "electronicsonlinewebservices.v1.title";
+	private static final String VERSION = "electronicsonlinewebservices.v1.version";
 
 	private static final String PASSWORD_AUTHORIZATION_NAME = "oauth2_Password";
 	private static final String CLIENT_CREDENTIAL_AUTHORIZATION_NAME = "oauth2_client_credentials";
@@ -91,7 +83,7 @@ public class WebConfig extends WebMvcConfigurationSupport
 	@Override
 	@Bean
 	public RequestMappingHandlerMapping requestMappingHandlerMapping(final ContentNegotiationManager mvcContentNegotiationManager,
-																	 final FormattingConversionService mvcConversionService, final ResourceUrlProvider mvcResourceUrlProvider)
+			final FormattingConversionService mvcConversionService, final ResourceUrlProvider mvcResourceUrlProvider)
 	{
 		final CommerceHandlerMapping handlerMapping = new CommerceHandlerMapping("v1");
 		handlerMapping.setOrder(0);

@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.storefront.security.impl;
 
@@ -33,18 +26,16 @@ import org.springframework.web.util.CookieGenerator;
 public class DefaultGUIDCookieStrategy implements GUIDCookieStrategy
 {
 	private static final Logger LOG = Logger.getLogger(DefaultGUIDCookieStrategy.class);
+	private static final int RANDOM_BYTES = 20;
 
 	private final SecureRandom random;
-	private final MessageDigest sha;
 
 	private CookieGenerator cookieGenerator;
 
 	public DefaultGUIDCookieStrategy() throws NoSuchAlgorithmException
 	{
 		random = SecureRandom.getInstance("SHA1PRNG");
-		sha = MessageDigest.getInstance("SHA-1");
 		Assert.notNull(random);
-		Assert.notNull(sha);
 	}
 
 	@Override
@@ -83,9 +74,9 @@ public class DefaultGUIDCookieStrategy implements GUIDCookieStrategy
 
 	protected String createGUID()
 	{
-		final String randomNum = String.valueOf(getRandom().nextInt());
-		final byte[] result = getSha().digest(randomNum.getBytes());
-		return String.valueOf(Hex.encodeHex(result));
+		final byte[] randomBytes = new byte[RANDOM_BYTES];
+		getRandom().nextBytes(randomBytes);
+		return String.valueOf(Hex.encodeHex(randomBytes));
 	}
 
 	protected CookieGenerator getCookieGenerator()
@@ -107,10 +98,5 @@ public class DefaultGUIDCookieStrategy implements GUIDCookieStrategy
 	protected SecureRandom getRandom()
 	{
 		return random;
-	}
-
-	protected MessageDigest getSha()
-	{
-		return sha;
 	}
 }

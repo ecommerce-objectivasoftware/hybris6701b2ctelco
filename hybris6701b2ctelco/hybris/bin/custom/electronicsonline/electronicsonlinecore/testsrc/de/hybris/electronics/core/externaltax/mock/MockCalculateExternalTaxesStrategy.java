@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.core.externaltax.mock;
 
@@ -41,7 +34,7 @@ public class MockCalculateExternalTaxesStrategy implements CalculateExternalTaxe
 		{
 			final TaxValue taxValue = new TaxValue("taxCode1", 2.0D, true, 2.0D, abstractOrder.getCurrency() == null ? "USD"
 					: abstractOrder.getCurrency().getIsocode());
-			externalDocument.setTaxesForOrderEntry(i + 1, taxValue);
+			externalDocument.setTaxesForOrderEntry(i, taxValue);
 		}
 
 		final TaxValue taxValue = new TaxValue("taxCode1", 3.0D, true, 3.0D, abstractOrder.getCurrency() == null ? "USD"

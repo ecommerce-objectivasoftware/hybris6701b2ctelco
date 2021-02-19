@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- [y] hybris Platform
-
- Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
-
- This software is the confidential and proprietary information of SAP
- ("Confidential Information"). You shall not disclose such Confidential
- Information and shall use it only in accordance with the terms of the
- license agreement you entered into with SAP.
+ Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
 	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -384,12 +377,6 @@
 		<property name="flexibleSearchService" ref="flexibleSearchService"/>
 	</bean>
 
-	<bean id="mccSiteUrlHelper" class="de.hybris.electronics.core.util.MccSiteUrlHelper" >
-		<property name="siteChannelValidationStrategy" ref="siteChannelValidationStrategy"/>
-		<property name="siteBaseUrlResolutionService" ref="siteBaseUrlResolutionService"/>
-		<property name="cmsSiteService" ref="cmsSiteService"/>
-	</bean>
-
 	<!-- Product Reference Lookup Strategies-->
 	<alias name="apparelCrossSellingProductReferenceTargetStrategy" alias="crossSellingProductReferenceTargetStrategy"/>
 	<bean id="apparelCrossSellingProductReferenceTargetStrategy"
@@ -551,33 +538,4 @@
 		<property name="itemCleanupHooks" ref="csTicketRetentionHooks"/>
 		<property name="ticketBusinessService" ref="ticketBusinessService"/>
 	</bean>
-
-	<util:map id="acceleratorStatusDisplayMap">
-		<entry key="CREATED" value="created"/>
-		<entry key="OPEN" value="open"/>
-		<entry key="CANCELLED" value="cancelled"/>
-		<entry key="CANCELLING" value="cancelling"/>
-		<entry key="COMPLETED" value="completed"/>
-		<entry key="CHECKED_INVALID" value="error"/>
-		<entry key="PAYMENT_AMOUNT_NOT_RESERVED" value="error"/>
-		<entry key="PAYMENT_NOT_AUTHORIZED" value="error"/>
-		<entry key="PAYMENT_NOT_CAPTURED" value="unpaid"/>
-		<entry key="PROCESSING_ERROR" value="error"/>
-	</util:map>
-
-	<bean id="unpaidOrderCancellationJob" class="de.hybris.electronics.core.job.UnpaidOrderCancellationJob"
-		  parent="abstractJobPerformable">
-		<property name="electronicsOrderService" ref="electronicsOrderService"/>
-	</bean>
-
-	<bean id="electronicsOrderService" class="de.hybris.electronics.core.order.impl.DefaultElectronicsOrderService"
-		  parent="orderService">
-		<property name="electronicsOrderDao" ref="electronicsOrderDao"/>
-	</bean>
-
-	<bean id="electronicsOrderDao" class="de.hybris.electronics.core.order.impl.DefaultElectronicsOrderDao"
-		  parent="orderDao">
-		<property name="configurationService" ref="configurationService"/>
-	</bean>
-
 </beans>

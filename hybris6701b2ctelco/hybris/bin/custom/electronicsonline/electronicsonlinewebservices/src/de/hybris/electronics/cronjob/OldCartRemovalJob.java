@@ -1,16 +1,8 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.cronjob;
 
-//import de.hybris.electronics.model.OldCartRemovalCronJobModel;
 import de.hybris.platform.basecommerce.model.site.BaseSiteModel;
 import de.hybris.platform.commerceservices.order.dao.CommerceCartDao;
 import de.hybris.platform.commercewebservicescommons.model.OldCartRemovalCronJobModel;
@@ -54,8 +46,9 @@ public class OldCartRemovalJob extends AbstractJobPerformable<OldCartRemovalCron
 			}
 
 			final int cartAge = job.getCartRemovalAge() != null ? job.getCartRemovalAge().intValue() : DEFAULT_CART_MAX_AGE;
-			final int anonymousCartAge = job.getAnonymousCartRemovalAge() != null ? job.getAnonymousCartRemovalAge().intValue()
-					: DEFAULT_ANONYMOUS_CART_MAX_AGE;
+			final int anonymousCartAge = job.getAnonymousCartRemovalAge() != null ?
+					job.getAnonymousCartRemovalAge().intValue() :
+					DEFAULT_ANONYMOUS_CART_MAX_AGE;
 
 			for (final BaseSiteModel site : job.getSites())
 			{

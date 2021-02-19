@@ -1,9 +1,11 @@
 #Ant properties
-#Tue May 08 01:20:35 CEST 2018
-builddate=20180508 0119
-description=electronicsonlinefacades
-name=electronicsonlinefacades
-releasedate=20180313 1012
+#Fri Feb 05 08:24:27 CET 2021
+version.api=2011
 vendor=hybris
-version=6.7.0.1
-version.api=6.7.0
+group.id=de.hybris.platform
+name=electronicsonlinefacades
+description=electronicsonlinefacades
+builddate=20210205 0821
+releasedate=20201119 1630
+version=2011.3
+module.name=platform-module

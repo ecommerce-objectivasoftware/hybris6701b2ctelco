@@ -1,20 +1,14 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.v2.filter;
+
+import javax.servlet.http.HttpServletRequest;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpServletRequest;
-
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 
@@ -23,18 +17,22 @@ import org.springframework.web.filter.OncePerRequestFilter;
  */
 public abstract class AbstractUrlMatchingFilter extends OncePerRequestFilter
 {
+
+	public static final String BASE_SITES_ENDPOINT_PATH = "/basesites";
+
 	protected boolean matchesUrl(final HttpServletRequest request, final String regexp)
 	{
 		final Matcher matcher = getMatcher(request, regexp);
-		if (matcher.find())
-		{
-			return true;
-		}
-		return false;
+		return matcher.find();
 	}
 
 	protected String getBaseSiteValue(final HttpServletRequest request, final String regexp)
 	{
+		if (BASE_SITES_ENDPOINT_PATH.equals(getPath(request)))
+		{
+			return null;
+		}
+
 		final Matcher matcher = getMatcher(request, regexp);
 		if (matcher.find())
 		{
@@ -66,7 +64,12 @@ public abstract class AbstractUrlMatchingFilter extends OncePerRequestFilter
 	protected Matcher getMatcher(final HttpServletRequest request, final String regexp)
 	{
 		final Pattern pattern = Pattern.compile(regexp);
-		final String path = request.getPathInfo() != null ? request.getPathInfo() : "";
+		final String path = getPath(request);
 		return pattern.matcher(path);
+	}
+
+	protected String getPath(final HttpServletRequest request)
+	{
+		return StringUtils.defaultString(request.getPathInfo());
 	}
 }

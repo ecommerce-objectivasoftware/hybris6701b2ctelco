@@ -8,37 +8,24 @@
 {"data":[
 	<c:forEach items="${searchPageData.results}" var="pickupStore" varStatus="pickupEntryNumber">
 		<c:set value="${ycommerce:storeImage(pickupStore, 'store')}"  var="storeImage"/>
-		<c:set var="stockPickup"><storepickup:pickupStoreStockLevel stockData="${pickupStore.stockData}"/></c:set>
+		<c:set var="stockPickupHtml"><storepickup:pickupStoreStockLevel stockData="${pickupStore.stockData}"/></c:set>
 		
-		<c:set var="pickupStoreNameHTML" value="${fn:escapeXml(pickupStore.name)}" />
-		<c:set var="pickupStoreDisplayNameHTML" value="${fn:escapeXml(pickupStore.displayName)}" />
-		<c:set var="pickupStoreAddressTownHTML" value="${fn:escapeXml(pickupStore.address.town)}" />
-		<c:set var="pickupStoreAddressLine1HTML" value="${fn:escapeXml(pickupStore.address.line1)}" />
-		<c:set var="pickupStoreAddressLine2HTML" value="${fn:escapeXml(pickupStore.address.line2)}" />
-		<c:set var="pickupStoreAddressCountryNameHTML" value="${fn:escapeXml(pickupStore.address.country.name)}" />
-		<c:set var="pickupStoreAddressPostalCodeHTML" value="${fn:escapeXml(pickupStore.address.postalCode)}" />
-		<c:set var="pickupStoreFormattedDistanceHTML" value="${fn:escapeXml(pickupStore.formattedDistance)}" />
-		<c:set var="pickupStoreStoreImageUrlHTML" value="${fn:escapeXml(storeImage.url)}" />
-		<c:set var="searchPageDataProductCodeHTML" value="${fn:escapeXml(searchPageData.product.code)}" />
-		<c:set var="pickupStoreGeoPointLatitudeHTML" value="${fn:escapeXml(pickupStore.geoPoint.latitude)}" />
-		<c:set var="pickupStoreGeoPointLongitudeHTML" value="${fn:escapeXml(pickupStore.geoPoint.longitude)}" />
-		<c:set var="pickupStoreStockDataStockLevelHTML" value="${fn:escapeXml(pickupStore.stockData.stockLevel)}" />
 		{
-			"name" : "${ycommerce:encodeJSON(pickupStoreNameHTML)}",
-			"displayName" : "${ycommerce:encodeJSON(pickupStoreDisplayNameHTML)}",
-			"town" : "${ycommerce:encodeJSON(pickupStoreAddressTownHTML)}",
+			"name" : "${ycommerce:encodeJSON(pickupStore.name)}",
+			"displayName" : "${ycommerce:encodeJSON(pickupStore.displayName)}",
+			"town" : "${ycommerce:encodeJSON(pickupStore.address.town)}",
 			"line1" : "${ycommerce:encodeJSON(pickupStore.address.line1)}",
-			"line2" : "${ycommerce:encodeJSON(pickupStoreAddressLine2HTML)}",
-			"country" : "${ycommerce:encodeJSON(pickupStoreAddressCountryNameHTML)}",
-			"postalCode" : "${ycommerce:encodeJSON(pickupStoreAddressPostalCodeHTML)}",
-			"formattedDistance" : "${ycommerce:encodeJSON(pickupStoreFormattedDistanceHTML)}",
-			"url" : "${ycommerce:encodeJSON(pickupStoreStoreImageUrlHTML)}",
-			"stockPickup" : "${stockPickup}",
+			"line2" : "${ycommerce:encodeJSON(pickupStore.address.line2)}",
+			"country" : "${ycommerce:encodeJSON(pickupStore.address.country.name)}",
+			"postalCode" : "${ycommerce:encodeJSON(pickupStore.address.postalCode)}",
+			"formattedDistance" : "${ycommerce:encodeJSON(pickupStore.formattedDistance)}",
+			"url" : "${ycommerce:encodeJSON(storeImage.url)}",
+			"stockPickupHtml" : "${ycommerce:encodeJSON(stockPickupHtml)}",
 			<storepickup:pickupStoreOpeningSchedule store="${pickupStore}"/>
-			"productcode":"${ycommerce:encodeJSON(searchPageDataProductCodeHTML)}",
-			"storeLatitude":"${ycommerce:encodeJSON(pickupStoreGeoPointLatitudeHTML)}",
-			"storeLongitude":"${ycommerce:encodeJSON(pickupStoreGeoPointLongitudeHTML)}",
-			"stockLevel": "${ycommerce:encodeJSON(pickupStoreStockDataStockLevelHTML)}"
+			"productcode":"${ycommerce:encodeJSON(searchPageData.product.code)}",
+			"storeLatitude":"${ycommerce:encodeJSON(pickupStore.geoPoint.latitude)}",
+			"storeLongitude":"${ycommerce:encodeJSON(pickupStore.geoPoint.longitude)}",
+			"stockLevel": "${ycommerce:encodeJSON(pickupStore.stockData.stockLevel)}"
 		}<c:if test="${!pickupEntryNumber.last}">,</c:if>
 	</c:forEach>
 ]}

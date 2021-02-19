@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.queues.impl;
 
@@ -24,7 +17,9 @@ import com.google.common.collect.Lists;
  */
 public abstract class AbstractUpdateQueue<T> extends TreeMap<Long, T> implements UpdateQueue<T> //NOSONAR
 {
-	private int maxCapacity = 1000;
+	protected static final int DEFAULT_MAX_CAPACITY = 1000;
+
+	private int maxCapacity = DEFAULT_MAX_CAPACITY;
 
 	@Override
 	public List<T> getItems()

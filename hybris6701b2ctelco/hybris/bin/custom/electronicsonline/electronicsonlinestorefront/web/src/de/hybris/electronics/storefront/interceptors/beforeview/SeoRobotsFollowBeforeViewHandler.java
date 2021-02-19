@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.storefront.interceptors.beforeview;
 
@@ -40,13 +33,9 @@ public class SeoRobotsFollowBeforeViewHandler implements BeforeViewHandler
 
 			if (RequestMethod.GET.name().equalsIgnoreCase(request.getMethod()))
 			{
-				if (request.isSecure())
-				{
-					robotsValue = ThirdPartyConstants.SeoRobots.NOINDEX_FOLLOW;
-				}
 				//Since no model attribute metaRobots can be set for JSON response, then configure that servlet path in the xml.
 				//If its a regular response and this setting has to be overriden then set model attribute metaRobots
-				else if (CollectionUtils.contains(getRobotIndexForJSONMapping().keySet().iterator(), request.getServletPath()))
+				if (CollectionUtils.contains(getRobotIndexForJSONMapping().keySet().iterator(), request.getServletPath()))
 				{
 					robotsValue = getRobotIndexForJSONMapping().get(request.getServletPath());
 				}

@@ -1,16 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- [y] hybris Platform
-
- Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
-
- This software is the confidential and proprietary information of SAP
- ("Confidential Information"). You shall not disclose such Confidential
- Information and shall use it only in accordance with the terms of the
- license agreement you entered into with SAP.
+ Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
 -->
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/util
 		http://www.springframework.org/schema/util/spring-util.xsd">
@@ -27,10 +21,12 @@
 		<ref bean="exceptionTranslationFilter" />
 
 		<!-- generic platform filters -->
+		<ref bean="corsFilter"/>
 		<ref bean="log4jFilter" />
 		<ref bean="restSessionFilterV2" />
 
 		<!-- occ v2 WebAppMediaFilter -->
+		<ref bean="polyglotPersistenceCallbackFilter"/>
 		<ref bean="commerceWebServicesV2WebAppMediaFilter" />
 
 		<!-- commerceWebservices filters -->
@@ -40,11 +36,18 @@
 		<ref bean="springSecurityFilterChain" />
 		<ref bean="userMatchingFilter" />
 
+		<!-- Anonymous Consents -->
+		<ref bean="commerceWebServicesConsentFilterV2"/>
+
 		<!-- Matching filters -->
+		<ref bean="commerceWebServicesEurope1AttributesFilterV2" />
+		<ref bean="commerceWebServicesSessionLanguageFilterV2" />
+		<ref bean="commerceWebServicesSessionCurrencyFilterV2" />
 		<ref bean="cartMatchingFilter" />
-		<ref bean="commerceWebServicesSessionAttributesFilterV2" />
-		
+
+		<!-- Guest Role -->
 		<ref bean="guestRoleFilterV2" />
+
 	</util:list>
 
 	<alias alias="exceptionTranslationFilter" name="defaultExceptionTranslationFilter" />
@@ -54,10 +57,10 @@
 
 	<alias alias="userMatchingFilter" name="defaultUserMatchingFilter" />
 	<bean id="defaultUserMatchingFilter" class="de.hybris.electronics.v2.filter.UserMatchingFilter">
-		<property name="regexp" value="^/[^/]+/users/([^/]+)" />
+		<property name="regexp" value="^/[^/]+/(?:users|orgUsers)/([^/]+)" />
 		<property name="userService" ref="userService" />
 		<property name="sessionService" ref="sessionService" />
-		<property name="weChatCustomerFacade" ref="customerFacade" />
+		<property name="userMatchingService" ref="wsUserMatchingService" />
 	</bean>
 
 	<alias alias="restSessionFilterV2" name="defaultRestSessionFilterV2" />
@@ -65,30 +68,44 @@
 		<property name="sessionService" ref="sessionService" />
 	</bean>
 
-	<bean id="commerceWebServicesSessionAttributesFilterV2" class="de.hybris.electronics.filter.SessionAttributesFilter">
-		<property name="contextInformationLoader" ref="wsContextInformationLoaderV2" />
+	<bean id="commerceWebServicesEurope1AttributesFilterV2" class="de.hybris.electronics.filter.Europe1AttributesFilter">
 		<property name="baseStoreService" ref="baseStoreService" />
 		<property name="sessionService" ref="sessionService" />
 	</bean>
 
+	<bean id="commerceWebServicesSessionCurrencyFilterV2" class="de.hybris.electronics.filter.SessionCurrencyFilter">
+		<property name="contextInformationLoader" ref="wsContextInformationLoaderV2" />
+	</bean>
+
+	<bean id="commerceWebServicesSessionLanguageFilterV2" class="de.hybris.electronics.filter.SessionLanguageFilter">
+		<property name="contextInformationLoader" ref="wsContextInformationLoaderV2" />
+	</bean>
+
 	<alias alias="cartMatchingFilter" name="defaultCartMatchingFilter" />
 	<bean id="defaultCartMatchingFilter" class="de.hybris.electronics.v2.filter.CartMatchingFilter">
-		<property name="regexp" value="^/[^/]+/users/[^/]+/carts/([^/]+)" />
+		<property name="regexp" value="^/[^/]+/(?:users|orgUsers)/[^/]+/carts/([^/]+)" />
 		<property name="cartLoaderStrategy" ref="cartLoaderStrategy" />
-		<property name="cartRefreshedByDefault" value="true" />
+		<property name="cartRefreshedByDefault" value="${electronicsonlinewebservices.cart.refreshed.by.default}" />
 	</bean>
 
 	<alias alias="baseSiteMatchingFilter" name="defaultBaseSiteMatchingFilter" />
 	<bean id="defaultBaseSiteMatchingFilter" class="de.hybris.electronics.v2.filter.BaseSiteMatchingFilter">
-		<property name="regexp" value="^/(?!(swagger)|(.*api-docs)|(webjars))([^/]+)" />
+		<property name="regexp" value="^/(?!(swagger)|(.*api-docs)|(csrf)|(webjars))([^/]+)" />
 		<property name="baseSiteService" ref="baseSiteService" />
+	</bean>
+
+	<bean id="commerceWebServicesConsentFilterV2" class="de.hybris.electronics.filter.ConsentFilter">
+		<property name="userFacade" ref="userFacade"/>
+		<property name="baseSiteService" ref="baseSiteService"/>
+		<property name="anonymousConsentFacade" ref="anonymousConsentFacade"/>
+		<property name="customerConsentDataStrategy" ref="customerConsentDataStrategy"/>
 	</bean>
 
 	<bean id="guestRoleFilterV2" class="de.hybris.electronics.auth.GuestRoleFilter">
 		<property name="authenticationEventPublisher">
 			<bean class="org.springframework.security.authentication.DefaultAuthenticationEventPublisher" />
 		</property>
-		<property name="userService" ref="userService" />
+		<property name="userFacade" ref="userFacade" />
 		<property name="cartService" ref="cartService" />
 		<property name="guestRole" value="ROLE_GUEST" />
 	</bean>

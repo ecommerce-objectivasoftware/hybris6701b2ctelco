@@ -1,12 +1,5 @@
 # -----------------------------------------------------------------------
-# [y] hybris Platform
-#
-# Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
-#
-# This software is the confidential and proprietary information of SAP
-# ("Confidential Information"). You shall not disclose such Confidential
-# Information and shall use it only in accordance with the terms of the
-# license agreement you entered into with SAP.
+# Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
 # -----------------------------------------------------------------------
 $currencies=EUR
 $defaultCurrency=EUR
@@ -43,8 +36,7 @@ INSERT_UPDATE Country;isocode[unique=true];name[lang=de];name[lang=en];active;;;
 ;US;Vereinigte Staaten von Amerika;United States of America;true;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;
 INSERT_UPDATE UserGroup;uid[unique=true];groups(uid);;;;;;;;;;;;;;;;;;;;
-;cockpitgroup;;;;;;;;;;;;;;;;;;;;;
-;customergroup;cockpitgroup;;;;;;;;;;;;;;;;;;;;
+;customergroup;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;
 INSERT_UPDATE Customer;uid[unique=true];customerID;name;description;sessionLanguage(isocode);sessionCurrency(isocode);groups(uid);password;;;;;;;;;;;;;;
 ;ahertz;K2006-C0005;Anja Hertz;;en;USD;customergroup;1234;;;;;;;;;;;;;;
@@ -84,13 +76,13 @@ INSERT_UPDATE Cart;user(uid);code[unique=true];currency(isocode);date[dateformat
 ;promoted;promotedStored;EUR;27.04.2010 00:00:00;true;false;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;
 INSERT CartEntry;order(Cart.code);creationTime[dateformat=dd.MM.yyyy HH:mm:ss];product(code,catalogVersion(catalog(id),version));quantity;unit(code);entryNumber;;;;;;;;;;;;;;;;
-;ahertzCart;27.04.2010 00:00:00;HW1210-3422:$catalog-id:$catalog-version;2;pieces;1;;;;;;;;;;;;;;;;
-;abrodeCart;27.04.2010 00:00:00;HW1210-3422:$catalog-id:$catalog-version;2;pieces;1;;;;;;;;;;;;;;;;
-;abrodeCart;27.04.2010 00:00:00;HW1210-3423:$catalog-id:$catalog-version;5;pieces;2;;;;;;;;;;;;;;;;
-;dejolStored;27.04.2010 00:00:00;HW1210-3423:$catalog-id:$catalog-version;10;pieces;1;;;;;;;;;;;;;;;;
-;dejolStored;27.04.2010 00:00:00;HW1210-3424:$catalog-id:$catalog-version;10;pieces;2;;;;;;;;;;;;;;;;
-;promotedStored;27.04.2010 00:00:00;HW1210-3425:$catalog-id:$catalog-version;8;pieces;2;;;;;;;;;;;;;;;;
-;promotedStored;27.04.2010 00:00:00;HW1210-3423:$catalog-id:$catalog-version;1;pieces;1;;;;;;;;;;;;;;;;
+;ahertzCart;27.04.2010 00:00:00;HW1210-3422:$catalog-id:$catalog-version;2;pieces;0;;;;;;;;;;;;;;;;
+;abrodeCart;27.04.2010 00:00:00;HW1210-3422:$catalog-id:$catalog-version;2;pieces;0;;;;;;;;;;;;;;;;
+;abrodeCart;27.04.2010 00:00:00;HW1210-3423:$catalog-id:$catalog-version;5;pieces;1;;;;;;;;;;;;;;;;
+;dejolStored;27.04.2010 00:00:00;HW1210-3423:$catalog-id:$catalog-version;10;pieces;0;;;;;;;;;;;;;;;;
+;dejolStored;27.04.2010 00:00:00;HW1210-3424:$catalog-id:$catalog-version;10;pieces;1;;;;;;;;;;;;;;;;
+;promotedStored;27.04.2010 00:00:00;HW1210-3425:$catalog-id:$catalog-version;8;pieces;1;;;;;;;;;;;;;;;;
+;promotedStored;27.04.2010 00:00:00;HW1210-3423:$catalog-id:$catalog-version;1;pieces;0;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;
 INSERT_UPDATE PromotionGroup;Identifier[unique=true];;;;;;;;;;;;;;;;;;;;;
 ;default;;;;;;;;;;;;;;;;;;;;;

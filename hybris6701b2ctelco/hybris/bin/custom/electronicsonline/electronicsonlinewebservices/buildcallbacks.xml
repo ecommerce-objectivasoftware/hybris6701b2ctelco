@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
- [y] hybris Platform
-
- Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
-
- This software is the confidential and proprietary information of SAP
- ("Confidential Information"). You shall not disclose such Confidential
- Information and shall use it only in accordance with the terms of the
- license agreement you entered into with SAP.
+ Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
 --><!--
  All hybris buildcallbacks.xml macrodefinitions:
 
@@ -66,45 +59,82 @@
 		 <macrodef name="electronicsonlinewebservices_after_dist_copy"/>
 
 --><project name="electronicsonlinewebservices_buildcallbacks">
-
-	<!-- 
+    	
+    <!-- 
 		Called whenever 'ant ear' is used. this callback can be used to modify the content of the ear file
 
 		${ear.path}: 			path to ear
 	 -->
-	<macrodef name="electronicsonlinewebservices_before_ear">
-		<sequential>
-
-			<!-- you can do anything before the EAR file is being packed -->
-
-		</sequential>
-	</macrodef>
-
+    	
+    <macrodef name="electronicsonlinewebservices_before_ear">
+        		
+        <sequential>
+            			
+            <!-- you can do anything before the EAR file is being packed -->
+            		
+        </sequential>
+        	
+    </macrodef>
+    	
 	
-	<macrodef name="electronicsonlinewebservices_after_build">
-		<sequential>
-			<echo message="electronicsonlinewebservices_after_build"/>
-			<containsExact separator=";" string="${extension.names}" substring="addonsupport">
-				<do>
-					<foreachext>
-						<do>
-							<for delimiter=";" list="${addon.folder}" param="addOnFile">
-								<sequential>
-									<if>
-										<available file="${ext.@{extname}.path}/acceleratoraddon/@{addOnFile}"/>
-										<then>
-											<echo message="Found addon:  @{extname}"/>
-											<echo message="addOnFile test:  @{addOnFile}"/>
-											<copyAddOnToExtension addonextension="@{extname}" addonresource="@{addOnFile}" target="electronicsonlinewebservices"/>
-										</then>
-									</if>
-								</sequential>
-							</for>
-						</do>
-					</foreachext>
-				</do>
-			</containsExact>
-		</sequential>
-	</macrodef>
+    <macrodef name="electronicsonlinewebservices_after_build">
+        		
+        <sequential>
+            			
+            <echo message="electronicsonlinewebservices_after_build"/>
+            			
+            <containsExact separator=";" string="${extension.names}" substring="addonsupport">
+                				
+                <do>
+                    					
+                    <foreachext>
+                        						
+                        <do>
+                            							
+                            <for delimiter=";" list="${addon.folder}" param="addOnFile">
+                                								
+                                <sequential>
+                                    									
+                                    <if>
+                                        										
+                                        <available file="${ext.@{extname}.path}/acceleratoraddon/@{addOnFile}"/>
+                                        										
+                                        <then>
+                                            											
+                                            <echo message="Found addon:  @{extname}"/>
+                                            											
+                                            <echo message="addOnFile test:  @{addOnFile}"/>
+                                            											
+                                            <copyAddOnToExtension addonextension="@{extname}" addonresource="@{addOnFile}" target="electronicsonlinewebservices"/>
+                                            										
+                                        </then>
+                                        									
+                                    </if>
+                                    								
+                                </sequential>
+                                							
+                            </for>
+                            						
+                        </do>
+                        					
+                    </foreachext>
+                    				
+                </do>
+                			
+            </containsExact>
+            		
+        </sequential>
+        	
+    </macrodef>
+    	
 	
+    <patternset id="extension.electronicsonlinewebservices.production.filter">
+        		
+        <patternset refid="extension.production.filter"/>
+        		
+        <exclude name="web/addonsrc/**"/>
+        	
+    </patternset>
+    	
+
 </project>

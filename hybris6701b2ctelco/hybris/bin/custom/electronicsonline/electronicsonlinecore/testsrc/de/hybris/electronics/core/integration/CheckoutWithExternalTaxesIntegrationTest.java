@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.core.integration;
 
@@ -44,6 +37,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.test.annotation.DirtiesContext;
 
 
 /**
@@ -51,6 +45,8 @@ import org.junit.Test;
  * 
  */
 @IntegrationTest
+// DirtiesContext since the test changes the spring context. This might affect other tests if not cleaned.
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class CheckoutWithExternalTaxesIntegrationTest extends ServicelayerTransactionalTest
 {
 
@@ -78,7 +74,7 @@ public class CheckoutWithExternalTaxesIntegrationTest extends ServicelayerTransa
 	@Resource
 	private DeliveryModeService deliveryModeService;
 
-	@Resource
+	@Resource(name = "externalTaxesService")
 	private DefaultExternalTaxesService defaultExternalTaxesService;
 
 	@Resource

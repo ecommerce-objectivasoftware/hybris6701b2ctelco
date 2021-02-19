@@ -3,7 +3,7 @@
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags" %>
 
 <%-- JS configuration --%>
-<script type="text/javascript">
+<script>
 	/*<![CDATA[*/
 	ACC.addons = {};	//JS namespace for addons properties
 

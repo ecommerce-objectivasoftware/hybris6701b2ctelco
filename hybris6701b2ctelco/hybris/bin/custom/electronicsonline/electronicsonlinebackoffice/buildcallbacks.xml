@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+ Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
+--><project name="electronicsonlinebackoffice_buildcallbacks">
+    	
+    <property name="electronicsonlinebackofficeWebFragmentSrc" value="${ext.electronicsonlinebackoffice.path}/resources/web-fragment.xml"/>
+    	
+    <property name="electronicsonlinebackofficeWebFragmentDestJar" value="${ext.backoffice.path}/web/webroot/WEB-INF/lib/webfragmentExt_electronicsonlinebackoffice.jar"/>
+    	
+    <macrodef name="electronicsonlinebackoffice_clean_classpath_file">
+        		
+        <sequential>
+            			
+            <copy failonerror="true" file="${ext.electronicsonlinebackoffice.path}/.classpath" overwrite="true" tofile="${ext.electronicsonlinebackoffice.path}/.classpath.edit">
+                				
+                <filterchain>
+                    					
+                    <linecontainsregexp negate="true">
+                        						
+                        <regexp pattern="^(\t\t\t\t|)$"/>
+                          
+                        <!-- added by script -->
+                        					
+                    </linecontainsregexp>
+                    				
+                </filterchain>
+                			
+            </copy>
+            			
+            <move failonerror="true" file="${ext.electronicsonlinebackoffice.path}/.classpath.edit" overwrite="true" tofile="${ext.electronicsonlinebackoffice.path}/.classpath"/>
+            		
+        </sequential>
+        	
+    </macrodef>
+    	
+    <macrodef name="electronicsonlinebackoffice_after_clean">
+        		
+        <sequential>
+            			
+            <echo level="info" message="Generating .classpath file for electronicsonlinebackoffice"/>
+            			
+            <create_extension_classpath_file extname="electronicsonlinebackoffice"/>
+            			
+            <electronicsonlinebackoffice_clean_classpath_file/>
+            			
+            <electronicsonlinebackoffice_remove_web_fragment/>
+            		
+        </sequential>
+        	
+    </macrodef>
+    	
+    <macrodef name="electronicsonlinebackoffice_after_build">
+        		
+        <sequential>
+            			
+            <electronicsonlinebackoffice_remove_web_fragment/>
+            			
+            <electronicsonlinebackoffice_create_web_fragment/>
+            		
+        </sequential>
+        	
+    </macrodef>
+    	
+    <macrodef name="electronicsonlinebackoffice_remove_web_fragment">
+        		
+        <sequential>
+            			
+            <if>
+                				
+                <available file="${electronicsonlinebackofficeWebFragmentDestJar}"/>
+                				
+                <then>
+                    					
+                    <delete file="${electronicsonlinebackofficeWebFragmentDestJar}"/>
+                    				
+                </then>
+                			
+            </if>
+            		
+        </sequential>
+        	
+    </macrodef>
+    	
+    <macrodef name="electronicsonlinebackoffice_create_web_fragment">
+        		
+        <sequential>
+            			
+            <if>
+                				
+                <available file="${electronicsonlinebackofficeWebFragmentSrc}"/>
+                				
+                <then>
+                    					
+                    <sequential>
+                        						
+                        <jar destfile="${electronicsonlinebackofficeWebFragmentDestJar}">
+                            							
+                            <metainf file="${electronicsonlinebackofficeWebFragmentSrc}"/>
+                            						
+                        </jar>
+                        					
+                    </sequential>
+                    				
+                </then>
+                			
+            </if>
+            		
+        </sequential>
+        	
+    </macrodef>
+    	
+    <patternset id="electronicsonlinebackoffice.localization.pattern">
+        		
+        <!-- core and hmc  -->
+        		
+        <include name="**/*locales*_en.properties"/>
+        		
+        <exclude name="**/hmc/web/webroot/WEB-INF/classes/**/*"/>
+        		
+        <exclude name="**/unittest/**/*"/>
+        		
+        <!-- cockpit (ng) -->
+        		
+        <include name="**/i3-label_en.properties"/>
+        		
+        <include name="**/labels_en.properties"/>
+        		
+        <!-- messages -->
+        		
+        <include name="**/*messages_en.properties"/>
+        		
+        <include name="**/*messages.properties"/>
+        		
+        <!-- frontend properties files in WEB-INF/messages folder -->
+        		
+        <include name="**/WEB-INF/messages/*_en.properties"/>
+        		
+        <!-- csv and impex -->
+        		
+        <include name="**/*_en.csv"/>
+        		
+        <include name="**/*_en.impex"/>
+        		
+        <include name="**/lang-en.properties"/>
+        		
+        <!-- email localizations from yacceleratorcore -->
+        		
+        <include name="resources/**/messages/*_en.properties"/>
+        		
+        <!-- include validation messages -->
+        		
+        <include name="resources/**/ValidationMessages.properties"/>
+        	
+    </patternset>
+    	
+    <macrodef name="electronicsonlinebackoffice_before_build">
+        		
+        <sequential>
+            			
+            <register_sass_extension extensionname="electronicsonlinebackoffice"/>
+            			
+            <register_sass_extension destination="" extensionname="electronicsonlinebackoffice" resources="resources"/>
+            		
+        </sequential>
+        	
+    </macrodef>
+    
+</project>

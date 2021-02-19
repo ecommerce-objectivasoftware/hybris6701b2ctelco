@@ -1,20 +1,14 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.v1.controller;
+
+import static de.hybris.electronics.constants.YcommercewebservicesConstants.ENUM_VALUES_SEPARATOR;
 
 import de.hybris.platform.commercefacades.product.data.PromotionData;
 import de.hybris.platform.commercefacades.promotion.CommercePromotionFacade;
 import de.hybris.platform.commercefacades.promotion.PromotionOption;
 import de.hybris.platform.commercewebservicescommons.errors.exceptions.RequestParameterException;
-import de.hybris.electronics.constants.YcommercewebservicesConstants;
 import de.hybris.electronics.product.data.PromotionDataList;
 
 import java.util.HashSet;
@@ -146,7 +140,7 @@ public class PromotionsController extends BaseController
 
 	protected Set<PromotionOption> extractOptions(final String options)
 	{
-		final String[] optionsStrings = options.split(YcommercewebservicesConstants.OPTIONS_SEPARATOR);
+		final String[] optionsStrings = options.split(ENUM_VALUES_SEPARATOR);
 
 		final Set<PromotionOption> opts = new HashSet<PromotionOption>();
 		for (final String option : optionsStrings)

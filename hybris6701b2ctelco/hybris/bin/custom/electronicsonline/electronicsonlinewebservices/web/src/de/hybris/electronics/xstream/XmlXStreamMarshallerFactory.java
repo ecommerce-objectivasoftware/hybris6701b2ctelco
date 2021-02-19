@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.xstream;
 
@@ -46,7 +39,6 @@ import javanet.staxutils.IndentingXMLStreamWriter;
 
 
 /**
- *
  * Factory for creating a {@link XStreamMarshaller} with given {@link XStream}, registered available
  * {@link TypeAliasMapping} and {@link TypeConverterMapping} instances as customization of the {@link XStreamMarshaller}
  * .
@@ -81,16 +73,16 @@ public class XmlXStreamMarshallerFactory implements FactoryBean, ApplicationCont
 		final XStreamMarshaller marshaller = createMarshaller();
 
 		//we use here BeanFactoryUtils.beansOfTypeIncludingAncestors lookup for assuring the lookup for the 'beans of type' in the parent spring context succeeds
-		final Map<String, TypeAliasMapping> allTypeAliases = BeanFactoryUtils.beansOfTypeIncludingAncestors(ctx,
-				TypeAliasMapping.class);
+		final Map<String, TypeAliasMapping> allTypeAliases = BeanFactoryUtils
+				.beansOfTypeIncludingAncestors(ctx, TypeAliasMapping.class);
 		setAliases(marshaller, allTypeAliases.values());
 
-		final Map<String, TypeConverterMapping> allTypeConverter = BeanFactoryUtils.beansOfTypeIncludingAncestors(ctx,
-				TypeConverterMapping.class);
+		final Map<String, TypeConverterMapping> allTypeConverter = BeanFactoryUtils
+				.beansOfTypeIncludingAncestors(ctx, TypeConverterMapping.class);
 		setConverters(marshaller, allTypeConverter.values());
 
-		final Map<String, AttributeOmitMapping> allOmitersConverter = BeanFactoryUtils.beansOfTypeIncludingAncestors(ctx,
-				AttributeOmitMapping.class);
+		final Map<String, AttributeOmitMapping> allOmitersConverter = BeanFactoryUtils
+				.beansOfTypeIncludingAncestors(ctx, AttributeOmitMapping.class);
 		setOmitted(marshaller, allOmitersConverter.values());
 
 		return marshaller;
@@ -98,8 +90,8 @@ public class XmlXStreamMarshallerFactory implements FactoryBean, ApplicationCont
 
 	protected void configureXmlMarshaller(final XStreamMarshaller marshaller)
 	{
-		final Map<String, ImplicitCollection> allImplicitCollections = BeanFactoryUtils.beansOfTypeIncludingAncestors(ctx,
-				ImplicitCollection.class);
+		final Map<String, ImplicitCollection> allImplicitCollections = BeanFactoryUtils
+				.beansOfTypeIncludingAncestors(ctx, ImplicitCollection.class);
 		setImplicitCollections(marshaller, allImplicitCollections.values());
 	}
 
@@ -107,8 +99,9 @@ public class XmlXStreamMarshallerFactory implements FactoryBean, ApplicationCont
 	{
 		for (final ImplicitCollection implicit : values)
 		{
-			marshaller.getXStream().addImplicitCollection(implicit.getOwnerType(), implicit.getFieldName(),
-					implicit.getItemFieldName(), implicit.getItemType());
+			marshaller.getXStream()
+					.addImplicitCollection(implicit.getOwnerType(), implicit.getFieldName(), implicit.getItemFieldName(),
+							implicit.getItemType());
 		}
 	}
 
@@ -226,8 +219,9 @@ public class XmlXStreamMarshallerFactory implements FactoryBean, ApplicationCont
 		}
 		else
 		{
-			throw new IllegalArgumentException("Assigned converter mapping should be of SingleValueConverter or Converter, not a"
-					+ converterMapping.getConverter());
+			throw new IllegalArgumentException(
+					"Assigned converter mapping should be of SingleValueConverter or Converter, not a" + converterMapping
+							.getConverter());
 		}
 	}
 
@@ -244,8 +238,9 @@ public class XmlXStreamMarshallerFactory implements FactoryBean, ApplicationCont
 		}
 		else
 		{
-			throw new IllegalArgumentException("Assigned converter mapping should be of SingleValueConverter or Converter, not a"
-					+ converterMapping.getConverter());
+			throw new IllegalArgumentException(
+					"Assigned converter mapping should be of SingleValueConverter or Converter, not a" + converterMapping
+							.getConverter());
 		}
 	}
 
@@ -259,7 +254,6 @@ public class XmlXStreamMarshallerFactory implements FactoryBean, ApplicationCont
 	}
 
 	/**
-	 *
 	 * aliases property moving also from element to attribute
 	 */
 	protected void setAttributeAliasInternal(final XStreamMarshaller marshaller, final TypeAliasMapping alias)
@@ -267,15 +261,14 @@ public class XmlXStreamMarshallerFactory implements FactoryBean, ApplicationCont
 		final AttributeAliasMapping attrAlias = (AttributeAliasMapping) alias;
 		if (LOG.isDebugEnabled())
 		{
-			LOG.debug("registering attribute alias " + attrAlias.getAlias() + " , " + attrAlias.getAttributeName() + "."
-					+ attrAlias.getAliasedClass());
+			LOG.debug("registering attribute alias " + attrAlias.getAlias() + " , " + attrAlias.getAttributeName() + "." + attrAlias
+					.getAliasedClass());
 		}
 
 		marshaller.getXStream().aliasAttribute(attrAlias.getAliasedClass(), attrAlias.getAttributeName(), attrAlias.getAlias());
 	}
 
 	/**
-	 *
 	 * aliases property leaving it as element
 	 */
 	protected void setFieldAliasInternal(final XStreamMarshaller marshaller, final TypeAliasMapping alias)
@@ -283,8 +276,8 @@ public class XmlXStreamMarshallerFactory implements FactoryBean, ApplicationCont
 		final FieldAliasMapping attrAlias = (FieldAliasMapping) alias;
 		if (LOG.isDebugEnabled())
 		{
-			LOG.debug("registering field alias " + attrAlias.getAlias() + " , " + attrAlias.getFieldName() + "."
-					+ attrAlias.getAliasedClass());
+			LOG.debug("registering field alias " + attrAlias.getAlias() + " , " + attrAlias.getFieldName() + "." + attrAlias
+					.getAliasedClass());
 		}
 
 		marshaller.getXStream().aliasField(attrAlias.getAlias(), attrAlias.getAliasedClass(), attrAlias.getFieldName());

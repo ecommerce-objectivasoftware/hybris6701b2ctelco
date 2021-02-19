@@ -4,7 +4,7 @@
 <%@ taglib prefix="ycommerce" uri="http://hybris.com/tld/ycommercetags" %>
 
 <c:if test="${not empty googleAnalyticsTrackingId}">
-<script type="text/javascript">
+<script>
 /* Google Analytics */
 
 var googleAnalyticsTrackingId = '${ycommerce:encodeJavaScript(googleAnalyticsTrackingId)}';

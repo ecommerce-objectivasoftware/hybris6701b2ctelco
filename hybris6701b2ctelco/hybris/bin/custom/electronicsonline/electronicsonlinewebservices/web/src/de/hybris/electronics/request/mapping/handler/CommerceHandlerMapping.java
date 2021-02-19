@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.request.mapping.handler;
 
@@ -58,7 +51,7 @@ public class CommerceHandlerMapping extends RequestMappingHandlerMapping
 
 	/**
 	 * @param apiVersion
-	 *           - Api version for which this request handler mapping should be defined
+	 * 		- Api version for which this request handler mapping should be defined
 	 */
 	public CommerceHandlerMapping(final String apiVersion)
 	{
@@ -83,7 +76,6 @@ public class CommerceHandlerMapping extends RequestMappingHandlerMapping
 	/**
 	 * Scan beans in the ApplicationContext, detect and register handler methods. Additionally this method detect which
 	 * request mapping was overridden
-	 * 
 	 */
 	@Override
 	protected void initHandlerMethods()
@@ -94,10 +86,9 @@ public class CommerceHandlerMapping extends RequestMappingHandlerMapping
 
 	/**
 	 * Gets mapping from parent method and check if it wasn't overridden by {@link RequestMappingOverride} annotation
-	 * 
+	 *
 	 * @return the created RequestMappingInfo, or {@code null} if the method does not have a {@code @RequestMapping}
-	 *         annotation or mapping was overridden by {@code RequestMappingOverride} annotation.
-	 * 
+	 * annotation or mapping was overridden by {@code RequestMappingOverride} annotation.
 	 */
 	@Override
 	protected RequestMappingInfo getMappingForMethod(final Method method, final Class<?> handlerType)
@@ -114,7 +105,6 @@ public class CommerceHandlerMapping extends RequestMappingHandlerMapping
 
 	/**
 	 * Method checks if mapping was overridden
-	 * 
 	 */
 	protected boolean isRequestMappingOverridden(final RequestMappingInfo mapping, final Method method)
 	{
@@ -134,7 +124,6 @@ public class CommerceHandlerMapping extends RequestMappingHandlerMapping
 
 	/**
 	 * Checks if method has {@code RequestMappingOverride} annotation
-	 * 
 	 */
 	protected boolean hasRequestMappingOverrideAnnotation(final Method method)
 	{
@@ -147,7 +136,6 @@ public class CommerceHandlerMapping extends RequestMappingHandlerMapping
 	 * properties files (project.properties, local.properties). If there is no {@code priorityProperty} then
 	 * {@code <className>.<methodName>.priority} will be used as property name. If there is no value for property with
 	 * given name, default value = 0 will be returned.
-	 * 
 	 */
 	protected Integer getMethodPriorityValue(final Method method)
 	{
@@ -157,8 +145,8 @@ public class CommerceHandlerMapping extends RequestMappingHandlerMapping
 			String priorityProperty = requestMappingOverride.priorityProperty();
 			if (priorityProperty.isEmpty())
 			{
-				priorityProperty = "requestMappingOverride." + method.getDeclaringClass().getName() + "." + method.getName()
-						+ ".priority";
+				priorityProperty =
+						"requestMappingOverride." + method.getDeclaringClass().getName() + "." + method.getName() + ".priority";
 			}
 
 			return Integer.valueOf(Config.getInt(priorityProperty, getDefaultRequestMappingOverridePriority()));
@@ -173,11 +161,12 @@ public class CommerceHandlerMapping extends RequestMappingHandlerMapping
 	{
 		if (LOG.isDebugEnabled())
 		{
-			LOG.debug("Looking for overridden request mappings in application context: " + getApplicationContext());
+			LOG.debug("Looking for overridden request mappings in application context: %s", getApplicationContext());
 		}
 
-		final String[] beanNames = this.detectInAncestorContexts ? BeanFactoryUtils.beanNamesForTypeIncludingAncestors(
-				getApplicationContext(), Object.class) : getApplicationContext().getBeanNamesForType(Object.class);
+		final String[] beanNames = this.detectInAncestorContexts ?
+				BeanFactoryUtils.beanNamesForTypeIncludingAncestors(getApplicationContext(), Object.class) :
+				getApplicationContext().getBeanNamesForType(Object.class);
 
 		for (final String beanName : beanNames)
 		{
@@ -191,14 +180,15 @@ public class CommerceHandlerMapping extends RequestMappingHandlerMapping
 
 	/**
 	 * Looks for overridden request mapping.
-	 * 
+	 *
 	 * @param handler
-	 *           the bean name of a handler or a handler instance
+	 * 		the bean name of a handler or a handler instance
 	 */
 	protected void detectOverriddenMappings(final Object handler)
 	{
-		final Class<?> handlerType = (handler instanceof String) ? getApplicationContext().getType((String) handler) : handler
-				.getClass();
+		final Class<?> handlerType = (handler instanceof String) ?
+				getApplicationContext().getType((String) handler) :
+				handler.getClass();
 
 		final Class<?> userType = ClassUtils.getUserClass(handlerType);
 
@@ -244,7 +234,7 @@ public class CommerceHandlerMapping extends RequestMappingHandlerMapping
 
 			if (LOG.isInfoEnabled())
 			{
-				LOG.info("Mapping \"" + mapping + "\" overridden with priority = " + newPriority);
+				LOG.info("Mapping \"%s\" overridden with priority = %s", mapping, newPriority);
 			}
 		}
 	}

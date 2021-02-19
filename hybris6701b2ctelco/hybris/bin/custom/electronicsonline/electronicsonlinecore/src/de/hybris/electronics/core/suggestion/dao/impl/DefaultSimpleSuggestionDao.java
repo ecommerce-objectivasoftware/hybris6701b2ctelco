@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.core.suggestion.dao.impl;
 
@@ -29,7 +22,7 @@ import org.springframework.util.Assert;
 
 /**
  * Default implementation of {@link SimpleSuggestionDao}.
- * 
+ *
  * Finds products that are related products that the user has bought.
  */
 public class DefaultSimpleSuggestionDao extends AbstractItemDao implements SimpleSuggestionDao
@@ -142,7 +135,7 @@ public class DefaultSimpleSuggestionDao extends AbstractItemDao implements Simpl
 	 * @deprecated Since 5.0. Use
 	 *             {@link #findProductsRelatedToPurchasedProductsByCategory(CategoryModel, List, UserModel, boolean, Integer)}
 	 */
-	@Deprecated
+	@Deprecated(since = "5.0", forRemoval = true)
 	@Override
 	public List<ProductModel> findProductsRelatedToPurchasedProductsByCategory(final CategoryModel category, final UserModel user,
 			final ProductReferenceTypeEnum referenceType, final boolean excludePurchased, final Integer limit)

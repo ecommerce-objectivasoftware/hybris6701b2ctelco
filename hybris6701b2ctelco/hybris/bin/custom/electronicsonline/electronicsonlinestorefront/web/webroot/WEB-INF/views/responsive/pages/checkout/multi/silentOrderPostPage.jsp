@@ -30,7 +30,7 @@
 
 							    <ycommerce:testId code="paymentDetailsForm">
 							
-								<form:form id="silentOrderPostForm" name="silentOrderPostForm" commandName="sopPaymentDetailsForm" action="${paymentFormUrl}" method="POST">
+								<form:form id="silentOrderPostForm" name="silentOrderPostForm" modelAttribute="sopPaymentDetailsForm" action="${paymentFormUrl}" method="POST">
 									<input type="hidden" name="orderPage_receiptResponseURL" value="${fn:escapeXml(silentOrderPageData.parameters['orderPage_receiptResponseURL'])}"/>
 									<input type="hidden" name="orderPage_declineResponseURL" value="${fn:escapeXml(silentOrderPageData.parameters['orderPage_declineResponseURL'])}"/>
 									<input type="hidden" name="orderPage_cancelResponseURL" value="${fn:escapeXml(silentOrderPageData.parameters['orderPage_cancelResponseURL'])}"/>
@@ -131,7 +131,7 @@
                                     </c:if>
 				  
                                     <input type="hidden" value="${fn:escapeXml(silentOrderPageData.parameters['billTo_email'])}" class="text" name="billTo_email" id="billTo_email">
-                                    <address:billAddressFormSelector supportedCountries="${countries}" regions="${regions}" tabindex="12"/>
+                                    <address:billAddressFormSelector supportedCountries="${supportedBillingCountries}" regions="${regions}" tabindex="12"/>
 				
 									<p class="help-block"><spring:theme code="checkout.multi.paymentMethod.seeOrderSummaryForMoreInformation"/></p>							
 								

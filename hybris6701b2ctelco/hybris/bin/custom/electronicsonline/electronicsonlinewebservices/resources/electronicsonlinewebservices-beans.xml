@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
- [y] hybris Platform
-
- Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
-
- This software is the confidential and proprietary information of SAP
- ("Confidential Information"). You shall not disclose such Confidential
- Information and shall use it only in accordance with the terms of the
- license agreement you entered into with SAP.
+ Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
 -->
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="beans.xsd">
 
@@ -91,6 +84,11 @@
 		<property name="countries" type="java.util.List&lt;de.hybris.platform.commercefacades.user.data.CountryData>"/>
 	</bean>
 
+	<bean class="de.hybris.electronics.user.data.RegionDataList">
+		<property name="regions"
+				  type="java.util.List&lt;de.hybris.platform.commercefacades.user.data.RegionData>"/>
+	</bean>
+
 	<bean class="de.hybris.electronics.user.data.AddressDataList">
 		<property name="addresses" type="java.util.List&lt;de.hybris.platform.commercefacades.user.data.AddressData>"/>
 	</bean>
@@ -109,11 +107,14 @@
 		          type="de.hybris.electronics.user.data.AddressDataList"/>
 	</bean>
 
-	<!-- Additional title property for CustomerData -->
-<!--	<bean class="de.hybris.platform.commercefacades.user.data.CustomerData"-->
-<!--	      extends="de.hybris.platform.commercefacades.user.data.PrincipalData">-->
-<!--		<property name="title" type="String"/>-->
-<!--	</bean>-->
+	<bean class="de.hybris.electronics.validation.data.CartVoucherValidationData">
+		<property name="subject" type="String" />
+	</bean>
+
+	<bean class="de.hybris.electronics.validation.data.CartVoucherValidationDataList">
+		<property name="CartVoucherValidationDataList"
+				  type="java.util.List&lt;de.hybris.electronics.validation.data.CartVoucherValidationData>"/>
+	</bean>
 
 	<bean class="de.hybris.electronics.user.data.LoginChangeResponse">
 		<property name="success" type="boolean"/>
@@ -147,107 +148,28 @@
 		          type="java.util.List&lt;de.hybris.electronics.queues.data.OrderStatusUpdateElementData>"/>
 	</bean>
 
-	<bean class="de.hybris.electronics.dto.plp.WechatCategoryBodyData">
-		<property name="id" type="String"/>
-		<property name="name" type="String"/>
-		<property name="picUrl" type="String"/>
-		<property name="frontName" type="String"/>
-		<property name="title" type="String"/>
-	</bean>
-	<bean class="de.hybris.electronics.dto.plp.WechatCategoryWsDTO">
-		<property name="data" type="de.hybris.electronics.dto.plp.WechatCategoryData"/>
-		<property name="errno" type="Integer"/>
-	</bean>
-	<bean class="de.hybris.electronics.dto.plp.WechatCategoryData">
-		<property name="categoryList"
-				  type="java.util.List&lt;de.hybris.electronics.dto.plp.WechatCategoryBodyData>"/>
-		<property name="primaryCategory"
-				  type="java.util.List&lt;de.hybris.electronics.dto.plp.WechatCategoryBodyData>"/>
-		<property name="currentCategory"
-				  type="de.hybris.electronics.dto.plp.WechatCategoryBodyData"/>
-		<property name="currentSubCategory"
-				  type="java.util.List&lt;de.hybris.electronics.dto.plp.WechatCategoryBodyData>"/>
-        <property name="parentCategory"
-                  type="de.hybris.electronics.dto.plp.WechatCategoryBodyData"/>
-        <property name="brotherCategory"
-                  type="java.util.List&lt;de.hybris.electronics.dto.plp.WechatCategoryBodyData>"/>
-        <property name="list"
-                  type="java.util.List&lt;de.hybris.electronics.dto.plp.WechatProductDetailData>"/>
-
-    </bean>
-
-	<bean class="de.hybris.electronics.dto.plp.WechatProductWsDTO">
-		<property name="data" type="de.hybris.electronics.dto.plp.WechatProductHeaderData"/>
-		<property name="errno" type="Integer"/>
+	<bean class="de.hybris.electronics.store.data.StoreCountListData">
+		<property name="countriesAndRegionsStoreCount"
+				  type="java.util.List&lt;de.hybris.platform.commercefacades.store.data.StoreCountData>"/>
 	</bean>
 
-	<bean class="de.hybris.electronics.dto.plp.WechatProductHeaderData">
-		<property name="list" type="java.util.List&lt;de.hybris.electronics.dto.plp.WechatProductDetailData>"/>
+	<!-- Consent management -->
+	<bean class="de.hybris.electronics.consent.data.ConsentTemplateDataList">
+		<property name="consentTemplates"
+				  type="java.util.List&lt;de.hybris.platform.commercefacades.consent.data.ConsentTemplateData>"/>
 	</bean>
 
-	<bean class="de.hybris.electronics.dto.plp.WechatProductDetailData">
-		<property name="id" type="String"/>
-		<property name="name" type="String"/>
-		<property name="picUrl" type="String"/>
-		<property name="retailPrice" type="Double"/>
+	<!-- Base Sites -->
+	<bean class="de.hybris.electronics.basesite.data.BaseSiteDataList">
+		<property name="baseSites"
+				  type="java.util.List&lt;de.hybris.platform.commercefacades.basesite.data.BaseSiteData>"/>
 	</bean>
 
-	<bean class="de.hybris.electronics.dto.address.WechatAddressWsDTO">
-		<property name="data" type="de.hybris.electronics.dto.address.WechatAddressHeaderData"/>
-		<property name="errno" type="Integer"/>
-	</bean>
-	<bean class="de.hybris.electronics.dto.address.WechatAddressHeaderData">
-		<property name="list" type="java.util.List&lt;de.hybris.electronics.dto.address.WechatAddressBodyData>"/>
-		<property name="total" type="Integer"/>
-	</bean>
-	<bean class="de.hybris.electronics.dto.address.WechatAddressBodyData">
-		<property name="id" type="Long"/>
-		<property name="name" type="String"/>
-		<property name="tel" type="String"/>
-		<property name="addressDetail" type="String"/>
-		<property name="isDefault" type="Boolean"/>
-	</bean>
-
-	<bean class="de.hybris.electronics.dto.order.WechatCheckoutCartWsDTO">
-		<property name="data" type="de.hybris.electronics.dto.order.WechatCartData"/>
-		<property name="errno" type="Integer"/>
-	</bean>
-
-	<bean class="de.hybris.electronics.dto.order.WechatCartData">
-		<property name="checkedGoodsList" type="java.util.List&lt;de.hybris.electronics.dto.order.CheckedGood>"/>
-		<property name="checkedAddress" type="de.hybris.electronics.dto.address.WechatAddressBodyData"/>
-		<property name="availableCouponLength" type="Integer"/>
-		<property name="actualPrice" type="Double"/>
-		<property name="couponPrice" type="Double"/>
-		<property name="grouponPrice" type="Double"/>
-		<property name="freightPrice" type="Double"/>
-		<property name="goodsTotalPrice" type="Double"/>
-		<property name="orderTotalPrice" type="Double"/>
-		<property name="addressId" type="Long"/>
-		<property name="couponId" type="Integer"/>
-		<property name="userCouponId" type="Integer"/>
-		<property name="grouponRulesId" type="Integer"/>
-	</bean>
-
-	<bean class="de.hybris.electronics.dto.order.CheckedGood">
-		<property name="id" type="Integer"/>
-		<property name="picUrl" type="String"/>
-		<property name="goodsName" type="String"/>
-		<property name="number" type="Long"/>
-		<property name="specifications" type="String"/>
-		<property name="price" type="Double"/>
-	</bean>
-
-	<bean class="de.hybris.electronics.dto.order.WechatOrderWsDTO">
-		<property name="data" type="de.hybris.electronics.dto.order.WechatOrderHeaderData"/>
-		<property name="errno" type="Integer"/>
-	</bean>
-	<bean class="de.hybris.electronics.dto.order.WechatOrderHeaderData">
-		<property name="timeStamp" type="String"/>
-		<property name="nonceStr" type="String"/>
-		<property name="packageValue" type="String"/>
-		<property name="signType" type="String"/>
-		<property name="paySign" type="String"/>
+	<bean class="de.hybris.electronics.returns.data.ReturnRequestsData">
+		<property name="returnRequests"
+				  type="java.util.List&lt;de.hybris.platform.ordermanagementfacades.returns.data.ReturnRequestData>"/>
+		<property name="sorts" type="java.util.List&lt;de.hybris.platform.commerceservices.search.pagedata.SortData>"/>
+		<property name="pagination" type="de.hybris.platform.commerceservices.search.pagedata.PaginationData"/>
 	</bean>
 
 </beans>

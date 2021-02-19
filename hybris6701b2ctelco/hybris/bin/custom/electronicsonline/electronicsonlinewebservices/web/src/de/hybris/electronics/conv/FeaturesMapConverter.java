@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.conv;
 
@@ -20,10 +13,6 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.json.JsonWriter;
 
 
-/**
- *
- * 
- */
 public class FeaturesMapConverter implements Converter
 {
 
@@ -55,7 +44,7 @@ public class FeaturesMapConverter implements Converter
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.thoughtworks.xstream.converters.ConverterMatcher#canConvert(java.lang.Class)
 	 */
 	@Override
@@ -66,7 +55,7 @@ public class FeaturesMapConverter implements Converter
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.thoughtworks.xstream.converters.Converter#unmarshal(com.thoughtworks.xstream.io.HierarchicalStreamReader,
 	 * com.thoughtworks.xstream.converters.UnmarshallingContext)
 	 */

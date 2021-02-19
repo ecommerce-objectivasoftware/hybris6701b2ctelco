@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.v1.controller;
 
@@ -16,7 +9,6 @@ import de.hybris.platform.commercefacades.order.CheckoutFacade;
 import de.hybris.platform.commercefacades.order.data.CCPaymentInfoData;
 import de.hybris.platform.commercefacades.order.data.CartData;
 import de.hybris.platform.commercefacades.order.data.CartModificationData;
-import de.hybris.platform.commercefacades.order.data.CartModificationDataList;
 import de.hybris.platform.commercefacades.order.data.CartRestorationData;
 import de.hybris.platform.commercefacades.order.data.DeliveryModeData;
 import de.hybris.platform.commercefacades.order.data.DeliveryModesData;
@@ -35,6 +27,7 @@ import de.hybris.platform.commerceservices.order.CommerceCartService;
 import de.hybris.platform.commerceservices.promotion.CommercePromotionRestrictionException;
 import de.hybris.platform.commerceservices.service.data.CommerceCartParameter;
 import de.hybris.platform.commercewebservicescommons.errors.exceptions.LowStockException;
+import de.hybris.platform.commercewebservicescommons.errors.exceptions.PaymentAuthorizationException;
 import de.hybris.platform.commercewebservicescommons.errors.exceptions.ProductLowStockException;
 import de.hybris.platform.commercewebservicescommons.errors.exceptions.StockSystemException;
 import de.hybris.platform.converters.ConfigurablePopulator;
@@ -47,9 +40,9 @@ import de.hybris.platform.site.BaseSiteService;
 import de.hybris.platform.webservicescommons.errors.exceptions.WebserviceValidationException;
 import de.hybris.electronics.exceptions.InvalidPaymentInfoException;
 import de.hybris.electronics.exceptions.NoCheckoutCartException;
-import de.hybris.electronics.exceptions.PaymentAuthorizationException;
 import de.hybris.electronics.exceptions.UnsupportedDeliveryAddressException;
 import de.hybris.electronics.exceptions.UnsupportedDeliveryModeException;
+import de.hybris.platform.commercefacades.order.data.CartModificationDataList;
 import de.hybris.electronics.populator.HttpRequestPaymentInfoPopulator;
 import de.hybris.electronics.populator.options.PaymentInfoOption;
 import de.hybris.electronics.stock.CommerceStockFacade;

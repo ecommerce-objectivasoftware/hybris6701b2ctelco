@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.core.suggestion.impl;
 
@@ -34,7 +27,7 @@ public class DefaultSimpleSuggestionService implements SimpleSuggestionService
 	 * @deprecated Since 5.0.
 	 */
 	@Override
-	@Deprecated
+	@Deprecated(since = "5.0", forRemoval = true)
 	public List<ProductModel> getReferencesForPurchasedInCategory(final CategoryModel category, final UserModel user,
 			final ProductReferenceTypeEnum referenceType, final boolean excludePurchased, final Integer limit)
 	{
@@ -52,14 +45,15 @@ public class DefaultSimpleSuggestionService implements SimpleSuggestionService
 	}
 
 	@Override
-	public List<ProductModel> getReferencesForProducts(final List<ProductModel> products, final List<ProductReferenceTypeEnum> referenceTypes, final UserModel user, final boolean excludePurchased, final Integer limit)
+	public List<ProductModel> getReferencesForProducts(final List<ProductModel> products,
+			final List<ProductReferenceTypeEnum> referenceTypes, final UserModel user, final boolean excludePurchased,
+			final Integer limit)
 	{
 		if (CollectionUtils.isEmpty(products))
 		{
 			return Collections.emptyList();
 		}
-		return getSimpleSuggestionDao().findProductsRelatedToProducts(products, referenceTypes, user,
-				excludePurchased, limit);
+		return getSimpleSuggestionDao().findProductsRelatedToProducts(products, referenceTypes, user, excludePurchased, limit);
 	}
 
 	protected SimpleSuggestionDao getSimpleSuggestionDao()

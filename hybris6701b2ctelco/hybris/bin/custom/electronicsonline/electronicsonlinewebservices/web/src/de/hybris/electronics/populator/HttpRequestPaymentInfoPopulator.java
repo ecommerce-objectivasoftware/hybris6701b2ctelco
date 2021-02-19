@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.populator;
 
@@ -41,17 +34,14 @@ import org.springframework.stereotype.Component;
  * <li>saved</li>
  * <li>defaultPaymentInfo</li>
  * </ul>
- * 
+ * <p>
  * If populator's options contains {@link PaymentInfoOption#BILLING_ADDRESS}, it uses
  * {@link HttpRequestAddressDataPopulator} with prefix 'billingAddress' to populate also the billing address data from
  * http request request parameters.
- * 
- *
- * 
  */
 @Component("httpRequestPaymentInfoPopulator")
-public class HttpRequestPaymentInfoPopulator extends AbstractHttpRequestDataPopulator implements
-		ConfigurablePopulator<HttpServletRequest, CCPaymentInfoData, PaymentInfoOption>
+public class HttpRequestPaymentInfoPopulator extends AbstractHttpRequestDataPopulator
+		implements ConfigurablePopulator<HttpServletRequest, CCPaymentInfoData, PaymentInfoOption>
 {
 
 	private static final String ACCOUNT_HOLDER_NAME = "accountHolderName";

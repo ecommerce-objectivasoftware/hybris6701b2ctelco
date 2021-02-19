@@ -22,7 +22,7 @@
 </c:if>
 
 <c:if test="${empty addressFormEnabled or addressFormEnabled}">
-	<form:form method="post" commandName="addressForm">
+	<form:form method="post" modelAttribute="addressForm">
 		<form:hidden path="addressId" class="add_edit_delivery_address_id"
 			status="${not empty suggestedAddresses ? 'hasSuggestedAddresses' : ''}" />
 		<input type="hidden" name="bill_state" id="address.billstate" />

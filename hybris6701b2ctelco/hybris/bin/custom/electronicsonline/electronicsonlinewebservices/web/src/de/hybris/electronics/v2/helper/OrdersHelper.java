@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.v2.helper;
 
@@ -17,15 +10,16 @@ import de.hybris.platform.commerceservices.search.pagedata.PageableData;
 import de.hybris.platform.commerceservices.search.pagedata.SearchPageData;
 import de.hybris.platform.commercewebservicescommons.dto.order.OrderHistoryListWsDTO;
 import de.hybris.platform.core.enums.OrderStatus;
-import de.hybris.electronics.constants.YcommercewebservicesConstants;
+
+import javax.annotation.Resource;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.annotation.Resource;
-
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
+
+import static de.hybris.electronics.constants.YcommercewebservicesConstants.ENUM_VALUES_SEPARATOR;
 
 
 @Component
@@ -52,8 +46,8 @@ public class OrdersHelper extends AbstractHelper
 		if (statuses != null)
 		{
 			final Set<OrderStatus> statusSet = extractOrderStatuses(statuses);
-			orderHistoriesData = createOrderHistoriesData(orderFacade.getPagedOrderHistoryForStatuses(pageableData,
-					statusSet.toArray(new OrderStatus[statusSet.size()])));
+			orderHistoriesData = createOrderHistoriesData(
+					orderFacade.getPagedOrderHistoryForStatuses(pageableData, statusSet.toArray(new OrderStatus[statusSet.size()])));
 		}
 		else
 		{
@@ -64,7 +58,7 @@ public class OrdersHelper extends AbstractHelper
 
 	protected Set<OrderStatus> extractOrderStatuses(final String statuses)
 	{
-		final String[] statusesStrings = statuses.split(YcommercewebservicesConstants.OPTIONS_SEPARATOR);
+		final String[] statusesStrings = statuses.split(ENUM_VALUES_SEPARATOR);
 
 		final Set<OrderStatus> statusesEnum = new HashSet<>();
 		for (final String status : statusesStrings)

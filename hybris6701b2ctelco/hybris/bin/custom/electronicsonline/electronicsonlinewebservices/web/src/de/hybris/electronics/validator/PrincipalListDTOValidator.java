@@ -1,21 +1,15 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.validator;
 
+import de.hybris.platform.commerceservices.user.UserMatchingService;
 import de.hybris.platform.commercewebservicescommons.dto.user.PrincipalWsDTO;
 import de.hybris.platform.commercewebservicescommons.dto.user.UserGroupWsDTO;
-import de.hybris.platform.servicelayer.user.UserService;
 
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.validation.Errors;
@@ -24,7 +18,7 @@ import org.springframework.validation.Validator;
 
 public class PrincipalListDTOValidator implements Validator
 {
-	private UserService userService;
+	private UserMatchingService userMatchingService;
 	private String fieldPath;
 	private boolean canBeEmpty = true;
 
@@ -40,33 +34,59 @@ public class PrincipalListDTOValidator implements Validator
 		final List<PrincipalWsDTO> list = (List<PrincipalWsDTO>) (fieldPath == null ? target : errors.getFieldValue(fieldPath));
 		final String uidFieldName = fieldPath == null ? "uid" : fieldPath + ".uid";
 
-		if (list == null || list.isEmpty())
+		if (CollectionUtils.isEmpty(list))
 		{
-			if (!canBeEmpty)
-			{
-				errors.reject("field.required");
-			}
+			setEmptyListError(errors);
 		}
 		else
 		{
-			for (final PrincipalWsDTO principal : list)
+			validateErrorsForPrincipals(list, errors, uidFieldName);
+		}
+	}
+
+	protected void validateErrorsForPrincipals(final List<PrincipalWsDTO> list, final Errors errors, final String uidFieldName)
+	{
+		for (final PrincipalWsDTO principal : list)
+		{
+			if (setUidEmptyError(principal, errors, uidFieldName) || setUserNotExistError(principal, errors))
 			{
-				if (StringUtils.isEmpty(principal.getUid()))
-				{
-					errors.reject("field.withName.required", new String[]
-					{ uidFieldName }, "Field {0} is required");
-					break;
-				}
-				else
-				{
-					if (!userService.isUserExisting(principal.getUid()))
-					{
-						errors.reject("user.doesnt.exist", new String[]
-						{ principal.getUid() }, "User {0} doesn''t exist or you have no privileges");
-						break;
-					}
-				}
+				break;
 			}
+		}
+	}
+
+	protected boolean setUidEmptyError(final PrincipalWsDTO principal, final Errors errors, final String uidFieldName)
+	{
+		if (StringUtils.isEmpty(principal.getUid()))
+		{
+			errors.reject("field.withName.required", new String[] { uidFieldName }, "Field {0} is required");
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	protected boolean setUserNotExistError(final PrincipalWsDTO principal, final Errors errors)
+	{
+		if (!getUserMatchingService().isUserExisting(principal.getUid()))
+		{
+			errors.reject("user.doesnt.exist", new String[] { principal.getUid() },
+					"User {0} doesn''t exist or you have no privileges");
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	protected void setEmptyListError(final Errors errors)
+	{
+		if (!canBeEmpty)
+		{
+			errors.reject("field.required");
 		}
 	}
 
@@ -90,15 +110,14 @@ public class PrincipalListDTOValidator implements Validator
 		this.canBeEmpty = canBeEmpty;
 	}
 
-	public UserService getUserService()
+	protected UserMatchingService getUserMatchingService()
 	{
-		return userService;
+		return userMatchingService;
 	}
 
 	@Required
-	public void setUserService(final UserService userService)
+	public void setUserMatchingService(final UserMatchingService userMatchingService)
 	{
-		this.userService = userService;
+		this.userMatchingService = userMatchingService;
 	}
-
 }

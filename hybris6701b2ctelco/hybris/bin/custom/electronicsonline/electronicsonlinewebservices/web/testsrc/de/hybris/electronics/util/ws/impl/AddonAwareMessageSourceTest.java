@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.util.ws.impl;
 
@@ -47,19 +40,18 @@ public class AddonAwareMessageSourceTest
 	@Parameters
 	public static Collection<String[]> parameters()
 	{
-		return Lists.newArrayList(new String[]
-		{ "/path/that/does/not/contain/basepath", null }, new String[]
-		{ (ADDON_PATH + "/base.properties").replace("/", File.separator), ADDON_BASE_PATH }, new String[]
-		{ (ADDON_PATH + "/base_en.properties").replace("/", File.separator), ADDON_BASE_PATH }, new String[]
-		{ (ADDON_PATH + "/base_en_US.properties").replace("/", File.separator), ADDON_BASE_PATH }, new String[]
-		{ (ADDON_PATH + "/base_message_en_US.properties").replace("/", File.separator), ADDON_BASE_PATH });
+		return Lists.newArrayList(new String[] { "/path/that/does/not/contain/basepath", null },
+				new String[] { (ADDON_PATH + "/base.properties").replace("/", File.separator), ADDON_BASE_PATH },
+				new String[] { (ADDON_PATH + "/base_en.properties").replace("/", File.separator), ADDON_BASE_PATH },
+				new String[] { (ADDON_PATH + "/base_en_US.properties").replace("/", File.separator), ADDON_BASE_PATH },
+				new String[] { (ADDON_PATH + "/base_message_en_US.properties").replace("/", File.separator), ADDON_BASE_PATH });
 	}
 
 	@Test
 	public void formatPathTest()
 	{
-		final String formattedPath = addonAwareMessageSource.formatPath(input,
-				"/WEB-INF/messages/addons/".replace("/", File.separator));
+		final String formattedPath = addonAwareMessageSource
+				.formatPath(input, "/WEB-INF/messages/addons/".replace("/", File.separator));
 		Assert.assertEquals(output, formattedPath);
 	}
 

@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.cart.impl;
 
@@ -33,13 +26,14 @@ public class CommerceWebServicesCartFacade extends DefaultCartFacade
 	 * Checks if given card belongs to anonymous user.
 	 *
 	 * @param cartGuid
-	 *           GUID of the cart.
+	 * 		GUID of the cart.
 	 * @return <tt>true</tt> if the cart belongs to anonymous user.
 	 */
 	public boolean isAnonymousUserCart(final String cartGuid)
 	{
-		final CartModel cart = getCommerceCartService().getCartForGuidAndSiteAndUser(cartGuid,
-				getBaseSiteService().getCurrentBaseSite(), getUserService().getAnonymousUser());
+		final CartModel cart = getCommerceCartService()
+				.getCartForGuidAndSiteAndUser(cartGuid, getBaseSiteService().getCurrentBaseSite(),
+						getUserService().getAnonymousUser());
 		return cart != null;
 	}
 
@@ -47,13 +41,13 @@ public class CommerceWebServicesCartFacade extends DefaultCartFacade
 	 * Checks if given card belongs to current user.
 	 *
 	 * @param cartGuid
-	 *           GUID of the cart.
+	 * 		GUID of the cart.
 	 * @return <tt>true</tt> if the cart belongs to current user.
 	 */
 	public boolean isCurrentUserCart(final String cartGuid)
 	{
-		final CartModel cart = getCommerceCartService().getCartForGuidAndSiteAndUser(cartGuid,
-				getBaseSiteService().getCurrentBaseSite(), getUserService().getCurrentUser());
+		final CartModel cart = getCommerceCartService()
+				.getCartForGuidAndSiteAndUser(cartGuid, getBaseSiteService().getCurrentBaseSite(), getUserService().getCurrentUser());
 		return cart != null;
 	}
 }

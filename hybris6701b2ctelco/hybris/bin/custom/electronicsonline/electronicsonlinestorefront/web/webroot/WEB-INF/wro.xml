@@ -1,12 +1,5 @@
 <!--
- [y] hybris Platform
-
- Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
-
- This software is the confidential and proprietary information of SAP
- ("Confidential Information"). You shall not disclose such Confidential
- Information and shall use it only in accordance with the terms of the
- license agreement you entered into with SAP.
+ Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
 -->
 <groups xmlns="http://www.isdc.ro/wro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.isdc.ro/wro wro.xsd">
@@ -24,7 +17,7 @@
 	<group name="all_responsive">
         
 		<!-- jquery -->
-		<js minimize="false">/_ui/responsive/common/js/jquery-3.2.1.min.js</js>
+		<js minimize="false">/_ui/responsive/common/js/jquery-3.5.1.min.js</js>
 		
 		<!-- plugins -->
 		<js minimize="false">/_ui/responsive/common/js/enquire.min.js</js>

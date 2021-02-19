@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- [y] hybris Platform
-
- Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
-
- This software is the confidential and proprietary information of SAP
- ("Confidential Information"). You shall not disclose such Confidential
- Information and shall use it only in accordance with the terms of the
- license agreement you entered into with SAP.
+ Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:security="http://www.springframework.org/schema/security"
@@ -31,9 +24,9 @@
 	<security:http pattern="/checkout/**">
         <security:anonymous username="anonymous" granted-authority="ROLE_ANONYMOUS" />
 		<security:access-denied-handler error-page="/login"/>
-		<security:session-management session-authentication-strategy-ref="fixation" />
+		<security:session-management session-authentication-strategy-ref="fixation" invalid-session-url="/login" />
 		<security:intercept-url pattern="/**" requires-channel="https" />
-		<security:csrf token-repository-ref="csrfTokenRepository" request-matcher-ref="csrfProtectionMatcher" />
+		<security:csrf token-repository-ref="csrfTokenRepository" request-matcher-ref="csrfProtectionMatcher"/>
 		<security:custom-filter before="CSRF_FILTER" ref="logoutFilter" />
 
 		<security:form-login
@@ -78,7 +71,7 @@
 	<security:http request-matcher-ref="excludeUrlRequestMatcher">
 		<security:anonymous username="anonymous" granted-authority="ROLE_ANONYMOUS" />
 		<security:access-denied-handler error-page="/login"/>
-		<security:session-management session-authentication-strategy-ref="fixation" />
+		<security:session-management session-authentication-strategy-ref="fixation" invalid-session-url="/login" />
 		<security:csrf token-repository-ref="csrfTokenRepository" request-matcher-ref="csrfProtectionMatcher" />
 		<security:custom-filter before="CSRF_FILTER" ref="logoutFilter" />
 

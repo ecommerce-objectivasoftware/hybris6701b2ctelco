@@ -8,7 +8,7 @@
 <spring:htmlEscape defaultHtmlEscape="true" />
 
 <%-- JS configuration --%>
-	<script type="text/javascript">
+	<script>
 		/*<![CDATA[*/
 		<%-- Define a javascript variable to hold the content path --%>
 		var ACC = { config: {} };
@@ -56,5 +56,5 @@
 	<template:javaScriptAddOnsVariables/>
 	
 	<%-- generated variables from commonVariables.properties --%>
-	<script type="text/javascript" src="${fn:escapeXml(sharedResourcePath)}/js/generatedVariables.js"></script>
+	<script src="${fn:escapeXml(sharedResourcePath)}/js/generatedVariables.js"></script>
 	

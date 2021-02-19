@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.v2.controller;
 
@@ -14,6 +7,7 @@ import de.hybris.platform.commercefacades.voucher.VoucherFacade;
 import de.hybris.platform.commercefacades.voucher.exceptions.VoucherOperationException;
 import de.hybris.platform.commercewebservicescommons.dto.voucher.VoucherWsDTO;
 import de.hybris.platform.webservicescommons.swagger.ApiBaseSiteIdParam;
+import de.hybris.platform.webservicescommons.swagger.ApiFieldsParam;
 
 import javax.annotation.Resource;
 
@@ -42,12 +36,11 @@ public class VouchersController extends BaseController
 	@Secured("ROLE_TRUSTED_CLIENT")
 	@RequestMapping(value = "/{code}", method = RequestMethod.GET)
 	@ResponseBody
-	@ApiOperation(value = "Get a voucher based on code", notes = "Returns details of a single voucher that is specified by its voucher identification code.", authorizations =
-	{ @Authorization(value = "oauth2_client_credentials") })
+	@ApiOperation(nickname = "getVoucher", value = "Get a voucher based on code.", notes = "Returns details of a single voucher that is specified by its voucher identification code.", authorizations = {
+			@Authorization(value = "oauth2_client_credentials") })
 	@ApiBaseSiteIdParam
-	public VoucherWsDTO getVoucherByCode(
-			@ApiParam(value = "Voucher identifier (code)", required = true) @PathVariable final String code,
-			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(defaultValue = "BASIC") final String fields)
+	public VoucherWsDTO getVoucher(@ApiParam(value = "Voucher identifier (code)", required = true) @PathVariable final String code,
+			@ApiFieldsParam(defaultValue = BASIC_FIELD_SET) @RequestParam(defaultValue = BASIC_FIELD_SET) final String fields)
 			throws VoucherOperationException
 	{
 		return getDataMapper().map(voucherFacade.getVoucher(code), VoucherWsDTO.class, fields);

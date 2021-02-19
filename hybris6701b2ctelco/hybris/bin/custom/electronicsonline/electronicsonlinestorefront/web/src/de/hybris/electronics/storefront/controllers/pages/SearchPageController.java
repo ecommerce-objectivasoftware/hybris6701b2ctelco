@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.storefront.controllers.pages;
 
@@ -19,6 +12,7 @@ import de.hybris.platform.acceleratorstorefrontcommons.controllers.ThirdPartyCon
 import de.hybris.platform.acceleratorstorefrontcommons.controllers.pages.AbstractSearchPageController;
 import de.hybris.platform.acceleratorstorefrontcommons.util.MetaSanitizerUtil;
 import de.hybris.platform.cms2.exceptions.CMSItemNotFoundException;
+import de.hybris.platform.cms2.model.pages.ContentPageModel;
 import de.hybris.platform.cms2.servicelayer.services.CMSComponentService;
 import de.hybris.platform.commercefacades.product.data.ProductData;
 import de.hybris.platform.commercefacades.search.ProductSearchFacade;
@@ -82,6 +76,7 @@ public class SearchPageController extends AbstractSearchPageController
 	public String textSearch(@RequestParam(value = "text", defaultValue = "") final String searchText,
 			final HttpServletRequest request, final Model model) throws CMSItemNotFoundException
 	{
+		final ContentPageModel noResultPage = getContentPageForLabelOrId(NO_RESULTS_CMS_PAGE_ID);
 		if (StringUtils.isNotBlank(searchText))
 		{
 			final PageableData pageableData = createPageableData(0, getSearchPageSize(), null, ShowMode.Page);
@@ -92,6 +87,7 @@ public class SearchPageController extends AbstractSearchPageController
 			searchState.setQuery(searchQueryData);
 
 			ProductSearchPageData<SearchStateData, ProductData> searchPageData = null;
+
 			try
 			{
 				searchPageData = encodeSearchPageData(productSearchFacade.textSearch(searchState, pageableData));
@@ -103,7 +99,7 @@ public class SearchPageController extends AbstractSearchPageController
 
 			if (searchPageData == null)
 			{
-				storeCmsPageInModel(model, getContentPageForLabelOrId(NO_RESULTS_CMS_PAGE_ID));
+				storeCmsPageInModel(model, noResultPage);
 			}
 			else if (searchPageData.getKeywordRedirectUrl() != null)
 			{
@@ -113,7 +109,7 @@ public class SearchPageController extends AbstractSearchPageController
 			else if (searchPageData.getPagination().getTotalNumberOfResults() == 0)
 			{
 				model.addAttribute("searchPageData", searchPageData);
-				storeCmsPageInModel(model, getContentPageForLabelOrId(NO_RESULTS_CMS_PAGE_ID));
+				storeCmsPageInModel(model, noResultPage);
 				updatePageTitle(searchText, model);
 			}
 			else
@@ -133,7 +129,7 @@ public class SearchPageController extends AbstractSearchPageController
 		}
 		else
 		{
-			storeCmsPageInModel(model, getContentPageForLabelOrId(NO_RESULTS_CMS_PAGE_ID));
+			storeCmsPageInModel(model, noResultPage);
 		}
 		model.addAttribute("pageType", PageType.PRODUCTSEARCH.name());
 		model.addAttribute(ThirdPartyConstants.SeoRobots.META_ROBOTS, ThirdPartyConstants.SeoRobots.NOINDEX_FOLLOW);

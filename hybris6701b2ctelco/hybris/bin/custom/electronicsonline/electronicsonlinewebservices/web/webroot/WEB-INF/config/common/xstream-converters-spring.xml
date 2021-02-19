@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- [y] hybris Platform
-
- Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
-
- This software is the confidential and proprietary information of SAP
- ("Confidential Information"). You shall not disclose such Confidential
- Information and shall use it only in accordance with the terms of the
- license agreement you entered into with SAP.
+ Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
 -->
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
@@ -597,6 +590,7 @@
 		<property name="wsDateFormatter" ref="wsDateFormatter" />
 	</bean>
 
+	<!-- <v1-api> -->
 	<bean class="de.hybris.platform.commercefacades.xstream.conv.AttributeConverterMapping">
 		<property name="aliasedClass" value="de.hybris.platform.commercefacades.product.data.ImageData" />
 		<property name="converter">
@@ -604,6 +598,7 @@
 		</property>
 		<property name="attributeName" value="url" />
 	</bean>
+	<!-- </v1-api> -->
 
 	<!-- field aliases -->
 

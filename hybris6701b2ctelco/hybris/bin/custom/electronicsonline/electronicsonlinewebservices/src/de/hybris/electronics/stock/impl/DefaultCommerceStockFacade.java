@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.stock.impl;
 
@@ -71,10 +64,9 @@ public class DefaultCommerceStockFacade implements CommerceStockFacade
 
 		final ProductModel productModel = getProductService().getProductForCode(productCode);
 
-		return createStockData(
-				getCommerceStockService().getStockLevelStatusForProductAndBaseStore(productModel,
-						getBaseStoreForSiteSelectorStrategy().getBaseStore(baseSiteModel)),
-				getCommerceStockService().getStockLevelForProductAndBaseStore(productModel,
+		return createStockData(getCommerceStockService().getStockLevelStatusForProductAndBaseStore(productModel,
+				getBaseStoreForSiteSelectorStrategy().getBaseStore(baseSiteModel)), getCommerceStockService()
+				.getStockLevelForProductAndBaseStore(productModel,
 						getBaseStoreForSiteSelectorStrategy().getBaseStore(baseSiteModel)));
 	}
 
@@ -96,9 +88,9 @@ public class DefaultCommerceStockFacade implements CommerceStockFacade
 	 * Ideally would be to improve it someday by returning StockLevelModel.
 	 *
 	 * @param stockLevelStatus
-	 *           stock level status
+	 * 		stock level status
 	 * @param stockLevel
-	 *           stock level
+	 * 		stock level
 	 * @return stockData
 	 */
 	protected StockData createStockData(final StockLevelStatus stockLevelStatus, final Long stockLevel)

@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.v2.controller;
 
@@ -21,6 +14,7 @@ import de.hybris.platform.commercewebservicescommons.dto.user.TitleListWsDTO;
 import de.hybris.platform.webservicescommons.cache.CacheControl;
 import de.hybris.platform.webservicescommons.cache.CacheControlDirective;
 import de.hybris.platform.webservicescommons.swagger.ApiBaseSiteIdParam;
+import de.hybris.platform.webservicescommons.swagger.ApiFieldsParam;
 import de.hybris.electronics.order.data.CardTypeDataList;
 import de.hybris.electronics.storesession.data.CurrencyDataList;
 import de.hybris.electronics.storesession.data.LanguageDataList;
@@ -38,7 +32,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 
 
 /**
@@ -59,11 +52,11 @@ public class MiscsController extends BaseController
 	@RequestMapping(value = "/{baseSiteId}/languages", method = RequestMethod.GET)
 	@Cacheable(value = "miscsCache", key = "T(de.hybris.platform.commercewebservicescommons.cache.CommerceCacheKeyGenerator).generateKey(false,false,'getLanguages',#fields)")
 	@ResponseBody
-	@ApiOperation(value = "Get a list of available languages.", notes = "Lists all available languages (all languages used for a particular store). If the list "
-			+ "of languages for a base store is empty, a list of all languages available in the system will be returned.")
+	@ApiOperation(nickname = "getLanguages", value = "Get a list of available languages.", notes =
+			"Lists all available languages (all languages used for a particular store). If the list "
+					+ "of languages for a base store is empty, a list of all languages available in the system will be returned.")
 	@ApiBaseSiteIdParam
-	public LanguageListWsDTO getLanguages(
-			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(defaultValue = DEFAULT_FIELD_SET) final String fields)
+	public LanguageListWsDTO getLanguages(@ApiFieldsParam @RequestParam(defaultValue = DEFAULT_FIELD_SET) final String fields)
 	{
 		final LanguageDataList dataList = new LanguageDataList();
 		dataList.setLanguages(storeSessionFacade.getAllLanguages());
@@ -73,24 +66,28 @@ public class MiscsController extends BaseController
 	@RequestMapping(value = "/{baseSiteId}/currencies", method = RequestMethod.GET)
 	@Cacheable(value = "miscsCache", key = "T(de.hybris.platform.commercewebservicescommons.cache.CommerceCacheKeyGenerator).generateKey(false,false,'getCurrencies',#fields)")
 	@ResponseBody
-	@ApiOperation(value = "Get a list of available currencies.", notes = "Lists all available currencies (all usable currencies for the current store). If the list "
-			+ "of currencies for a base store is empty, a list of all currencies available in the system is returned.")
+	@ApiOperation(nickname = "getCurrencies", value = "Get a list of available currencies.", notes =
+			"Lists all available currencies (all usable currencies for the current store). If the list "
+					+ "of currencies for a base store is empty, a list of all currencies available in the system is returned.")
 	@ApiBaseSiteIdParam
-	public CurrencyListWsDTO getCurrencies(
-			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(defaultValue = DEFAULT_FIELD_SET) final String fields)
+	public CurrencyListWsDTO getCurrencies(@ApiFieldsParam @RequestParam(defaultValue = DEFAULT_FIELD_SET) final String fields)
 	{
 		final CurrencyDataList dataList = new CurrencyDataList();
 		dataList.setCurrencies(storeSessionFacade.getAllCurrencies());
 		return getDataMapper().map(dataList, CurrencyListWsDTO.class, fields);
 	}
 
+	/**
+	 * @deprecated since 1808. Please use {@link CountriesController#getCountries(String, String)} instead.
+	 */
+	@Deprecated(since = "1808", forRemoval = true)
 	@RequestMapping(value = "/{baseSiteId}/deliverycountries", method = RequestMethod.GET)
 	@Cacheable(value = "miscsCache", key = "T(de.hybris.platform.commercewebservicescommons.cache.CommerceCacheKeyGenerator).generateKey(false,false,'getDeliveryCountries',#fields)")
 	@ResponseBody
-	@ApiOperation(value = "Get a list of supported countries.", notes = "Lists all supported delivery countries for the current store. The list is sorted alphabetically.")
+	@ApiOperation(nickname = "getDeliveryCountries", value = "Get a list of shipping countries.", notes = "Lists all supported delivery countries for the current store. The list is sorted alphabetically.")
 	@ApiBaseSiteIdParam
 	public CountryListWsDTO getDeliveryCountries(
-			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(defaultValue = DEFAULT_FIELD_SET) final String fields)
+			@ApiFieldsParam @RequestParam(defaultValue = DEFAULT_FIELD_SET) final String fields)
 	{
 		final CountryDataList dataList = new CountryDataList();
 		dataList.setCountries(checkoutFacade.getDeliveryCountries());
@@ -100,10 +97,9 @@ public class MiscsController extends BaseController
 	@RequestMapping(value = "/{baseSiteId}/titles", method = RequestMethod.GET)
 	@Cacheable(value = "miscsCache", key = "T(de.hybris.platform.commercewebservicescommons.cache.CommerceCacheKeyGenerator).generateKey(false,false,'getTitles',#fields)")
 	@ResponseBody
-	@ApiOperation(value = "Get a list of all localized titles.", notes = "Lists all localized titles.")
+	@ApiOperation(nickname = "getTitles", value = "Get a list of all localized titles.", notes = "Lists all localized titles.")
 	@ApiBaseSiteIdParam
-	public TitleListWsDTO getTitles(
-			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(defaultValue = DEFAULT_FIELD_SET) final String fields)
+	public TitleListWsDTO getTitles(@ApiFieldsParam @RequestParam(defaultValue = DEFAULT_FIELD_SET) final String fields)
 	{
 		final TitleDataList dataList = new TitleDataList();
 		dataList.setTitles(userFacade.getTitles());
@@ -113,10 +109,9 @@ public class MiscsController extends BaseController
 	@RequestMapping(value = "/{baseSiteId}/cardtypes", method = RequestMethod.GET)
 	@Cacheable(value = "miscsCache", key = "T(de.hybris.platform.commercewebservicescommons.cache.CommerceCacheKeyGenerator).generateKey(false,false,'getCardTypes',#fields)")
 	@ResponseBody
-	@ApiOperation(value = "Get a list of supported payment card types.", notes = "Lists supported payment card types.")
+	@ApiOperation(nickname = "getCardTypes", value = "Get a list of supported payment card types.", notes = "Lists supported payment card types.")
 	@ApiBaseSiteIdParam
-	public CardTypeListWsDTO getCardTypes(
-			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(defaultValue = DEFAULT_FIELD_SET) final String fields)
+	public CardTypeListWsDTO getCardTypes(@ApiFieldsParam @RequestParam(defaultValue = DEFAULT_FIELD_SET) final String fields)
 	{
 		final CardTypeDataList dataList = new CardTypeDataList();
 		dataList.setCardTypes(checkoutFacade.getSupportedCardTypes());

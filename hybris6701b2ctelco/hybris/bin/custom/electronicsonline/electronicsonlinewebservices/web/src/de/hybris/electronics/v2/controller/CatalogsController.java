@@ -1,21 +1,8 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.v2.controller;
 
-import de.hybris.electronics.dto.plp.WechatCategoryBodyData;
-import de.hybris.electronics.dto.plp.WechatCategoryData;
-import de.hybris.electronics.dto.plp.WechatCategoryWsDTO;
-import de.hybris.electronics.dto.plp.WechatProductDetailData;
-import de.hybris.electronics.facades.pages.plp.WechatCategoryFacade;
-import de.hybris.electronics.facades.pages.plp.WechatProductFacade;
 import de.hybris.platform.commercefacades.catalog.CatalogFacade;
 import de.hybris.platform.commercefacades.catalog.CatalogOption;
 import de.hybris.platform.commercefacades.catalog.PageOption;
@@ -31,13 +18,14 @@ import de.hybris.platform.webservicescommons.mapping.DataMapper;
 import de.hybris.platform.webservicescommons.mapping.FieldSetBuilder;
 import de.hybris.platform.webservicescommons.mapping.impl.FieldSetBuilderContext;
 import de.hybris.platform.webservicescommons.swagger.ApiBaseSiteIdParam;
-
-import java.util.*;
+import de.hybris.platform.webservicescommons.swagger.ApiFieldsParam;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -66,17 +54,21 @@ public class CatalogsController extends BaseController
 	private CatalogFacade catalogFacade;
 	@Resource(name = "fieldSetBuilder")
 	private FieldSetBuilder fieldSetBuilder;
-	@Autowired
-    private WechatCategoryFacade wechatCategoryFacade;
-	@Resource
-	private WechatProductFacade wechatProductFacade;
+
+	protected static Set<CatalogOption> getOptions()
+	{
+		final Set<CatalogOption> opts = new HashSet<>();
+		opts.add(CatalogOption.BASIC);
+		opts.add(CatalogOption.CATEGORIES);
+		opts.add(CatalogOption.SUBCATEGORIES);
+		return opts;
+	}
 
 	@RequestMapping(method = RequestMethod.GET)
 	@ResponseBody
-	@ApiOperation(value = "Get a list of catalogs", notes = "Returns all catalogs with versions defined for the base store.")
+	@ApiOperation(nickname = "getCatalogs", value = "Get a list of catalogs", notes = "Returns all catalogs with versions defined for the base store.")
 	@ApiBaseSiteIdParam
-	public CatalogListWsDTO getCatalogs(
-			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(defaultValue = DEFAULT_FIELD_SET) final String fields)
+	public CatalogListWsDTO getCatalogs(@ApiFieldsParam @RequestParam(defaultValue = DEFAULT_FIELD_SET) final String fields)
 	{
 		final List<CatalogData> catalogDataList = catalogFacade.getAllProductCatalogsForCurrentSite(OPTIONS);
 		final CatalogsData catalogsData = new CatalogsData();
@@ -84,20 +76,18 @@ public class CatalogsController extends BaseController
 
 		final FieldSetBuilderContext context = new FieldSetBuilderContext();
 		context.setRecurrencyLevel(countRecurrecyLevel(catalogDataList));
-		final Set<String> fieldSet = fieldSetBuilder.createFieldSet(CatalogListWsDTO.class, DataMapper.FIELD_PREFIX, fields,
-				context);
+		final Set<String> fieldSet = fieldSetBuilder
+				.createFieldSet(CatalogListWsDTO.class, DataMapper.FIELD_PREFIX, fields, context);
 
 		return getDataMapper().map(catalogsData, CatalogListWsDTO.class, fieldSet);
 	}
 
-
-
 	@RequestMapping(value = "/{catalogId}", method = RequestMethod.GET)
 	@ResponseBody
-	@ApiOperation(value = "Get a catalog", notes = "Returns information about a catalog based on its ID, along with the versions defined for the current base store.")
+	@ApiOperation(nickname = "getCatalog", value = "Get a catalog", notes = "Returns information about a catalog based on its ID, along with the versions defined for the current base store.")
 	@ApiBaseSiteIdParam
 	public CatalogWsDTO getCatalog(@ApiParam(value = "Catalog identifier", required = true) @PathVariable final String catalogId,
-			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(defaultValue = DEFAULT_FIELD_SET) final String fields)
+			@ApiFieldsParam @RequestParam(defaultValue = DEFAULT_FIELD_SET) final String fields)
 	{
 		final CatalogData catalogData = catalogFacade.getProductCatalogForCurrentSite(catalogId, OPTIONS);
 
@@ -108,112 +98,46 @@ public class CatalogsController extends BaseController
 		return getDataMapper().map(catalogData, CatalogWsDTO.class, fieldSet);
 	}
 
-
 	@RequestMapping(value = "/{catalogId}/{catalogVersionId}", method = RequestMethod.GET)
 	@ResponseBody
-	@ApiOperation(value = "Get information about catalog version", notes = "Returns information about the catalog version that exists for the current base store.")
+	@ApiOperation(nickname = "getCatalogVersion", value = "Get information about catalog version", notes = "Returns information about the catalog version that exists for the current base store.")
 	@ApiBaseSiteIdParam
 	public CatalogVersionWsDTO getCatalogVersion(
 			@ApiParam(value = "Catalog identifier", required = true) @PathVariable final String catalogId,
 			@ApiParam(value = "Catalog version identifier", required = true) @PathVariable final String catalogVersionId,
-			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(defaultValue = DEFAULT_FIELD_SET) final String fields)
+			@ApiFieldsParam @RequestParam(defaultValue = DEFAULT_FIELD_SET) final String fields)
 	{
-		final CatalogVersionData catalogVersionData = catalogFacade.getProductCatalogVersionForTheCurrentSite(catalogId,
-				catalogVersionId, OPTIONS);
+		final CatalogVersionData catalogVersionData = catalogFacade
+				.getProductCatalogVersionForTheCurrentSite(catalogId, catalogVersionId, OPTIONS);
 
 		final FieldSetBuilderContext context = new FieldSetBuilderContext();
 		context.setRecurrencyLevel(countRecurrencyForCatalogVersionData(catalogVersionData));
-		final Set<String> fieldSet = fieldSetBuilder.createFieldSet(CatalogVersionWsDTO.class, DataMapper.FIELD_PREFIX, fields,
-				context);
+		final Set<String> fieldSet = fieldSetBuilder
+				.createFieldSet(CatalogVersionWsDTO.class, DataMapper.FIELD_PREFIX, fields, context);
 
 		return getDataMapper().map(catalogVersionData, CatalogVersionWsDTO.class, fieldSet);
 	}
 
-
 	@RequestMapping(value = "/{catalogId}/{catalogVersionId}/categories/{categoryId}", method = RequestMethod.GET)
 	@ResponseBody
-	@ApiOperation(value = "Get information about catagory in a catalog version", notes = "Returns information about a specified category that exists in a catalog version available for the current base store.")
+	@ApiOperation(nickname = "getCategories", value = "Get information about catagory in a catalog version", notes = "Returns information about a specified category that exists in a catalog version available for the current base store.")
 	@ApiBaseSiteIdParam
 	public CategoryHierarchyWsDTO getCategories(
 			@ApiParam(value = "Catalog identifier", required = true) @PathVariable final String catalogId,
 			@ApiParam(value = "Catalog version identifier", required = true) @PathVariable final String catalogVersionId,
 			@ApiParam(value = "Category identifier", required = true) @PathVariable final String categoryId,
-			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(defaultValue = "DEFAULT") final String fields)
+			@ApiFieldsParam @RequestParam(defaultValue = "DEFAULT") final String fields)
 	{
 		final PageOption page = PageOption.createForPageNumberAndPageSize(0, 10);
-		final CategoryHierarchyData categoryHierarchyData = catalogFacade.getCategoryById(catalogId, catalogVersionId, categoryId,
-				page, OPTIONS);
+		final CategoryHierarchyData categoryHierarchyData = catalogFacade
+				.getCategoryById(catalogId, catalogVersionId, categoryId, page, OPTIONS);
 
 		final FieldSetBuilderContext context = new FieldSetBuilderContext();
 		context.setRecurrencyLevel(countRecurrencyForCategoryHierarchyData(1, categoryHierarchyData));
-		final Set<String> fieldSet = fieldSetBuilder.createFieldSet(CategoryHierarchyWsDTO.class, DataMapper.FIELD_PREFIX, fields,
-				context);
+		final Set<String> fieldSet = fieldSetBuilder
+				.createFieldSet(CategoryHierarchyWsDTO.class, DataMapper.FIELD_PREFIX, fields, context);
 
 		return getDataMapper().map(categoryHierarchyData, CategoryHierarchyWsDTO.class, fieldSet);
-	}
-
-	@RequestMapping(value = "/wechat/categories/{categoryId}", method = RequestMethod.GET)
-	@ResponseBody
-	@ApiOperation(value = "Get information about catagory in a catalog version", notes = "Returns information about a specified category that exists in a catalog version available for the current base store.")
-	@ApiBaseSiteIdParam
-	public WechatCategoryWsDTO getWeChatCategorisById(
-			@ApiParam(value = "Category identifier", required = true) @PathVariable final String categoryId,
-
-			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(defaultValue = "DEFAULT") final String fields)
-	{
-		final WechatCategoryWsDTO wechatCategoryWsDTO = new WechatCategoryWsDTO();
-		wechatCategoryWsDTO.setErrno(0);
-		WechatCategoryData wechatCategoryData = new WechatCategoryData();
-		final List<WechatCategoryBodyData> superCategoryList = wechatCategoryFacade.getSuperCategoryById(categoryId);
-		if(CollectionUtils.isNotEmpty(superCategoryList))
-		{
-			wechatCategoryData.setParentCategory(superCategoryList.get(0));
-		}
-		final List<WechatCategoryBodyData> categoryList = wechatCategoryFacade.getCategoryList();
-		wechatCategoryData.setBrotherCategory(categoryList.subList(15, 20));
-
-		final List<WechatProductDetailData> productDataList = wechatProductFacade.getProductList();
-		Collections.shuffle(productDataList);
-		wechatCategoryData.setList(productDataList);
-		wechatCategoryData.setCurrentCategory(wechatCategoryFacade.getCategoryById(categoryId));
-		wechatCategoryData.setCurrentSubCategory(wechatCategoryFacade.getSubCategoryById(categoryId));
-		wechatCategoryWsDTO.setData(wechatCategoryData);
-
-		return wechatCategoryWsDTO;
-	}
-
-
-	@RequestMapping(value = "/wechat/categories", method = RequestMethod.GET)
-	@ResponseBody
-	@ApiOperation(value = "Get information about catagory in a catalog version", notes = "Returns information about a specified category that exists in a catalog version available for the current base store.")
-	@ApiBaseSiteIdParam
-	public WechatCategoryWsDTO getWeChatCategories(
-			@ApiParam(value = "Response configuration. This is the list of fields that should be returned in the response body.", allowableValues = "BASIC, DEFAULT, FULL") @RequestParam(defaultValue = "DEFAULT") final String fields)
-	{
-		final WechatCategoryWsDTO wechatCategoryWsDTO = new WechatCategoryWsDTO();
-		wechatCategoryWsDTO.setErrno(0);
-		final WechatCategoryData wechatCategoryData = new WechatCategoryData();
-		final List<WechatCategoryBodyData> wechatCategoryBodyDataList = wechatCategoryFacade.getCategoryList();
-		if(CollectionUtils.isNotEmpty(wechatCategoryBodyDataList) && wechatCategoryBodyDataList.size() > 15) {
-			final List<WechatCategoryBodyData> wechatCategoryList = new ArrayList<>();
-			wechatCategoryList.add(wechatCategoryFacade.getCategoryById("578"));
-			wechatCategoryList.addAll(wechatCategoryBodyDataList.subList(0, 5));
-			wechatCategoryData.setCategoryList(wechatCategoryList);
-			wechatCategoryData.setCurrentCategory(wechatCategoryFacade.getCategoryById("578"));
-			wechatCategoryData.setPrimaryCategory(wechatCategoryBodyDataList.subList(6, 10));
-			wechatCategoryData.setCurrentSubCategory(wechatCategoryFacade.getSubCategoryById("578"));
-			wechatCategoryWsDTO.setData(wechatCategoryData);
-		}
-		return wechatCategoryWsDTO;
-	}
-
-	protected static Set<CatalogOption> getOptions()
-	{
-		final Set<CatalogOption> opts = new HashSet<>();
-		opts.add(CatalogOption.BASIC);
-		opts.add(CatalogOption.CATEGORIES);
-		opts.add(CatalogOption.SUBCATEGORIES);
-		return opts;
 	}
 
 	protected int countRecurrecyLevel(final List<CatalogData> catalogDataList)

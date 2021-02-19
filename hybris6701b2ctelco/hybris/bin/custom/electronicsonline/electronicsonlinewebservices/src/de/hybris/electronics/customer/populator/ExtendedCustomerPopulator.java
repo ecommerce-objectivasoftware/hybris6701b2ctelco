@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.customer.populator;
 
@@ -17,6 +10,7 @@ import de.hybris.platform.core.model.user.AddressModel;
 import de.hybris.platform.core.model.user.CustomerModel;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
+
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.Assert;
 
@@ -27,18 +21,18 @@ import org.springframework.util.Assert;
  */
 public class ExtendedCustomerPopulator implements Populator<CustomerModel, CustomerData>
 {
-    private Converter<AddressModel, AddressData> addressConverter;
+	private Converter<AddressModel, AddressData> addressConverter;
 
-    protected Converter<AddressModel, AddressData> getAddressConverter()
-    {
-        return addressConverter;
-    }
+	protected Converter<AddressModel, AddressData> getAddressConverter()
+	{
+		return addressConverter;
+	}
 
-    @Required
-    public void setAddressConverter(final Converter<AddressModel, AddressData> addressConverter)
-    {
-        this.addressConverter = addressConverter;
-    }
+	@Required
+	public void setAddressConverter(final Converter<AddressModel, AddressData> addressConverter)
+	{
+		this.addressConverter = addressConverter;
+	}
 
 	@Override
 	public void populate(final CustomerModel source, final CustomerData target) throws ConversionException //NOSONAR
@@ -51,13 +45,13 @@ public class ExtendedCustomerPopulator implements Populator<CustomerModel, Custo
 			target.setTitle(source.getTitle().getName());
 		}
 
-        if (source.getDefaultPaymentAddress() != null)
-        {
-            target.setDefaultBillingAddress(getAddressConverter().convert(source.getDefaultPaymentAddress()));
-        }
-        if (source.getDefaultShipmentAddress() != null)
-        {
-            target.setDefaultShippingAddress(getAddressConverter().convert(source.getDefaultShipmentAddress()));
-        }
+		if (source.getDefaultPaymentAddress() != null)
+		{
+			target.setDefaultBillingAddress(getAddressConverter().convert(source.getDefaultPaymentAddress()));
+		}
+		if (source.getDefaultShipmentAddress() != null)
+		{
+			target.setDefaultShippingAddress(getAddressConverter().convert(source.getDefaultShipmentAddress()));
+		}
 	}
 }

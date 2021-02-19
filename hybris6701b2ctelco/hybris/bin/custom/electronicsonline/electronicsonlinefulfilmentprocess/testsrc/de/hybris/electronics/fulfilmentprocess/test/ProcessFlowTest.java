@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2019 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.fulfilmentprocess.test;
 
@@ -31,6 +24,7 @@ import de.hybris.platform.task.RetryLaterException;
 import de.hybris.platform.task.TaskModel;
 import de.hybris.platform.task.impl.DefaultTaskService;
 import de.hybris.platform.testframework.HybrisJUnit4Test;
+import de.hybris.platform.testframework.PropertyConfigSwitcher;
 import de.hybris.platform.testframework.TestUtils;
 import de.hybris.platform.util.Utilities;
 import de.hybris.electronics.fulfilmentprocess.test.actions.TestActionTemp;
@@ -58,7 +52,7 @@ import org.springframework.core.io.ClassPathResource;
 public class ProcessFlowTest extends HybrisJUnit4Test
 {
 	private static final Logger LOG = Logger.getLogger(ProcessFlowTest.class);
-
+	private static final PropertyConfigSwitcher canJoinPreviousNodeSwitcher = new PropertyConfigSwitcher("processengine.process.canjoinpreviousnode.default");
 	private static TaskServiceStub taskServiceStub;
 
 	private static DefaultBusinessProcessService processService;
@@ -72,7 +66,7 @@ public class ProcessFlowTest extends HybrisJUnit4Test
 		Registry.activateStandaloneMode();
 		Utilities.setJUnitTenant();
 		LOG.debug("Preparing...");
-
+		canJoinPreviousNodeSwitcher.switchToValue("false");
 
 
 		final ApplicationContext appCtx = Registry.getApplicationContext();
@@ -166,6 +160,7 @@ public class ProcessFlowTest extends HybrisJUnit4Test
 		processService.setTaskService(appCtx.getBean("taskService", DefaultTaskService.class));
 		definitonFactory = null;
 		processService = null;
+		canJoinPreviousNodeSwitcher.switchBackToDefault();
 	}
 
 	@After

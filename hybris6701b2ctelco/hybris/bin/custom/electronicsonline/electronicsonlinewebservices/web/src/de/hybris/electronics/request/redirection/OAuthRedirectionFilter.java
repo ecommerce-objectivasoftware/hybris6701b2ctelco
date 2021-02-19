@@ -1,12 +1,5 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.request.redirection;
 
@@ -42,7 +35,7 @@ import org.apache.commons.lang.StringUtils;
  * 	</filter-mapping>
  * }
  * </pre>
- *
+ * <p>
  * Filter can be also parameterized : <br/>
  *
  * <pre>
@@ -70,7 +63,6 @@ import org.apache.commons.lang.StringUtils;
  * 	</filter-mapping>
  * }
  * </pre>
- *
  */
 public class OAuthRedirectionFilter implements Filter
 {

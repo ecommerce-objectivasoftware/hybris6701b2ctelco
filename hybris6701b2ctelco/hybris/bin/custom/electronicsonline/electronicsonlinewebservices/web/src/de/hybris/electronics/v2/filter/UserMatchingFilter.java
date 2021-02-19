@@ -1,30 +1,24 @@
 /*
- * [y] hybris Platform
- *
- * Copyright (c) 2018 SAP SE or an SAP affiliate company.  All rights reserved.
- *
- * This software is the confidential and proprietary information of SAP
- * ("Confidential Information"). You shall not disclose such Confidential
- * Information and shall use it only in accordance with the terms of the
- * license agreement you entered into with SAP.
+ * Copyright (c) 2020 SAP SE or an SAP affiliate company. All rights reserved.
  */
 package de.hybris.electronics.v2.filter;
 
-import de.hybris.electronics.facades.wechat.WeChatCustomerFacade;
+import de.hybris.platform.commerceservices.user.UserMatchingService;
 import de.hybris.platform.core.model.user.UserModel;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.servicelayer.session.SessionService;
 import de.hybris.platform.servicelayer.user.UserService;
-
-import java.io.IOException;
-import java.util.Objects;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import java.io.IOException;
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
@@ -44,11 +38,12 @@ public class UserMatchingFilter extends AbstractUrlMatchingFilter
 	private static final String CURRENT_USER = "current";
 	private static final String ANONYMOUS_USER = "anonymous";
 	private static final String ACTING_USER_UID = "ACTING_USER_UID";
-	private static final Logger LOG = Logger.getLogger(UserMatchingFilter.class);
+	private static final Logger LOG = LoggerFactory.getLogger(UserMatchingFilter.class);
+
 	private String regexp;
 	private UserService userService;
 	private SessionService sessionService;
-	private WeChatCustomerFacade weChatCustomerFacade;
+	private UserMatchingService userMatchingService;
 
 	@Override
 	protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response,
@@ -73,7 +68,7 @@ public class UserMatchingFilter extends AbstractUrlMatchingFilter
 				setCurrentUser(userService.getAnonymousUser());
 			}
 		}
-		else if (userID.equals(ANONYMOUS_USER))
+		else if (userID.equals(ANONYMOUS_USER) && !hasRole(ROLE_CUSTOMERGROUP, auth))
 		{
 			setCurrentUser(userService.getAnonymousUser());
 		}
@@ -83,14 +78,7 @@ public class UserMatchingFilter extends AbstractUrlMatchingFilter
 		}
 		else if (hasRole(ROLE_CUSTOMERGROUP, auth))
 		{
-			if (userID.equals(CURRENT_USER) || userID.equals(auth.getPrincipal()))
-			{
-				setCurrentUser((String) auth.getPrincipal());
-			}
-			else
-			{
-				throw new AccessDeniedException("Access is denied");
-			}
+			setCurrentUserForCustomerGroupRole((String) auth.getPrincipal(), userID);
 		}
 		else
 		{
@@ -99,6 +87,71 @@ public class UserMatchingFilter extends AbstractUrlMatchingFilter
 		}
 
 		filterChain.doFilter(request, response);
+	}
+
+	protected boolean hasRole(final String role, final Authentication auth)
+	{
+		if (auth != null)
+		{
+			for (final GrantedAuthority ga : auth.getAuthorities())
+			{
+				if (ga.getAuthority().equals(role))
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	protected void setCurrentUser(final String id)
+	{
+		try
+		{
+			final UserModel user = userMatchingService.getUserByProperty(id, UserModel.class);
+			setCurrentUser(user);
+		}
+		catch (final UnknownIdentifierException ex)
+		{
+			LOG.debug(ex.getMessage(), ex);
+			throw ex;
+		}
+	}
+
+	protected void setCurrentUser(final UserModel user)
+	{
+		userService.setCurrentUser(user);
+	}
+
+	protected void setCurrentUserForCustomerGroupRole(final String principal, final String userID)
+	{
+
+		if (userID.equals(CURRENT_USER))
+		{
+			setCurrentUser(principal);
+		}
+		else
+		{
+			setCurrentUser(
+					getUserForValidProperty(principal, userID).orElseThrow(() -> new AccessDeniedException("Access is denied")));
+		}
+	}
+
+	protected Optional<UserModel> getUserForValidProperty(final String principal, final String propertyValue)
+	{
+		try
+		{
+			final UserModel user = userMatchingService.getUserByProperty(propertyValue, UserModel.class);
+			if (principal.equals(user.getUid()))
+			{
+				return Optional.of(user);
+			}
+		}
+		catch (final UnknownIdentifierException ex)
+		{
+			LOG.debug(ex.getMessage(), ex);
+		}
+		return Optional.empty();
 	}
 
 	protected Authentication getAuth()
@@ -139,58 +192,14 @@ public class UserMatchingFilter extends AbstractUrlMatchingFilter
 		this.sessionService = sessionService;
 	}
 
-	protected boolean hasRole(final String role, final Authentication auth)
+	protected UserMatchingService getUserMatchingService()
 	{
-		if (auth != null)
-		{
-			for (final GrantedAuthority ga : auth.getAuthorities())
-			{
-				if (ga.getAuthority().equals(role))
-				{
-					return true;
-				}
-			}
-		}
-		return false;
+		return userMatchingService;
 	}
 
-	protected void setCurrentUser(final String uid) {
-
-		UserModel userModel = getUserByPhone(uid);
-
-		try {
-			if (Objects.isNull(userModel)) {
-				userModel = userService.getUserForUID(uid);
-			}
-			userService.setCurrentUser(userModel);
-		} catch (final UnknownIdentifierException ex) {
-			LOG.debug(ex.getMessage());
-			throw ex;
-		}
-	}
-
-	private UserModel getUserByPhone(final String uid) {
-		try {
-			Long.parseLong(uid);
-			return getWeChatCustomerFacade().getUserByPhoneNumber(uid);
-		} catch (NumberFormatException ex) {
-			//nothing to do
-		}
-
-		return null;
-	}
-
-
-	protected void setCurrentUser(final UserModel user)
+	@Required
+	public void setUserMatchingService(final UserMatchingService userMatchingService)
 	{
-		userService.setCurrentUser(user);
-	}
-
-	public WeChatCustomerFacade getWeChatCustomerFacade() {
-		return weChatCustomerFacade;
-	}
-
-	public void setWeChatCustomerFacade(WeChatCustomerFacade weChatCustomerFacade) {
-		this.weChatCustomerFacade = weChatCustomerFacade;
+		this.userMatchingService = userMatchingService;
 	}
 }
